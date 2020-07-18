@@ -3,12 +3,17 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author best lu
+ * @since 2020/7/18 14:00
+ */
 @Getter
 @Setter
 public class Disk {
-    /**
-     * 假设模拟磁盘有 128 个物理块，每个物理块大小为 64 字节。盘块的块号从 0 编起。
-     */
+
     private static final FAT fat = new FAT();//文件分配表，占两字节，磁盘的 0、1 号
     private static final DiskBlock[] diskBlocks = new DiskBlock[126];//模拟的磁盘数据区，（ 2 ~ 127 号）
 
@@ -16,17 +21,33 @@ public class Disk {
         fat.recovery_FAT(header);
     }
 
-    public void malloc(int size){
-        int freeOrder = fat.getFreeBlockOrder();
-
+    public int malloc(String str) throws Exception {
+        int strLength = str.length();
+        int preBlockSize = (strLength % 64) > 0 ? strLength/64 + 1 : strLength/64;
+        int header = fat.malloc_FAT(preBlockSize);
+        write(header,str);
+        return header;
     }
 
-    public void write(int position){
+    public void write(int position,String str) throws Exception {
+        /*
+         两种情况，新创建或修改。
+         1.新创建时，只能通过malloc。
+         2.修改时长度变化需要改分配表（检查最后一次写的块在表中是否为-1）
+         */
+        if (position == 0) throw new Exception("dangerous operation");
+        synchronized (diskBlocks[position]){
 
+        }
     }
 
-    public int[] read(int header){
-        return null;
+    public String read(int header){
+        List<Integer> fileList = fat.getFileList(header);
+        StringBuilder stringBuffer = new StringBuilder();
+        for (Integer integer : fileList) {
+            stringBuffer.append(diskBlocks[integer].r());
+        }
+        return stringBuffer.toString();
     }
 
     public void markDamage(int position){
@@ -36,13 +57,7 @@ public class Disk {
     @Setter
     @Getter
     private static class FAT{
-        /**
-         * 因为盘块有 128 块，所以文件分配表有 128 项。
-         * 文件分配表占用了磁盘的 0 块和 1 块，这两块就不能作其它用处。
-         * 若一个盘块是某个文件的最后一块，填写“ -1 ”表示文件结束。
-         * 用“ 0 ”表示磁盘盘块空闲。
-         * 用“ 254 ”表示该盘块损坏不能使用。
-         */
+
         int frsFreePosition = 2;//记录第一个空闲块索引
         final int[] FAT_cont = new int[128];
 
@@ -66,7 +81,7 @@ public class Disk {
         }
 
         /**
-         *
+         * 获得文件分配表中首个空闲块
          * @return 首个空闲块
          */
         int getFreeBlockOrder(){
@@ -80,6 +95,26 @@ public class Disk {
         }
 
         /**
+         * 文件分配表的分配内存
+         * @param preBlockSize 请求划分的块数
+         * @return 文件块头
+         */
+        int malloc_FAT(int preBlockSize){
+            int header = 0;
+            for (int i = 1,prePos = 0; i <= preBlockSize; i ++){
+                int freeOrder = fat.getFreeBlockOrder();
+                if (i ==1) {
+                    header = freeOrder;
+                }else if(i == preBlockSize){
+                    fat.getFAT_cont()[freeOrder] = -1;
+                }else{
+                    fat.getFAT_cont()[prePos] = freeOrder;
+                }
+                prePos = freeOrder;
+            }
+            return header;
+        }
+        /**
          * 损坏的磁盘块标记
          * @param position 块位置
          */
@@ -90,21 +125,54 @@ public class Disk {
                 FAT_cont[position] = 254;
             }
         }
+
+        /**
+         * 计算文件块数
+         * @param header 文件块头
+         * @return 文件块数
+         */
+        int getFileSize(int header){
+            if (FAT_cont[header] == -1) return 1;
+            else return getFileSize(FAT_cont[FAT_cont[header]]) + 1;
+        }
+
+        /**
+         * 获取文件流串的索引
+         * @param header 文件块头
+         * @return 文件流串的索引
+         */
+        List<Integer> getFileList(int header){
+            List<Integer> list = new ArrayList<>();
+            list.add(header);
+            while(true){
+                if (FAT_cont[header] != -1) list.add(FAT_cont[header]);
+                else break;
+                header = FAT_cont[header];
+            }
+            return list;
+        }
     }
 
     @Getter
     @Setter
     private static class DiskBlock{
-        /**
-         * 物理块大小为 64 字节
-         */
-        int order;
-        int[] block_cont;
-        void w(){
 
+        int order;//块号
+        char[] block_cont;//内容
+        DiskBlock(int order){
+            this.order = order;
         }
-        void r(){
+        void  w(int cur,char newChar) throws Exception {
+            if (cur > 64) throw new Exception("full out of block" + order);
+            if (block_cont == null){
+                block_cont = new char[64];
+            }
+            block_cont[cur] = newChar;
+        }
 
+        String r() {
+            if (block_cont == null) return "";
+            return String.copyValueOf(block_cont);
         }
     }
 }
