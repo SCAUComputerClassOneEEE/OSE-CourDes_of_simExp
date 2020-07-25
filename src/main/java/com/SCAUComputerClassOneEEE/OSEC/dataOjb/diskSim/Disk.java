@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,10 +25,8 @@ public class Disk implements Serializable {
 
     public Disk(){
         for (int i = 0; i < diskBlocks.length; i++) {
-            diskBlocks[i] = new DiskBlock(i);
+            diskBlocks[i] = new DiskBlock(i + 2);
         }
-        diskBlocks[2].write("112");
-        System.out.println(diskBlocks[2].read());
     }
     public void recovery(int header){
         fat.recovery_FAT(header);
@@ -56,16 +55,16 @@ public class Disk implements Serializable {
      * @throws Exception 容量不足
      */
     public void writeFile(int header,String str) throws Exception {
+        System.out.println("writeFile : "+str);
         int preBlockSize = str.length()/BLOCK_MAX_SIZE;
+        System.out.println(str.length());
         fat.mallocForFile_FAT(header,preBlockSize);//exception
         for (int i = 0,position = header; i < preBlockSize + 1; i ++){
             String wStr;
             if (i != preBlockSize) wStr = str.substring(i * BLOCK_MAX_SIZE, i * BLOCK_MAX_SIZE + BLOCK_MAX_SIZE);
             else wStr = str.substring(i * BLOCK_MAX_SIZE);
             int finalPosition = position;
-            TaskThreadPools.executeOnCachedThreadPool(()->{
-                diskBlocks[finalPosition].write(wStr);
-            });
+            diskBlocks[finalPosition].write(wStr);
             position = fat.getFAT_cont()[position];
         }
     }
@@ -161,7 +160,7 @@ public class Disk implements Serializable {
             for (int i = 0; i < preBlockSize; i ++){
                 int freeOrder = getFreeBlockOrder();
                 /*                 */
-                System.out.println("loop: " + freeOrder + "be allocated");
+                System.out.println("loop: " + freeOrder + " be allocated");
                 /*                 */
                 FAT_cont[header] = freeOrder;
                 header = freeOrder;
@@ -213,16 +212,15 @@ public class Disk implements Serializable {
     private static class DiskBlock{
 
         int order;//块号
-        char[] block_cont;//内容
+        char[] block_cont = new char[BLOCK_MAX_SIZE];//内容
+
         DiskBlock(int order){
             this.order = order;
+            Arrays.fill(block_cont, '*');
         }
 
         void write(String newStr){
             synchronized (this){
-                if (block_cont == null){
-                    block_cont = new char[BLOCK_MAX_SIZE];
-                }
                 block_cont = newStr.toCharArray();
             }
         }
