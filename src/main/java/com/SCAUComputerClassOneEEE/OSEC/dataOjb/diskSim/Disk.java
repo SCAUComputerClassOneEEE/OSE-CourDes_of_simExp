@@ -128,6 +128,7 @@ public class Disk implements Serializable {
          * @return 首个空闲块号
          */
         int getFreeBlockOrder() throws Exception {
+            FAT_cont[frsFreePosition] = -1;
             int ret = frsFreePosition;
             /* 计算剩余空闲 */
             freeBlocks --;
