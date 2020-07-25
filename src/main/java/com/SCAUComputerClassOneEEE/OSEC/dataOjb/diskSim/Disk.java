@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
+import com.sun.java.swing.plaf.windows.WindowsTextAreaUI;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,12 @@ public class Disk implements Serializable {
 
     private static final FAT fat = new FAT();//文件分配表，占两字节，磁盘的 0、1 号
     private static final DiskBlock[] diskBlocks = new DiskBlock[DISK_MAX_SIZE - 2];//模拟的磁盘数据区，（ 2 ~ 127 号）
+
+    public Disk(){
+        for (int i = 0; i < diskBlocks.length; i++){
+            diskBlocks[i] = new DiskBlock(i + 2);
+        }
+    }
 
     public void recovery(int header){
         fat.recovery_FAT(header);
