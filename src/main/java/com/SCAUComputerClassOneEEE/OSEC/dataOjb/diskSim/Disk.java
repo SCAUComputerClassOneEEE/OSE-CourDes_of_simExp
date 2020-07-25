@@ -1,7 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
-import com.sun.java.swing.plaf.windows.WindowsTextAreaUI;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,11 +23,12 @@ public class Disk implements Serializable {
     private static final DiskBlock[] diskBlocks = new DiskBlock[DISK_MAX_SIZE - 2];//模拟的磁盘数据区，（ 2 ~ 127 号）
 
     public Disk(){
-        for (int i = 0; i < diskBlocks.length; i++){
-            diskBlocks[i] = new DiskBlock(i + 2);
+        for (int i = 0; i < diskBlocks.length; i++) {
+            diskBlocks[i] = new DiskBlock(i);
         }
+        diskBlocks[2].write("112");
+        System.out.println(diskBlocks[2].read());
     }
-
     public void recovery(int header){
         fat.recovery_FAT(header);
     }
@@ -64,9 +64,7 @@ public class Disk implements Serializable {
             else wStr = str.substring(i * BLOCK_MAX_SIZE);
             int finalPosition = position;
             TaskThreadPools.executeOnCachedThreadPool(()->{
-                synchronized (diskBlocks[finalPosition]){
-                    diskBlocks[finalPosition].write(wStr);
-                }
+                diskBlocks[finalPosition].write(wStr);
             });
             position = fat.getFAT_cont()[position];
         }
@@ -221,14 +219,19 @@ public class Disk implements Serializable {
         }
 
         void write(String newStr){
-            if (block_cont == null){
-                block_cont = new char[BLOCK_MAX_SIZE];
+            synchronized (this){
+                if (block_cont == null){
+                    block_cont = new char[BLOCK_MAX_SIZE];
+                }
+                block_cont = newStr.toCharArray();
             }
-            block_cont = newStr.toCharArray();
         }
+
         String read() {
-            if (block_cont == null) return "";
-            return String.copyValueOf(block_cont);
+            synchronized (this){
+                if (block_cont == null) return "";
+                return String.copyValueOf(block_cont);
+            }
         }
     }
 }
