@@ -56,7 +56,7 @@ public class Disk implements Serializable {
      */
     public void writeFile(int header,String str) throws Exception {
         System.out.println("writeFile : "+str);
-        int preBlockSize = str.length()/BLOCK_MAX_SIZE;
+        int preBlockSize = str.length()/(BLOCK_MAX_SIZE+1);
         System.out.println(str.length());
         fat.mallocForFile_FAT(header,preBlockSize);//exception
         for (int i = 0,position = header; i < preBlockSize + 1; i ++){
@@ -118,13 +118,12 @@ public class Disk implements Serializable {
         void recovery_FAT(int header){
             if (header == 0) return;
             if (header == 1) return;
-            synchronized (FAT_cont){
                 if (header < frsFreePosition) frsFreePosition = header;
                 FAT_cont[header] = 0;
                 /* 计算剩余空闲 */
                 freeBlocks ++;
                 recovery_FAT(FAT_cont[FAT_cont[header]]);
-            }
+
         }
 
         /**
@@ -136,7 +135,6 @@ public class Disk implements Serializable {
             int ret = frsFreePosition;
             /* 计算剩余空闲 */
             freeBlocks --;
-            synchronized (FAT_cont){
                 int i;
                 for (i = 2; i < DISK_MAX_SIZE; i++) {
                     if (FAT_cont[i] == 0) {
@@ -145,7 +143,6 @@ public class Disk implements Serializable {
                     }
                 }
                 if (i == DISK_MAX_SIZE) throw new Exception("Not enough memory to be allocated.");
-            }
             return ret;
         }
 
@@ -174,9 +171,7 @@ public class Disk implements Serializable {
         void mark_FAT(int position){
             if (position == 0) return;
             if (position == 1) return;
-            synchronized (FAT_cont){
                 FAT_cont[position] = 254;
-            }
         }
 
         /**
@@ -220,16 +215,14 @@ public class Disk implements Serializable {
         }
 
         void write(String newStr){
-            synchronized (this){
                 block_cont = newStr.toCharArray();
-            }
+                System.out.print("在DiskBlock类中write方法的block_cont:");
+                System.out.println(block_cont);
         }
 
         String read() {
-            synchronized (this){
                 if (block_cont == null) return "";
                 return String.copyValueOf(block_cont);
-            }
         }
     }
 }

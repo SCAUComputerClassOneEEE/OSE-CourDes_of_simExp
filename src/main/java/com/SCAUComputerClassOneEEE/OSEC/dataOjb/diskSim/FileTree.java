@@ -5,6 +5,8 @@ import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+
 @Getter
 @Setter
 public class FileTree {
@@ -36,14 +38,13 @@ public class FileTree {
 
     private void setRootFileTreeItems(AFile aFile, TreeItem<AFile> rootTreeItem){
         //加载根目录
-        AFile[] aFiles = aFile.getAFiles();
+        ArrayList<AFile> aFiles = aFile.getAFiles();
         if(aFiles == null){
             return;
         }
         for(AFile file:aFiles){
 //            System.out.println(file.getFileName());
             TreeItem<AFile> treeItem = new TreeItem<>(file);
-
             rootTreeItem.getChildren().add(treeItem);
             if(!treeItem.isLeaf()){
                 setRootFileTreeItems(file, treeItem);
@@ -82,8 +83,9 @@ class AFile{
     private char length;         //1个字节,盘数
 
     private String location;        //位置,存放父路径的，好按照名称来找
-    private AFile[] aFiles;
+    private ArrayList<AFile> aFiles = new ArrayList<>();
 
+    //创建文件、目录
     public AFile(String fileName, String type, char property, char diskNum, char length, String location){
         this.fileName = fileName;
         this.type = type;
@@ -106,7 +108,11 @@ class AFile{
         return "  ".equals(this.type);
     }
 
-    public String getALLData(){return this.fileName + this.type + this.property + this.diskNum + this.length;}
+    public char[] getALLData(){
+        String string = this.fileName + this.type + this.property + this.diskNum + this.length;
+        char[] chars = string.toCharArray();
+        return chars;
+    }
 }
 
 @Getter
@@ -129,67 +135,92 @@ class MenuPane {
         addFunction();
     }
 
-
     private void addFunction(){
         this.openMenu.setOnAction(actionEvent -> {});
         this.createDirectoryMenu.setOnAction(actionEvent -> {
             int header1 = disk.malloc_F_Header();
-            //新增
-            System.out.println("新建文件对应的磁盘号：" + header1);
-            System.out.println("root对应的磁盘号：" + (int)this.root.getDiskNum());
             if(header1 == -1){
                 System.out.println("磁盘已满，创建失败！");
-            }else if(disk.readFile(this.root.getDiskNum()).length() >= 64){
+            }else if(this.root.getAFiles().size() >= 8){
                 System.out.println("该目录已满，创建失败！");
             }else {
+                System.out.println("新磁盘号："+header1);
                 char diskNum = (char) header1;
                 char property = 8;
                 char length = 0;
                 AFile newFile = new AFile("roo", "  ", property, diskNum, length, root.getLocation() + "/" + root.getFileName());
-                MyTreeItem treeItem = new MyTreeItem(newFile);
-                String str = disk.readFile(root.getDiskNum()) + newFile.getALLData();
+                System.out.println("新文件信息："+String.valueOf(newFile.getALLData()));
+                System.out.println(newFile.getFileName() +","+ newFile.getType() +","+ (int)newFile.getProperty() +","+ (int)newFile.getDiskNum() +","+ (int)newFile.getLength());
+                String str = replaceBlock_cont(this.root.getAFiles().size(), newFile.getALLData());
+                System.out.println("要写入的父目录的磁盘号:"+ (int)this.root.getDiskNum());
+                System.out.println("写入前磁盘的内容:"+disk.readFile( (int)this.root.getDiskNum()));
+                System.out.println("要写入的磁盘的字符串:"+str);
                 try {
                     disk.writeFile(root.getDiskNum(), str);
+                    MyTreeItem treeItem = new MyTreeItem(newFile);
+                    this.myTreeItem.getChildren().add(treeItem);
+                    this.root.getAFiles().add(newFile);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                this.myTreeItem.getChildren().add(treeItem);
-                //新增
-                System.out.println("str:"+str+","+(int)property+","+(int)diskNum+","+(int)length);
-                System.out.println("长度："+str.length());
-                System.out.println("root目录对应磁盘内容:"+disk.readFile((int)this.root.getDiskNum()));
             }
         });
         this.createFileMenu.setOnAction(actionEvent -> {
             int header2 = disk.malloc_F_Header();
-            System.out.println("新建文件对应的磁盘号：" + header2);
-            System.out.println("root对应的磁盘号：" + (int)this.root.getDiskNum());
             if(header2 == -1){
                 System.out.println("磁盘已满，创建失败！");
-            }else if(disk.readFile((int)this.root.getDiskNum()).length() >= 64){
+            }else if(this.root.getAFiles().size() >= 8){
                 System.out.println("该目录已满，创建失败！");
             }else{
+                System.out.println("新磁盘号："+header2);
                 char diskNum = (char)header2;
                 char property = 4;
                 char length = 1;
                 AFile newFile = new AFile("roo", "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
-                MyTreeItem treeItem = new MyTreeItem(newFile);
-                String str = disk.readFile((int)root.getDiskNum()) + newFile.getALLData();
-                System.out.println("写入前root目录对应磁盘内容:"+disk.readFile((int)this.root.getDiskNum()));
+                System.out.println("新文件信息："+String.valueOf(newFile.getALLData()));
+                System.out.println(newFile.getFileName() +","+ newFile.getType() +","+ (int)newFile.getProperty() +","+ (int)newFile.getDiskNum() +","+ (int)newFile.getLength());
+                String str = replaceBlock_cont(this.root.getAFiles().size(), newFile.getALLData());
+                System.out.println("要写入的父目录的磁盘号:"+ (int)this.root.getDiskNum());
+                System.out.println("写入前磁盘的内容:"+disk.readFile( (int)this.root.getDiskNum()));
+                System.out.println("要写入的磁盘的字符串:"+str);
                 try{
                     disk.writeFile(root.getDiskNum(), str);
+                    MyTreeItem treeItem = new MyTreeItem(newFile);
+                    this.myTreeItem.getChildren().add(treeItem);
+                    this.root.getAFiles().add(newFile);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                this.myTreeItem.getChildren().add(treeItem);
-                //新增
-                System.out.println("str:"+str);
-                System.out.println("长度:"+str.length());
-                System.out.println("newFile:"+newFile.getALLData());
-                System.out.println("写入后root目录对应磁盘内容:"+disk.readFile((int)this.root.getDiskNum()));
             }
         });
         this.deleteMenu.setOnAction(event -> {});
+    }
+
+    //判断磁盘块是否已满
+    private boolean directory_full(String block_cont){
+        int num = 0;
+        char[] block_conts = block_cont.toCharArray();
+        for(char b : block_conts){
+            if(b != '*') num++;
+        }
+        System.out.println("num:"+num);
+        return num >= 64;
+    }
+
+    /**
+     * 将创建文件的信息替换读出的磁盘块内容
+     * @param num 父目录中孩子数量
+     * @param block_cont 孩子的信息
+     * @return 将要写入父目录对应的磁盘块的字符串
+     */
+    private String replaceBlock_cont(int num, char[] block_cont){
+        String str = disk.readFile((int) this.root.getDiskNum());
+        char[] chars = str.toCharArray();
+        int i = num * 8;
+        for(char c : block_cont) {
+            chars[i++] = c;
+        }
+        return String.valueOf(chars);
     }
 }
 
