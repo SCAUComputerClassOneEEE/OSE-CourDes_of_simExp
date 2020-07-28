@@ -1,9 +1,12 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
 
+import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,79 +15,100 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class Disk {
+public class Disk implements Serializable {
+
+    public static final int DISK_MAX_SIZE = 128;
+    public static final int BLOCK_MAX_SIZE = 64;
 
     private static final FAT fat = new FAT();//文件分配表，占两字节，磁盘的 0、1 号
-    private static final DiskBlock[] diskBlocks = new DiskBlock[126];//模拟的磁盘数据区，（ 2 ~ 127 号）
+    private static final DiskBlock[] diskBlocks = new DiskBlock[DISK_MAX_SIZE - 2];//模拟的磁盘数据区，（ 2 ~ 127 号）
 
+    public Disk(){
+        for (int i = 0; i < diskBlocks.length; i++) {
+            diskBlocks[i] = new DiskBlock(i + 2);
+        }
+    }
     public void recovery(int header){
         fat.recovery_FAT(header);
     }
 
     /**
-     *
-     * @param str 写入的字符串
+     * 为目录或文件申请一个头盘块
      * @return -1表示没有足够空间
-     * @throws Exception dangerous operation
+     *         others 文件头盘块号
      */
-    public int malloc(String str) throws Exception {
-        int strLength = str.length();
-
-        int preBlockSize = (strLength % 64) > 0 ? strLength/64 + 1 : strLength/64;
-        int header = fat.malloc_FAT(preBlockSize);
-        if (header == -1) return -1;
-        write(header,str);
-        return header;
-    }
-
-    public void write(int position,String str) throws Exception {
-        if (position == 0) throw new Exception("dangerous operation");
-        if (fat.getFileSize(position) > 1)
-        while (str.length() > 0){
-            String element = str.substring(0,64);
-            str = str.substring(64);
-
-            synchronized (diskBlocks[position]){
-                if (fat.getFAT_cont()[position] == -1){
-                    diskBlocks[position].w(element);
-                    int newBlock = fat.malloc_FAT(1);
-
-
-
-                }else{
-                    diskBlocks[position].w(element);
-                    position = fat.getFAT_cont()[position];
-                }
-            }
-        }
-        if (fat.getFAT_cont()[position] != -1) {
-            fat.recovery_FAT(fat.getFAT_cont()[position]);
-            fat.getFAT_cont()[position] = -1;
+    public int malloc_F_Header() {
+        int header;
+        try{
+            header = fat.getFreeBlockOrder();
+            return  header;
+        }catch (Exception e){
+            e.printStackTrace();
+            return  -1;
         }
     }
 
-    public String read(int header){
+    /**
+     * 写入文件到磁盘
+     * @param header 目录或文件头
+     * @param str 内容
+     * @throws Exception 容量不足
+     */
+    public void writeFile(int header,String str) throws Exception {
+        System.out.println("writeFile : "+str);
+        int preBlockSize = str.length()/(BLOCK_MAX_SIZE+1);
+        System.out.println(str.length());
+        fat.mallocForFile_FAT(header,preBlockSize);//exception
+        for (int i = 0,position = header; i < preBlockSize + 1; i ++){
+            String wStr;
+            if (i != preBlockSize) wStr = str.substring(i * BLOCK_MAX_SIZE, i * BLOCK_MAX_SIZE + BLOCK_MAX_SIZE);
+            else wStr = str.substring(i * BLOCK_MAX_SIZE);
+            int finalPosition = position;
+            diskBlocks[finalPosition].write(wStr);
+            position = fat.getFAT_cont()[position];
+        }
+    }
+
+    /**
+     * 读出文件
+     * @param header 目录或文件头
+     * @return 内容
+     */
+    public String readFile(int header){
         List<Integer> fileList = fat.getFileList(header);
         StringBuilder stringBuffer = new StringBuilder();
         for (Integer integer : fileList) {
-            stringBuffer.append(diskBlocks[integer].r());
+            stringBuffer.append(diskBlocks[integer].read());
         }
         return stringBuffer.toString();
     }
 
+    /**
+     * 计算文件长度
+     * @param header 目录或文件头
+     * @return 文件长度
+     */
+    public int getFileSize(int header){ return fat.getFileSize(header); }
+
+    /**
+     * 标记损坏盘块
+     * @param position 位置
+     */
     public void markDamage(int position){ fat.mark_FAT(position); }
 
     @Setter
     @Getter
     private static class FAT{
 
-        int freeBlocks = 126;
-        int frsFreePosition = 2;//记录第一个空闲块索引
-        final int[] FAT_cont = new int[128];
+        int freeBlocks;
+        int frsFreePosition;//记录第一个空闲块索引
+        final int[] FAT_cont = new int[DISK_MAX_SIZE];
 
         FAT(){
             FAT_cont[0] = -1;
             FAT_cont[1] = -1;
+            freeBlocks = DISK_MAX_SIZE - 2;
+            frsFreePosition = 2;
         }
 
         /**
@@ -94,52 +118,51 @@ public class Disk {
         void recovery_FAT(int header){
             if (header == 0) return;
             if (header == 1) return;
-            synchronized (FAT_cont){
                 if (header < frsFreePosition) frsFreePosition = header;
                 FAT_cont[header] = 0;
                 /* 计算剩余空闲 */
                 freeBlocks ++;
                 recovery_FAT(FAT_cont[FAT_cont[header]]);
-            }
+
         }
 
         /**
          * 获得文件分配表中首个空闲块
-         * -1表示已满
-         * @return 首个空闲块
+         * @return 首个空闲块号
          */
-        private int getFreeBlockOrder(){
+        int getFreeBlockOrder() throws Exception {
+            FAT_cont[frsFreePosition] = -1;
             int ret = frsFreePosition;
             /* 计算剩余空闲 */
             freeBlocks --;
-            int i;
-            for (i = frsFreePosition; i < 128; i++)
-                if (FAT_cont[i] == 0) {
-                    frsFreePosition = i;
-                    break;
+                int i;
+                for (i = 2; i < DISK_MAX_SIZE; i++) {
+                    if (FAT_cont[i] == 0) {
+                        frsFreePosition = i;
+                        break;
+                    }
                 }
+                if (i == DISK_MAX_SIZE) throw new Exception("Not enough memory to be allocated.");
             return ret;
         }
 
         /**
-         * 从文件分配表第一个空闲块开始分配 preBlockSize 份内存
+         * 从指定的文件盘块开始尾添 preBlockSize 块盘
          * @param preBlockSize 请求划分的块数
-         * @return 文件块头
          */
-        int malloc_FAT(int preBlockSize){
-            if (preBlockSize <= 0) return -1;
-            if (preBlockSize > freeBlocks) return -1;
-            int header = 0;
-            for (int i = 1,prePos = 0; i <= preBlockSize; i ++){
+        void mallocForFile_FAT(int header,int preBlockSize) throws Exception {
+            if (preBlockSize <= 0) return;
+            if (preBlockSize > freeBlocks)
+                throw new Exception("Not enough memory to be allocated.");
+            for (int i = 0; i < preBlockSize; i ++){
                 int freeOrder = getFreeBlockOrder();
-
-                if (i ==1) header = freeOrder;
-                else FAT_cont[prePos] = freeOrder;
-
-                if(i == preBlockSize) FAT_cont[freeOrder] = -1;
-                prePos = freeOrder;
+                /*                 */
+                System.out.println("loop: " + freeOrder + " be allocated");
+                /*                 */
+                FAT_cont[header] = freeOrder;
+                header = freeOrder;
             }
-            return header;
+            FAT_cont[header] = -1;
         }
         /**
          * 损坏的磁盘块标记
@@ -148,9 +171,7 @@ public class Disk {
         void mark_FAT(int position){
             if (position == 0) return;
             if (position == 1) return;
-            synchronized (FAT_cont){
                 FAT_cont[position] = 254;
-            }
         }
 
         /**
@@ -186,26 +207,22 @@ public class Disk {
     private static class DiskBlock{
 
         int order;//块号
-        char[] block_cont;//内容
+        char[] block_cont = new char[BLOCK_MAX_SIZE];//内容
+
         DiskBlock(int order){
             this.order = order;
+            Arrays.fill(block_cont, '*');
         }
-        void  w(int cur,char newChar) throws Exception {
-            if (cur > 64) throw new Exception("full out of block" + order);
-            if (block_cont == null){
-                block_cont = new char[64];
-            }
-            block_cont[cur] = newChar;
+
+        void write(String newStr){
+                block_cont = newStr.toCharArray();
+                System.out.print("在DiskBlock类中write方法的block_cont:");
+                System.out.println(block_cont);
         }
-        void w(String newStr){
-            if (block_cont == null){
-                block_cont = new char[64];
-            }
-            block_cont = newStr.toCharArray();
-        }
-        String r() {
-            if (block_cont == null) return "";
-            return String.copyValueOf(block_cont);
+
+        String read() {
+                if (block_cont == null) return "";
+                return String.copyValueOf(block_cont);
         }
     }
 }
