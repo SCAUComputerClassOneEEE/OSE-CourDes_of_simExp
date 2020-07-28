@@ -118,12 +118,12 @@ public class Disk implements Serializable {
         void recovery_FAT(int header){
             if (header == 0) return;
             if (header == 1) return;
-                if (header < frsFreePosition) frsFreePosition = header;
+            if (header == -1) return;
+            if (header < frsFreePosition) frsFreePosition = header;
                 FAT_cont[header] = 0;
                 /* 计算剩余空闲 */
                 freeBlocks ++;
                 recovery_FAT(FAT_cont[FAT_cont[header]]);
-
         }
 
         /**
