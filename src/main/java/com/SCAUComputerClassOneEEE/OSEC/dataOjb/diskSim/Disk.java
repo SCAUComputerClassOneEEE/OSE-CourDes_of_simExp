@@ -28,6 +28,7 @@ public class Disk implements Serializable {
             diskBlocks[i] = new DiskBlock(i + 2);
         }
     }
+    
     public void recovery(int header){
         fat.recovery_FAT(header);
     }

@@ -1,118 +1,13 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
 
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-
-@Getter
-@Setter
-public class FileTree {
-    private TreeView<AFile> treeView;
-    private MyTreeItem rootTree;
-    private VBox vBox;
-    private Disk disk = new Disk();
-
-    public FileTree(VBox vBox) {
-        this.vBox = vBox;
-        int header = disk.malloc_F_Header();
-        if(header == -1){
-            System.out.println("错误，磁盘已满");
-        }else{
-            System.out.println("根目录对应的磁盘号：" + header);
-            char diskNum = (char)header;
-            char property = 8;
-            char length = 0;
-            AFile rootFile = new AFile("root", "  ", property, diskNum, length, "");
-            rootTree = new MyTreeItem(rootFile);
-            this.setRootFileTreeItems(rootFile, rootTree);
-            this.treeView = new TreeView<>(rootTree);
-            this.treeView.setShowRoot(true);
-            // 单元设置，TreeView下的每个子控件都支持,包扩子子控件,所以添加菜单栏那里只对有儿子有父亲的进行设置
-            treeView.setCellFactory((TreeView<AFile> p) -> new TextFieldTreeCellImpl(this.disk));
-            vBox.getChildren().add(treeView);
-        }
-    }
-
-    private void setRootFileTreeItems(AFile aFile, TreeItem<AFile> rootTreeItem){
-        //加载根目录
-        ArrayList<AFile> aFiles = aFile.getAFiles();
-        if(aFiles == null){
-            return;
-        }
-        for(AFile file:aFiles){
-//            System.out.println(file.getFileName());
-            TreeItem<AFile> treeItem = new TreeItem<>(file);
-            rootTreeItem.getChildren().add(treeItem);
-            if(!treeItem.isLeaf()){
-                setRootFileTreeItems(file, treeItem);
-            }
-        }
-    }
-
-}
-
-@Getter
-@Setter
-class MyTreeItem extends TreeItem<AFile> {
-
-    public MyTreeItem(AFile aFile){
-        this.setValue(aFile);
-    }
-
-    @Override
-    public boolean isLeaf(){
-        return !getValue().isDirectory();
-    }
-}
-
-@Getter
-@Setter
-class AFile{
-    private String fileName;
-    /*
-     *名仅可以使用字母、数字和除“$”、 “.”、 “/”以外的字符
-     * 第一个字节的值为“$”时表示该目录为空目录项
-     *，文件名和类型名之间用“.”分割，用“/”作为路径名中目录间分隔符
-     * 3 个字节
-     */
-    private String type;           //2个字节   类型
-    private char property;       //1个字节  属性
-    private char diskNum;        //1个字节 起始盘块号
-    private char length;         //1个字节,盘数
-
-    private String location;        //位置,存放父路径的，好按照名称来找
-    private ArrayList<AFile> aFiles = new ArrayList<>();
-
-    //创建文件、目录
-    public AFile(String fileName, String type, char property, char diskNum, char length, String location){
-        this.fileName = fileName;
-        this.type = type;
-        this.property = property;
-        this.diskNum = diskNum;
-        this.length = length;
-        this.location = location;
-    }
-
-    @Override
-    public String toString(){
-        return this.fileName;
-    }
-
-    //是文本文件为true
-    public boolean isFile(){
-        return !"  ".equals(this.type);
-    }
-    //是目录为true
-    public boolean isDirectory(){
-        return "  ".equals(this.type);
-    }
-    //得到文件信息
-    public char[] getALLData(){ return (this.fileName + this.type + this.property + this.diskNum + this.length).toCharArray(); }
-}
 
 @Getter
 @Setter
@@ -284,57 +179,5 @@ class MenuPane {
         System.out.print("block_cont:");
         System.out.println(block_cont);
         return String.valueOf(block_cont);
-    }
-}
-
-@Getter
-@Setter
-// 对TreeView下的每个单元格进行处理
-final class TextFieldTreeCellImpl extends TreeCell<AFile> {
-    private MenuPane menuPane;
-    private Disk disk;
-
-    public TextFieldTreeCellImpl(Disk disk) {
-        super();
-        this.disk = disk;
-    }
-
-    @Override
-    public void updateItem(AFile item, boolean empty) {
-        super.updateItem(item, empty);
-        // 为空不处理
-        if (empty) {
-            setText(null);
-            setGraphic(null);
-        } else {
-            setText(getString());
-            setGraphic(getTreeItem().getGraphic());
-            // 如果有儿子  并且 有父亲，则拥有添加、删除功能，不能打开
-            if(!getTreeItem().isLeaf() && getTreeItem().getParent() != null){
-                menuPane = new MenuPane(getTreeItem(), disk);
-                menuPane.getOpenMenu().setDisable(true);
-                setContextMenu(menuPane.getAddMenu());
-            }else if(!getTreeItem().isLeaf() && getTreeItem().getParent() == null){
-                //根目录,不能删除，打开
-                menuPane = new MenuPane(getTreeItem(), disk);
-                menuPane.getOpenMenu().setDisable(true);
-                menuPane.getDeleteMenu().setDisable(true);
-                setContextMenu(menuPane.getAddMenu());
-            }else if(getTreeItem().isLeaf()){
-                //叶子（文本文件），不能创建孩子
-                menuPane = new MenuPane(getTreeItem(), disk);
-                menuPane.getCreateDirectoryMenu().setDisable(true);
-                menuPane.getCreateFileMenu().setDisable(true);
-                setContextMenu(menuPane.getAddMenu());
-            }else{
-                //空白处
-                setMenuPane(null);
-            }
-        }
-    }
-
-    // 获取该Item的名字
-    private String getString() {
-        return getItem() == null ? "" : getItem().toString();
     }
 }
