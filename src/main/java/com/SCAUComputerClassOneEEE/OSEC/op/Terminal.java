@@ -20,7 +20,7 @@ public class Terminal {
     public static TextArea textArea = new TextArea();
 
 
-    public void start(Stage primaryStage) throws Exception {
+    public Terminal() {
         String command = "";
 
         textArea.appendText(">> ");
@@ -46,9 +46,7 @@ public class Terminal {
                 }
             }
         });
-        Scene scene = new Scene(textArea, 500, 300);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+
     }
 
 
