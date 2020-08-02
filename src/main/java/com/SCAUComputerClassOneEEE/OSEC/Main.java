@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC;
 
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import javafx.application.Application;
@@ -16,10 +17,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        Disk disk = new Disk();
         BorderPane root = new BorderPane();
-
         Terminal terminal = new Terminal();
-        FileTree fileTree = new FileTree(new VBox());
+        FileTree fileTree = new FileTree(new VBox(), disk);
 
         root.setLeft(fileTree.getVBox());
         root.setCenter(terminal.textArea);

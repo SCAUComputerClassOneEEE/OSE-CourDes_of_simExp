@@ -14,9 +14,10 @@ public class FileTree {
     private TreeView<AFile> treeView;
     private MyTreeItem rootTree;
     private VBox vBox;
-    private Disk disk = new Disk();
+    private Disk disk;
 
-    public FileTree(VBox vBox) {
+    public FileTree(VBox vBox, Disk disk) {
+        this.disk = disk;
         this.vBox = vBox;
         int header = disk.malloc_F_Header();
         if(header == -1){
