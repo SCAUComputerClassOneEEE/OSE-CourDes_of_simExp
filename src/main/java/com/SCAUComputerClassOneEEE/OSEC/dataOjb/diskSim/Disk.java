@@ -28,6 +28,7 @@ public class Disk implements Serializable {
             diskBlocks[i] = new DiskBlock(i + 2);
         }
     }
+    
     public void recovery(int header){
         fat.recovery_FAT(header);
     }
@@ -55,16 +56,13 @@ public class Disk implements Serializable {
      * @throws Exception 容量不足
      */
     public void writeFile(int header,String str) throws Exception {
-        System.out.println("writeFile : "+str);
         int preBlockSize = str.length()/(BLOCK_MAX_SIZE+1);
-        System.out.println(str.length());
         fat.mallocForFile_FAT(header,preBlockSize);//exception
         for (int i = 0,position = header; i < preBlockSize + 1; i ++){
             String wStr;
             if (i != preBlockSize) wStr = str.substring(i * BLOCK_MAX_SIZE, i * BLOCK_MAX_SIZE + BLOCK_MAX_SIZE);
             else wStr = str.substring(i * BLOCK_MAX_SIZE);
-            int finalPosition = position;
-            diskBlocks[finalPosition].write(wStr);
+            diskBlocks[position].write(wStr);
             position = fat.getFAT_cont()[position];
         }
     }
@@ -156,9 +154,6 @@ public class Disk implements Serializable {
                 throw new Exception("Not enough memory to be allocated.");
             for (int i = 0; i < preBlockSize; i ++){
                 int freeOrder = getFreeBlockOrder();
-                /*                 */
-                System.out.println("loop: " + freeOrder + " be allocated");
-                /*                 */
                 FAT_cont[header] = freeOrder;
                 header = freeOrder;
             }
@@ -215,14 +210,12 @@ public class Disk implements Serializable {
         }
 
         void write(String newStr){
-                block_cont = newStr.toCharArray();
-                System.out.print("在DiskBlock类中write方法的block_cont:");
-                System.out.println(block_cont);
+            System.arraycopy(newStr.toCharArray(), 0, block_cont, 0, newStr.length());
         }
 
         String read() {
-                if (block_cont == null) return "";
-                return String.copyValueOf(block_cont);
+            if (block_cont == null) return "";
+            return String.copyValueOf(block_cont);
         }
     }
 }
