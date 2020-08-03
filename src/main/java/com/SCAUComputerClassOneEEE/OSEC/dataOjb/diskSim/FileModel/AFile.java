@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 @Getter
 @Setter
-class AFile{
+public class AFile{
     private String fileName;
     /*
      *名仅可以使用字母、数字和除“$”、 “.”、 “/”以外的字符

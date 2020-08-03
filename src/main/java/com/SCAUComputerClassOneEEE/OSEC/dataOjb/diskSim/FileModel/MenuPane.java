@@ -21,7 +21,7 @@ class MenuPane {
 
     public MenuPane(TreeItem<AFile> treeItem, Disk disk){
         addMenu.getItems().addAll(openMenu, createFileMenu, createDirectoryMenu, deleteMenu);
-        this.openMenu.setOnAction(actionEvent -> {});
+        this.openMenu.setOnAction(actionEvent -> { FileTextField fileTextField = new FileTextField(disk, treeItem); });
         this.createDirectoryMenu.setOnAction(actionEvent -> {
             TextInputBox textInputBox = new TextInputBox(disk, treeItem, 0);
         });

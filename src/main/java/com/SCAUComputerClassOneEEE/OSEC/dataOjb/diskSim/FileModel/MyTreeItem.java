@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-class MyTreeItem extends TreeItem<AFile> {
+public class MyTreeItem extends TreeItem<AFile> {
 
     public MyTreeItem(AFile aFile){
         this.setValue(aFile);
