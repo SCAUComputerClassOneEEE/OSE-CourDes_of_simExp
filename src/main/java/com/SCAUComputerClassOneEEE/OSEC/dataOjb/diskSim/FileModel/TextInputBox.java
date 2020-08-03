@@ -181,8 +181,9 @@ public class TextInputBox {
      *
      * @param disk          固定的磁盘类（新建会出错）
      * @param myTreeItem    操作的节点
+     * @return 删除成功为true
      */
-    public void delete(Disk disk, TreeItem<AFile> myTreeItem){
+    public boolean delete(Disk disk, TreeItem<AFile> myTreeItem){
         AFile root = myTreeItem.getValue();
         char[] chars = new char[64];
         Arrays.fill(chars, '*');
@@ -193,19 +194,16 @@ public class TextInputBox {
             //清理自己的
             disk.writeFile( (int)root.getDiskNum(), str );
             //清理孩子
-            for(AFile aFile : root.getAFiles()){
-                if(aFile.isDirectory()){
-                    recoveryDisk(disk, (int)aFile.getDiskNum(), str);
-                }
-                recoveryDisk(disk, (int)aFile.getDiskNum(), str);
-            }
+            recoveryDisk(disk, root, str);
             //清理父亲的
             AFile aFile = (AFile) myTreeItem.getParent().getValue();
             disk.writeFile( (int)aFile.getDiskNum(), resetChip(disk, aFile.getAFiles().indexOf(root), aFile.getAFiles().size(), (int)aFile.getDiskNum()));
             aFile.getAFiles().remove(root);
             myTreeItem.getParent().getChildren().remove(myTreeItem);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -265,8 +263,19 @@ public class TextInputBox {
         return String.valueOf(block_cont);
     }
 
-    private void recoveryDisk(Disk disk, int diskNum, String str) throws Exception{
-        disk.recovery(diskNum);
-        disk.writeFile(diskNum, str);
+    /**
+     *
+     * @param disk      固定的磁盘类（新建会出错）
+     * @param root      删除的文件\目录
+     * @param str       将磁盘复原的字符串
+     * @throws Exception 删除失败抛出异常
+     */
+    private void recoveryDisk(Disk disk, AFile root, String str) throws Exception{
+        for(AFile aFile : root.getAFiles()){
+            if(aFile.isDirectory())
+                recoveryDisk(disk, aFile, str);
+            disk.recovery((int)aFile.getDiskNum());
+            disk.writeFile((int)aFile.getDiskNum(), str);
+        }
     }
 }
