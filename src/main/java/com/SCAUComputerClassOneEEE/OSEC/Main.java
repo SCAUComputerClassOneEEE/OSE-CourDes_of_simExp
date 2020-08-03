@@ -19,7 +19,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         Disk disk = new Disk();
         BorderPane root = new BorderPane();
-        Terminal terminal = new Terminal();
+        Terminal terminal = new Terminal(disk);
         FileTree fileTree = new FileTree(new VBox(), disk);
 
         root.setLeft(fileTree.getVBox());

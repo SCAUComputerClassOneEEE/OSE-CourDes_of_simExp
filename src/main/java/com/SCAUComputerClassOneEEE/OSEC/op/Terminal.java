@@ -1,5 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.*;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -17,10 +19,15 @@ import java.util.regex.Pattern;
 public class Terminal {
     public Pattern pattern1 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w]+)");
     public Pattern pattern2 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w]+)\\s([/,\\w]+)");
+
     public static TextArea textArea = new TextArea();
+    TextInputBox tib = new TextInputBox();
+    private Disk disk;
 
 
-    public Terminal() {
+    public Terminal(Disk disk) {
+        this.disk = disk;
+
         String command = "";
 
         textArea.appendText(">> ");
@@ -60,6 +67,21 @@ public class Terminal {
             System.out.println(matcher1.group(0));
             String action = matcher1.group(1);
             String filePath = matcher1.group(2);
+
+            switch (action){
+                case "create":
+                    if(tib.createFile(disk, Null, filePath)){
+                        textArea.appendText("文件创建成功！");
+                    } else {
+                        textArea.appendText("错误！文件已经存在");
+                    }break;
+                case "delete":
+                    if (tib.delete(disk, Null, filePath)){
+                        textArea.appendText("文件删除成功！");
+                    } else {
+                        textArea.appendText("错误！文件不存在");
+                    }
+            }
             //下面是文件方法调用
 
 //            switch (action) {
