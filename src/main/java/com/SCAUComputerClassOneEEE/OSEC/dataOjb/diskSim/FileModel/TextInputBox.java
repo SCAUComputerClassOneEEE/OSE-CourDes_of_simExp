@@ -127,9 +127,9 @@ public class TextInputBox {
             char property = 8;
             char length = 0;
             AFile newFile = new AFile(fileName, "  ", property, diskNum, length, root.getLocation() + "/" + root.getFileName());
-            String str = replaceBlock_cont(disk, header, root.getAFiles().size(), newFile.getALLData());
+            String str = replaceBlock_cont(disk, (int)root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
             try {
-                disk.writeFile(root.getDiskNum(), str);
+                disk.writeFile((int)root.getDiskNum(), str);
                 MyTreeItem treeItem = new MyTreeItem(newFile);
                 myTreeItem.getChildren().add(treeItem);
                 root.getAFiles().add(newFile);
@@ -163,9 +163,9 @@ public class TextInputBox {
             char property = 4;
             char length = 1;
             AFile newFile = new AFile(fileName, "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
-            String str = replaceBlock_cont(disk, header, root.getAFiles().size(), newFile.getALLData());
+            String str = replaceBlock_cont(disk, (int)root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
             try{
-                disk.writeFile(root.getDiskNum(), str);
+                disk.writeFile((int)root.getDiskNum(), str);
                 MyTreeItem treeItem = new MyTreeItem(newFile);
                 myTreeItem.getChildren().add(treeItem);
                 root.getAFiles().add(newFile);
@@ -246,7 +246,7 @@ public class TextInputBox {
     }
 
     /**
-     * 将创建文件的信息替换读出的磁盘块内容
+     * 删除文件的信息替换读出的磁盘块内容
      * @param position 删除碎片位置
      * @param length 磁盘块内容长度
      * @param diskNum 磁盘块号
