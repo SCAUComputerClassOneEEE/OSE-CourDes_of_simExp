@@ -96,8 +96,6 @@ public class Terminal {
                             }
                         }
                     }
-
-
                     break;
                 case "mkdir":
                     //注释的方法正常
