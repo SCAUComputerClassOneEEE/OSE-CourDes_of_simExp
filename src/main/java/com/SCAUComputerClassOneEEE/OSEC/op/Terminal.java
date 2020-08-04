@@ -41,7 +41,8 @@ public class Terminal {
 
         String command = "";
 
-        textArea.appendText(">> ");
+        textArea.appendText("可使用指令: create mkdir delete");
+        textArea.appendText("(请按回车开始) ");
         final int[] currentCaretPos = {textArea.getCaretPosition()};
         textArea.setOnKeyPressed(event -> {
 
@@ -84,37 +85,19 @@ public class Terminal {
 
             switch (action){
                 case "create":
-                    for (int i = 0; i < fileNameList.size(); i++){
-                        if (i == 0 && fileNameList.size() == 1){
-                            textArea.appendText(tib.createFile(disk, rootTree, fileNameList.get(i)));
-                        }else if(i == 1){
-                            ObservableList<TreeItem<AFile>> myTreeItems = rootTree.getChildren();
-                            for (int j = 0; j < myTreeItems.size(); j++){
-                                if(fileNameList.get(i - 1).equals(myTreeItems.get(j).getValue().getFileName())){
-                                    textArea.appendText(tib.createFile(disk, myTreeItems.get(j), fileNameList.get(i)));
-                                }
-                            }
-                        }
-                    }
+                    textArea.appendText(tib.createFile(disk, getFatherTreeItem(fileNameList, rootTree, 0),
+                            fileNameList.get(fileNameList.size() - 1)));
                     break;
                 case "mkdir":
-                    //注释的方法正常
-//                    for (int i = 0; i < fileNameList.size(); i++){
-//                        if (i == 0 && fileNameList.size() == 1){
-//                            textArea.appendText(tib.createDirectory(disk, rootTree, fileNameList.get(i)));
-//                        }else if(i == 1){
-//                            ObservableList<TreeItem<AFile>> myTreeItems = rootTree.getChildren();
-//                            for (int j = 0; j < myTreeItems.size(); j++){
-//                                if(fileNameList.get(i - 1).equals(myTreeItems.get(j).getValue().getFileName())){
-//                                    textArea.appendText(tib.createDirectory(disk, myTreeItems.get(j), fileNameList.get(i)));
-//                                }
-//                            }
-//                        }
-//                    }
                     textArea.appendText(tib.createDirectory(disk, getFatherTreeItem(fileNameList, rootTree, 0),
                             fileNameList.get(fileNameList.size() - 1)));
-
                     break;
+                case "delete":
+                    if(tib.delete(disk, getFatherTreeItem(fileNameList, rootTree, 0))){
+                        textArea.appendText("文件删除成功！");
+                    }else {
+                        textArea.appendText("错误！文件不存在");
+                    }break;
 //                case "delete":
 //                    if (tib.delete(disk, rootTree)){
 //                        textArea.appendText("文件删除成功！");
@@ -207,26 +190,33 @@ public class Terminal {
      * @return
      */
     TreeItem<AFile> getFatherTreeItem(List<String> fileNameList, TreeItem<AFile> fatherTreeItem, int i){
-        textArea.appendText(fatherTreeItem.toString());
+//        textArea.appendText(fatherTreeItem.toString());
         // i从0开始,务必让 i 初值为0
+        //假如只有长度1，则直接返回根目录作为子目录
         if(fileNameList.size() == 1){
             return rootTree;
         }else{
-//            if(i == (fileNameList.size() - 1)){
-//                return fatherTreeItem;
-//            }
+
+            //长度不为1，是多级目录
             ObservableList<TreeItem<AFile>> myTreeItems = fatherTreeItem.getChildren();
-            if(myTreeItems.isEmpty()) { return fatherTreeItem; }
+
+//            textArea.appendText("的myTreeItems大小:" + myTreeItems.size());
+            //如果函数传入的父节点没有孩子，传入的父节点即为所需父节点，片面理解，防止不了用户错误操作
+            // mkdir /a/b(有父目录） 和 mkdir /a/b(无父目录）判断条件重复,后续再修复,判断核心是有无a
+            if(myTreeItems.size()  == 0){
+                return fatherTreeItem;
+            }
+            //如果传入父节点有孩子，就用for匹配是否有相同名字，有就继续递归，没有 传入的父节点即为所需父节点
             for (int j = 0; j < myTreeItems.size(); j++){
                 if(fileNameList.get(i).equals(myTreeItems.get(j).getValue().getFileName())){
                     i++;
-                    getFatherTreeItem(fileNameList, myTreeItems.get(j), i);
+                    fatherTreeItem = getFatherTreeItem(fileNameList, myTreeItems.get(j), i);
                 }
-                //没找到,循环结束后 j = myTreeItems.size()  退出条件
-//                if(j == (myTreeItems.size() - 1)){
+     //           没找到,循环结束后 j = myTreeItems.size()  退出条件
+                if(j == (myTreeItems.size() - 1)){
 //                    textArea.appendText("father not found");
-//                    return fatherTreeItem;
-//                }
+                    return fatherTreeItem;
+                }
             }
         }
         return null;
