@@ -21,7 +21,12 @@ class MenuPane {
 
     public MenuPane(TreeItem<AFile> treeItem, Disk disk){
         addMenu.getItems().addAll(openMenu, createFileMenu, createDirectoryMenu, deleteMenu);
-        this.openMenu.setOnAction(actionEvent -> { FileTextField fileTextField = new FileTextField(disk, treeItem); });
+        this.openMenu.setOnAction(actionEvent -> {
+            if (OpenedFile.openFile(treeItem.getValue())) {
+                new FileTextField(disk, treeItem);
+            }
+            else System.out.println("已打开文件数达最大或文件已打开");
+             });
         this.createDirectoryMenu.setOnAction(actionEvent -> {
             TextInputBox textInputBox = new TextInputBox(disk, treeItem, 0);
         });

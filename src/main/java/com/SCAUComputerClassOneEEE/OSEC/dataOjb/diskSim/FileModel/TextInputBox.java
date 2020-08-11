@@ -132,6 +132,7 @@ public class TextInputBox {
                 disk.writeFile((int)root.getDiskNum(), str);
                 MyTreeItem treeItem = new MyTreeItem(newFile);
                 myTreeItem.getChildren().add(treeItem);
+                myTreeItem.setExpanded(true);
                 root.getAFiles().add(newFile);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -168,6 +169,7 @@ public class TextInputBox {
                 disk.writeFile((int)root.getDiskNum(), str);
                 MyTreeItem treeItem = new MyTreeItem(newFile);
                 myTreeItem.getChildren().add(treeItem);
+                myTreeItem.setExpanded(true);
                 root.getAFiles().add(newFile);
             }catch (Exception e){
                 e.printStackTrace();
