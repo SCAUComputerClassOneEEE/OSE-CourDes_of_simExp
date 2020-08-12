@@ -13,7 +13,7 @@ public class FileTextField {
     private Menu menu = new Menu();
     private MenuItem menuItem = new MenuItem();
 
-    FileTextField(Disk disk, TreeItem<AFile> myTreeItem){
+    public FileTextField(Disk disk, TreeItem<AFile> myTreeItem){
         AFile aFile = myTreeItem.getValue();
         int diskNum = (int)aFile.getDiskNum();
         String str = disk.readFile(diskNum);
@@ -43,6 +43,9 @@ public class FileTextField {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(event -> {
+            OpenedFile.closeFile(aFile);
+        });
     }
 
     //删除磁盘块中的'*'

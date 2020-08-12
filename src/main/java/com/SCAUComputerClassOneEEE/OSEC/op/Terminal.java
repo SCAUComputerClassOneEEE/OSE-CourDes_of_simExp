@@ -1,7 +1,10 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.*;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DeviceSimService;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -22,26 +25,27 @@ import java.util.regex.Pattern;
  * @date 28/7/2020
  */
 public class Terminal {
-    private Disk disk;
     private FileTree fileTree;
     private MyTreeItem rootTree;
 
     public static TextArea textArea = new TextArea();
-    TextInputBox tib = new TextInputBox();  //实例化文件操作输入盒子对象
+
+    //数据服务层
+    private DiskSimService diskSimService = new DiskSimService();
+
     //模式串
     public Pattern pattern1 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w]+)");
     public Pattern pattern2 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w]+)\\s([/,\\w]+)");
 
 
-    public Terminal(Disk disk, FileTree fileTree) {
-        this.disk = disk;
+    public Terminal(FileTree fileTree) {
         this.fileTree = fileTree;
         this.rootTree = fileTree.getRootTree();
 
 
         String command = "";
 
-        textArea.appendText("可使用指令: create mkdir delete");
+        textArea.appendText("可使用指令: create mkdir delete open");
         textArea.appendText("(请按回车开始) ");
         final int[] currentCaretPos = {textArea.getCaretPosition()};
         textArea.setOnKeyPressed(event -> {
@@ -85,70 +89,21 @@ public class Terminal {
 
             switch (action){
                 case "create":
-                    textArea.appendText(tib.createFile(disk, getFatherTreeItem(fileNameList, rootTree, 0),
+                    textArea.appendText(diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
                             fileNameList.get(fileNameList.size() - 1)));
                     break;
                 case "mkdir":
-                    textArea.appendText(tib.createDirectory(disk, getFatherTreeItem(fileNameList, rootTree, 0),
+                    textArea.appendText(diskSimService.createDirectory(getFatherTreeItem(fileNameList, rootTree, 0),
                             fileNameList.get(fileNameList.size() - 1)));
                     break;
                 case "delete":
-                    if(tib.delete(disk, getFatherTreeItem(fileNameList, rootTree, 0))){
-                        textArea.appendText("文件删除成功！");
-                    }else {
-                        textArea.appendText("错误！文件不存在");
-                    }break;
-//                case "delete":
-//                    if (tib.delete(disk, rootTree)){
-//                        textArea.appendText("文件删除成功！");
-//                    } else {
-//                        textArea.appendText("错误！文件不存在");
-//                    }break;
-//                case "rmdir":
-//                    if(tib.delete(disk, Null, filePath)){
-//                        textArea.appendText("目录删除成功！");
-//                    }else{
-//                        textArea.appendText("错误！该目录包含子目录");
-//                    }
-//                    break;
+                    textArea.appendText(diskSimService.delete(getFatherTreeItem(fileNameList, rootTree, 0)));
+                    break;
+                case "open":
+                    //new FileTextField(Main.disk,getFatherTreeItem(fileNameList, rootTree, 0));
+                    break;
             }
-            //下面是文件方法调用
 
-//            switch (action) {
-//                case "create":
-//                    if (fileOperations.create(filePath)) {
-//                        textArea.appendText("文件创建成功！");
-//                    } else {
-//                        textArea.appendText("错误！文件已经存在");
-//                    }break;
-//                case "delete":
-//                    if(fileOperations.delete(filePath)){
-//                        textArea.appendText("文件删除成功！");
-//                    }else{
-//                        textArea.appendText("错误！文件不存在");
-//                    }
-//                    break;
-//                case "type":
-//                    if(!fileOperations.type(filePath,textArea)){
-//                        textArea.appendText("错误！文件不存在");
-//                    }
-//                    break;
-//                case "mkdir":
-//                    if(fileOperations.mkdir(filePath)){
-//                        textArea.appendText("目录创建成功！");
-//                    }else{
-//                        textArea.appendText("错误！目录已存在");
-//                    }
-//                    break;
-//                case "rmdir":
-//                    if(fileOperations.rmdir(filePath)){
-//                        textArea.appendText("目录删除成功！");
-//                    }else{
-//                        textArea.appendText("错误！该目录包含子目录");
-//                    }
-//                    break;
-//            }
-//
         } else if (matcher2.matches()) {
             String srcFilepath = matcher2.group(2);
             String desFilePath = matcher2.group(3);

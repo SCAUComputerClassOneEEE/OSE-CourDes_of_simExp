@@ -2,5 +2,5 @@ package com.SCAUComputerClassOneEEE.OSEC.dataService.impl;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataService.SimulationDataService;
 
-public class ProcessSimService implements SimulationDataService {
+public class ProcessSimService   {
 }
