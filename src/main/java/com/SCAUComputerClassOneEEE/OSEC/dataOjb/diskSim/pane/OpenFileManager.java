@@ -1,5 +1,6 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
+package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -10,9 +11,9 @@ import lombok.Setter;
 
 
 /**
- * 管路已打开的文件
+ * 管理已打开的文件
  * @Author: Sky
- * @Date: 2020/8/12 17:02
+ * @Date: 2020/8/11 17:02
  */
 @Getter
 @Setter

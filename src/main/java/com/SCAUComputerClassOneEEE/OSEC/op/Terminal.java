@@ -1,18 +1,14 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
-import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.*;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DeviceSimService;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,7 +81,7 @@ public class Terminal {
             System.out.println(matcher1.group(0));
             String action = matcher1.group(1);
             String filePath = matcher1.group(2);
-            List<String> fileNameList = getfileNameList(filePath);
+            List<String> fileNameList = getFileNameList(filePath);
 
             switch (action){
                 case "create":
@@ -97,9 +93,10 @@ public class Terminal {
                             fileNameList.get(fileNameList.size() - 1)));
                     break;
                 case "delete":
-                    textArea.appendText(diskSimService.delete(getFatherTreeItem(fileNameList, rootTree, 0)));
+                    textArea.appendText(diskSimService.delete(getFatherTreeItem(fileNameList, rootTree, 0))?"删除成功":"删除失败或文件不存在");
                     break;
                 case "open":
+                    //FileTextField fileTextField = new FileTextField();
                     //new FileTextField(Main.disk,getFatherTreeItem(fileNameList, rootTree, 0));
                     break;
             }
@@ -123,7 +120,7 @@ public class Terminal {
      * @return 文件名数组，每个元素都为上一个元素所属TreeItem的子的文件名
      */
 
-    List<String> getfileNameList(String filePath){
+    List<String> getFileNameList(String filePath){
         //将字符串以 / 拆分成几个字符串，其中fileNames[0]是第一个 / 前面的字符，如果第一个字符是 / ，则fileNames[0]为空(可打印
         String[] fileNames = filePath.split("/");
         //将数组第一个空内容去掉,并转化成List类型
@@ -176,5 +173,6 @@ public class Terminal {
         }
         return null;
     }
+
 
 }
