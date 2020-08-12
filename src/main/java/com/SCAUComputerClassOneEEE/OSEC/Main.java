@@ -2,6 +2,7 @@ package com.SCAUComputerClassOneEEE.OSEC;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -26,6 +27,7 @@ public class Main extends Application {
 
         root.setLeft(fileTree.getVBox());
         root.setCenter(terminal.textArea);
+        root.setBottom(OpenFileManager.openFileTableView);
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
