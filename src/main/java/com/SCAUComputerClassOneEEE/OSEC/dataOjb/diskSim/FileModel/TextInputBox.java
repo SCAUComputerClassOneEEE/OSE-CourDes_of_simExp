@@ -115,12 +115,12 @@ public class TextInputBox {
         AFile root = myTreeItem.getValue();
         if (foundFile(root, fileName)){
             return "文件名重复，创建失败！";
+        }else if(root.getAFiles().size() >= 8){
+            return "该目录已满，创建失败！";
         }
         int header = disk.malloc_F_Header();
         if(header == -1){
             return "磁盘已满，创建失败！";
-        }else if(root.getAFiles().size() >= 8){
-            return "该目录已满，创建失败！";
         }else {
             System.out.println("新磁盘号："+header);
             char diskNum = (char) header;
@@ -136,6 +136,7 @@ public class TextInputBox {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            myTreeItem.setExpanded(true);
             return "创建成功";
         }
     }
@@ -151,12 +152,12 @@ public class TextInputBox {
         AFile root = myTreeItem.getValue();
         if (foundFile(root, fileName)){
             return "文件名重复，创建失败！";
+        }else if(root.getAFiles().size() >= 8){
+            return "该目录已满，创建失败！";
         }
         int header = disk.malloc_F_Header();
         if(header == -1){
             return "磁盘已满，创建失败！";
-        }else if(root.getAFiles().size() >= 8){
-            return "该目录已满，创建失败！";
         }else{
             System.out.println("新磁盘号："+header);
             char diskNum = (char)header;
@@ -172,6 +173,7 @@ public class TextInputBox {
             }catch (Exception e){
                 e.printStackTrace();
             }
+            myTreeItem.setExpanded(true);
             return "创建成功";
         }
     }
