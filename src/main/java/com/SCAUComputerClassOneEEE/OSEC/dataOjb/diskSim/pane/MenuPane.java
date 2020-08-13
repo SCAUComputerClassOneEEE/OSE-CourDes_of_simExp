@@ -1,6 +1,5 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.scene.control.ContextMenu;
@@ -22,16 +21,10 @@ public class MenuPane {
 
     private DiskSimService diskSimService = new DiskSimService();
 
-    public MenuPane(TreeItem<AFile> treeItem, Disk disk){
+    public MenuPane(TreeItem<AFile> treeItem){
         addMenu.getItems().addAll(openMenu, createFileMenu, createDirectoryMenu, deleteMenu);
 
-        this.openMenu.setOnAction(actionEvent -> {
-            if (OpenFileManager.openAFile(treeItem.getValue())) {
-                FileTextField fileTextField = new FileTextField(disk, treeItem);
-                fileTextField.show();
-            }
-            else System.out.println("已打开文件数达最大或文件已打开");
-             });
+        this.openMenu.setOnAction(actionEvent -> diskSimService.open(treeItem));
 
         this.createDirectoryMenu.setOnAction(actionEvent -> {
             TextInputBox textInputBox = new TextInputBox(treeItem, 0);
@@ -43,8 +36,6 @@ public class MenuPane {
             textInputBox.show();
         });
 
-        this.deleteMenu.setOnAction(actionEvent -> {
-            diskSimService.delete(treeItem);
-        });
+        this.deleteMenu.setOnAction(actionEvent -> diskSimService.delete(treeItem));
     }
 }

@@ -30,18 +30,18 @@ final class TextFieldTreeCellImpl extends TreeCell<AFile> {
             setGraphic(getTreeItem().getGraphic());
             // 如果有儿子  并且 有父亲，则拥有添加、删除功能，不能打开
             if(!getTreeItem().isLeaf() && getTreeItem().getParent() != null){
-                menuPane = new MenuPane(getTreeItem(), disk);
+                menuPane = new MenuPane(getTreeItem());
                 menuPane.getOpenMenu().setDisable(true);
                 setContextMenu(menuPane.getAddMenu());
             }else if(!getTreeItem().isLeaf() && getTreeItem().getParent() == null){
                 //根目录,不能删除，打开
-                menuPane = new MenuPane(getTreeItem(), disk);
+                menuPane = new MenuPane(getTreeItem());
                 menuPane.getOpenMenu().setDisable(true);
                 menuPane.getDeleteMenu().setDisable(true);
                 setContextMenu(menuPane.getAddMenu());
             }else if(getTreeItem().isLeaf()){
                 //叶子（文本文件），不能创建孩子
-                menuPane = new MenuPane(getTreeItem(), disk);
+                menuPane = new MenuPane(getTreeItem());
                 menuPane.getCreateDirectoryMenu().setDisable(true);
                 menuPane.getCreateFileMenu().setDisable(true);
                 setContextMenu(menuPane.getAddMenu());

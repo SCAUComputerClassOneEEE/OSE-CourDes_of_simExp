@@ -1,7 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.*;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -93,11 +92,10 @@ public class Terminal {
                             fileNameList.get(fileNameList.size() - 1)));
                     break;
                 case "delete":
-                    textArea.appendText(diskSimService.delete(getFatherTreeItem(fileNameList, rootTree, 0))?"删除成功":"删除失败或文件不存在");
+                    textArea.appendText(diskSimService.delete(getLastTreeItem(filePath))?"删除成功":"删除失败或文件不存在");
                     break;
                 case "open":
-                    //FileTextField fileTextField = new FileTextField();
-                    //new FileTextField(Main.disk,getFatherTreeItem(fileNameList, rootTree, 0));
+                    textArea.appendText(diskSimService.open(getLastTreeItem(filePath))?"打开成功":"已打开文件数达最大或文件已打开");
                     break;
             }
 
@@ -110,7 +108,6 @@ public class Terminal {
 //                textArea.appendText("错误！");
 //            }
 //        }
-
         }
     }
 
@@ -174,5 +171,53 @@ public class Terminal {
         return null;
     }
 
+    TreeItem<AFile> getLastTreeItem(String name){
+        int 起始 = 0;
+        int num = 2;
+        int second = getCharacterPosition(name, num++);
+        System.out.println("second:"+second);
+        boolean flag = true;
+        String str = null;
+        ObservableList<TreeItem<AFile>> treeItems = rootTree.getChildren();
+        while (second != -1){
+            int i = 0;
+            str = name.substring(起始 + 1,second);
+            System.out.println("截取的:"+str);
+            for (i = 0; i < treeItems.size(); i++) {
+                if(str.equals(treeItems.get(i).getValue().getFileName()))
+                    break;
+            }
+            System.out.println("i:"+i);
+            if(i < treeItems.size()){
+                起始 = second;
+                second = getCharacterPosition(name,num++);
+                treeItems = treeItems.get(i).getChildren();
+            }else {
+                flag = false;
+                break;
+            }
+        }
+        if(flag){
+            str = name.substring(起始+1);
+            System.out.println("截取的:"+str);
+            for (int i = 0; i < treeItems.size(); i++)
+                if(str.equals(treeItems.get(i).getValue().getFileName()))
+                    return  treeItems.get(i);
+        }
+        return  null;
+    }
+
+    int getCharacterPosition(String string,int num){
+        Matcher slashMatcher = Pattern.compile("/").matcher(string);
+        int mIdx = 0;
+        while(slashMatcher.find()) {
+            mIdx++;
+            if(mIdx == num){
+                break;
+            }
+        }
+        if(mIdx < num) return  -1;
+        return slashMatcher.start();
+    }
 
 }

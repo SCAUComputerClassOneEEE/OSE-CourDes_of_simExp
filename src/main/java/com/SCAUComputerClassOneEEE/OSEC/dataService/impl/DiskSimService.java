@@ -4,6 +4,8 @@ import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.MyTreeItem;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.SimulationDataService;
 import javafx.scene.control.TreeItem;
 import lombok.Setter;
@@ -61,21 +63,18 @@ public class DiskSimService implements SimulationDataService {
         }
     }
 
-    /**
-     * @param myTreeItem    操作的节点
-     * @return 删除成功为true
-     */
     @Override
+    //删除
     public boolean delete(TreeItem<AFile> myTreeItem){
         AFile root = myTreeItem.getValue();
         char[] chars = new char[64];
         Arrays.fill(chars, '*');
         String str = String.valueOf(chars);
         //清理自己的
-        disk.recovery( (int)root.getDiskNum() );
+        disk.recovery(root.getDiskNum());
         try {
             //清理自己的
-            disk.writeFile( (int)root.getDiskNum(), str );
+            disk.writeFile(root.getDiskNum(), str );
             //清理孩子
             recoveryDisk(disk, root, str);
             //清理父亲的
@@ -86,6 +85,19 @@ public class DiskSimService implements SimulationDataService {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean open(TreeItem<AFile> myTreeItem){
+        if (myTreeItem.isLeaf() && OpenFileManager.openAFile(myTreeItem.getValue())) {
+            FileTextField fileTextField = new FileTextField(myTreeItem);
+            fileTextField.show();
+            return true;
+        }
+        else {
+            System.out.println("已打开文件数达最大或文件已打开");
             return false;
         }
     }

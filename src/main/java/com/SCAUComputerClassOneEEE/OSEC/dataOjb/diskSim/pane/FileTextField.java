@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
@@ -18,12 +19,13 @@ public class FileTextField {
     private Menu menu = new Menu();
     private MenuItem save = new MenuItem();
     private Stage stage = new Stage();
+    private Disk disk = Main.disk;
 
-    public FileTextField(Disk disk, TreeItem<AFile> myTreeItem){
-        init(disk,myTreeItem);
+    public FileTextField(TreeItem<AFile> myTreeItem){
+        init(myTreeItem);
     }
 
-    private void init(Disk disk, TreeItem<AFile> myTreeItem){
+    private void init(TreeItem<AFile> myTreeItem){
         AFile aFile = myTreeItem.getValue();
         int diskNum = (int)aFile.getDiskNum();
         //读取块中内容并进行转化
