@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AOpenFile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -19,8 +20,8 @@ import lombok.Setter;
 @Setter
 public class OpenFileManager {
 
-    private static ObservableList<AFile> openFileList = FXCollections.observableArrayList();
-    public static TableView<AFile> openFileTableView = new TableView<>();
+    private static ObservableList<AOpenFile> openFileList = FXCollections.observableArrayList();
+    public static TableView<AOpenFile> openFileTableView = new TableView<>();
 
     static {
         intiTableView();
@@ -32,12 +33,20 @@ public class OpenFileManager {
      * @return
      */
     public static boolean openAFile(AFile aFile){
-        if (openFileList.size()<5&&!openFileList.contains(aFile)){
-            openFileList.add(aFile);
-            printOpenFileMassage();
-            return true;
+        //最多打开5个
+        if (openFileList.size()>=5)
+            return false;
+        //可能已打开
+        for(AOpenFile each:openFileList){
+            if (each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation())){
+                return false;
+            }
         }
-        return false;
+        //直接打开
+        openFileList.add(new AOpenFile(aFile));
+        printOpenFileMassage();
+        return true;
+
     }
 
     /**
@@ -46,10 +55,12 @@ public class OpenFileManager {
      * @return
      */
     public static boolean closeAFile(AFile aFile){
-        if(openFileList.contains(aFile)){
-            boolean result = openFileList.remove(aFile);
-            printOpenFileMassage();
-            return result;
+        for (AOpenFile each:openFileList){
+            if(each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation())){
+                boolean result = openFileList.remove(each);
+                printOpenFileMassage();
+                return result;
+            }
         }
         return false;
     }
@@ -58,9 +69,9 @@ public class OpenFileManager {
      * 打印当前已打开的文件信息
      */
     public static void printOpenFileMassage(){
-        System.out.println("massage:");
-        for (AFile each:openFileList){
-            System.out.println(each.getALLData());
+        System.out.printf("当前已打开文件%d个\n",openFileList.size());
+        for (AOpenFile each:openFileList){
+            System.out.println(each.toString());
         }
     }
 
@@ -70,36 +81,36 @@ public class OpenFileManager {
     private static void intiTableView(){
         openFileTableView.setItems(openFileList);
 
-        TableColumn<AFile,String> fileLocation = new TableColumn<>("文件路径");
-        fileLocation.setCellValueFactory(new PropertyValueFactory<>("fileLocation"));
+        TableColumn<AOpenFile,String> absoluteLocation = new TableColumn<>("文件路径");
+        absoluteLocation.setCellValueFactory(new PropertyValueFactory<>("absoluteLocation"));
 
-        TableColumn<AFile,Character> property = new TableColumn<>("文件属性");
+        TableColumn<AOpenFile,Integer> property = new TableColumn<>("文件属性");
         property.setCellValueFactory(new PropertyValueFactory<>("property"));
 
-        TableColumn<AFile,Character> diskNum = new TableColumn<>("起始盘块号");
+        TableColumn<AOpenFile,Integer> diskNum = new TableColumn<>("起始盘块号");
         diskNum.setCellValueFactory(new PropertyValueFactory<>("diskNum"));
 
-        TableColumn<AFile,Character> length = new TableColumn<>("文件长度");
+        TableColumn<AOpenFile,Integer> length = new TableColumn<>("文件长度");
         length.setCellValueFactory(new PropertyValueFactory<>("length"));
 
-        TableColumn<AFile,Character> openType = new TableColumn<>("操作类型");
+        TableColumn<AOpenFile,Character> openType = new TableColumn<>("操作类型");
         openType.setCellValueFactory(new PropertyValueFactory<>("openType"));
 
-        TableColumn<AFile,String> readPointer = new TableColumn<>("读指针");
-        TableColumn<AFile,Integer> rDiskBlockNum = new TableColumn<>("块号");
+        TableColumn<AOpenFile,String> readPointer = new TableColumn<>("读指针");
+        TableColumn<AOpenFile,Integer> rDiskBlockNum = new TableColumn<>("块号");
         rDiskBlockNum.setCellValueFactory(new PropertyValueFactory<>("rPointerBlockNum"));
-        TableColumn<AFile,Integer> rPointerLocation = new TableColumn<>("块内地址");
+        TableColumn<AOpenFile,Integer> rPointerLocation = new TableColumn<>("块内地址");
         rPointerLocation.setCellValueFactory(new PropertyValueFactory<>("rPointerLocation"));
         readPointer.getColumns().addAll(rDiskBlockNum,rPointerLocation);
 
-        TableColumn<AFile,String> writPointer = new TableColumn<>("写指针");
-        TableColumn<AFile,Integer> wDiskBlockNum = new TableColumn<>("块号");
+        TableColumn<AOpenFile,String> writPointer = new TableColumn<>("写指针");
+        TableColumn<AOpenFile,Integer> wDiskBlockNum = new TableColumn<>("块号");
         wDiskBlockNum.setCellValueFactory(new PropertyValueFactory<>("wPointerBlockNum"));
-        TableColumn<AFile,Integer> wPointerLocation = new TableColumn<>("块内地址");
+        TableColumn<AOpenFile,Integer> wPointerLocation = new TableColumn<>("块内地址");
         wPointerLocation.setCellValueFactory(new PropertyValueFactory<>("wPointerLocation"));
         writPointer.getColumns().addAll(wDiskBlockNum,wPointerLocation);
 
-        openFileTableView.getColumns().addAll(fileLocation,property,diskNum,length,openType,readPointer,writPointer);
+        openFileTableView.getColumns().addAll(absoluteLocation,property,diskNum,length,openType,readPointer,writPointer);
 
     }
 

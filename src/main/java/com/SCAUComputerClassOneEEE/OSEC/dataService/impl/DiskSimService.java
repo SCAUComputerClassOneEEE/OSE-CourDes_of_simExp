@@ -65,7 +65,7 @@ public class DiskSimService implements SimulationDataService {
 
     @Override
     //删除
-    public boolean delete(TreeItem<AFile> myTreeItem){
+    public boolean deleteFile(TreeItem<AFile> myTreeItem){
         AFile root = myTreeItem.getValue();
         char[] chars = new char[64];
         Arrays.fill(chars, '*');
@@ -90,7 +90,7 @@ public class DiskSimService implements SimulationDataService {
     }
 
     @Override
-    public boolean open(TreeItem<AFile> myTreeItem){
+    public boolean openFile(TreeItem<AFile> myTreeItem){
         if (myTreeItem.isLeaf() && OpenFileManager.openAFile(myTreeItem.getValue())) {
             FileTextField fileTextField = new FileTextField(myTreeItem);
             fileTextField.show();

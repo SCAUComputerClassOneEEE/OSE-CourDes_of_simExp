@@ -23,15 +23,9 @@ public class AFile{
     private String location;        //位置,存放父路径的，好按照名称来找
     private ArrayList<AFile> aFiles = new ArrayList<>();
 
-    private String openType = "读写";
+    //绝对路径
+    private String absoluteLocation;
 
-    //指针
-    private int rPointerBlockNum;
-    private int rPointerLocation;
-    private int wPointerBlockNum;
-    private int wPointerLocation;
-
-    private String fileLocation;
     //创建文件、目录
     public AFile(String fileName, String type, char property, char diskNum, char length, String location){
         this.fileName = fileName;
@@ -40,7 +34,8 @@ public class AFile{
         this.diskNum = diskNum;
         this.length = length;
         this.location = location;
-        this.fileLocation = location+"/"+fileName+"."+type;
+        this.absoluteLocation = location+"/"+fileName+"."+type;
+
     }
 
     @Override

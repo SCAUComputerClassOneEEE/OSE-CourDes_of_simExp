@@ -92,13 +92,12 @@ public class Terminal {
                             fileNameList.get(fileNameList.size() - 1)));
                     break;
                 case "delete":
-                    textArea.appendText(diskSimService.delete(getLastTreeItem(filePath))?"删除成功":"删除失败或文件不存在");
+                    textArea.appendText(diskSimService.deleteFile(getLastTreeItem(filePath))?"删除成功":"删除失败或文件不存在");
                     break;
                 case "open":
-                    textArea.appendText(diskSimService.open(getLastTreeItem(filePath))?"打开成功":"已打开文件数达最大或文件已打开");
+                    textArea.appendText(diskSimService.openFile(getLastTreeItem(filePath))?"打开成功":"已打开文件数达最大或文件已打开");
                     break;
             }
-
         } else if (matcher2.matches()) {
             String srcFilepath = matcher2.group(2);
             String desFilePath = matcher2.group(3);
