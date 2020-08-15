@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM;
+package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import lombok.Getter;
 import lombok.Setter;

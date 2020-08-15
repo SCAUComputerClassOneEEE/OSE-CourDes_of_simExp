@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM;
 
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import lombok.Getter;
 import lombok.Setter;
 
