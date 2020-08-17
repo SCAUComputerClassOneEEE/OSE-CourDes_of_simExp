@@ -42,7 +42,7 @@ public class TextInputBox {
     private boolean judge(String string){
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
-            if(c == '$' || c == '.' || c == '/')
+            if(c == '$' || c == '.' || c == '/' || c == '#')
                 return true;
         }
         return false;
@@ -86,29 +86,23 @@ public class TextInputBox {
         primaryStage.setScene(scene);
 
 
-        fieldFileName.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(newValue.length() > 3){
-                    warmLabel.setText("文件名长度要求小于等于3");
-                    button.setDisable(true);
-                }else if(judge(newValue)){
-                    warmLabel.setText("文件不能包含“$”、 “.”、 “/”字符");
-                    button.setDisable(true);
-                }else{
-                    warmLabel.setText("");
-                    button.setDisable(false);
-                }
+        fieldFileName.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.length() > 3){
+                warmLabel.setText("文件名长度要求小于等于3");
+                button.setDisable(true);
+            }else if(judge(newValue)){
+                warmLabel.setText("文件不能包含“$”、 “.”、 “/”、“#”字符");
+                button.setDisable(true);
+            }else{
+                warmLabel.setText("");
+                button.setDisable(false);
             }
         });
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                primaryStage.close();
-                //1为文件，0为目录
-                if(type == 1) diskSimService.createFile(myTreeItem, fieldFileName.getText());
-                else if(type == 0) diskSimService.createDirectory(myTreeItem, fieldFileName.getText());
-            }
+        button.setOnAction(event -> {
+            primaryStage.close();
+            //1为文件，0为目录
+            if(type == 1) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 4);
+            else if(type == 0) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 8);
         });
     }
 }

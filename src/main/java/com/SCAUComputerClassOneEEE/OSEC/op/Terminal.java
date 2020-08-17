@@ -85,17 +85,17 @@ public class Terminal {
             switch (action){
                 case "create":
                     textArea.appendText(diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
-                            fileNameList.get(fileNameList.size() - 1)));
+                            fileNameList.get(fileNameList.size() - 1), 4));
                     break;
                 case "mkdir":
-                    textArea.appendText(diskSimService.createDirectory(getFatherTreeItem(fileNameList, rootTree, 0),
-                            fileNameList.get(fileNameList.size() - 1)));
+                    textArea.appendText(diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
+                            fileNameList.get(fileNameList.size() - 1), 8));
                     break;
                 case "delete":
                     textArea.appendText(diskSimService.deleteFile(getLastTreeItem(filePath))?"删除成功":"删除失败或文件不存在");
                     break;
                 case "open":
-                    textArea.appendText(diskSimService.openFile(getLastTreeItem(filePath))?"打开成功":"已打开文件数达最大或文件已打开");
+                    textArea.appendText(diskSimService.openFile(getLastTreeItem(filePath))?"打开成功":"已打开文件数达最大或文件已打开或文件不存在");
                     break;
             }
         } else if (matcher2.matches()) {

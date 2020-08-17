@@ -206,7 +206,7 @@ public class Disk implements Serializable {
 
         DiskBlock(int order){
             this.order = order;
-            Arrays.fill(block_cont, '*');
+            Arrays.fill(block_cont, '#');
         }
 
         void write(String newStr){

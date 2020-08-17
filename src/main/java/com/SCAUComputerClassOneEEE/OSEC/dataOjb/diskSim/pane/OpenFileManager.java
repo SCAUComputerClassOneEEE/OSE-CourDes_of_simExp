@@ -33,15 +33,15 @@ public class OpenFileManager {
      * @return
      */
     public static boolean openAFile(AFile aFile){
-        //最多打开5个
-        if (openFileList.size()>=5)
-            return false;
         //可能已打开
         for(AOpenFile each:openFileList){
             if (each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation())){
                 return false;
             }
         }
+        //最多打开5个
+        if (openFileList.size()>=5)
+            return false;
         //直接打开
         openFileList.add(new AOpenFile(aFile));
         printOpenFileMassage();
