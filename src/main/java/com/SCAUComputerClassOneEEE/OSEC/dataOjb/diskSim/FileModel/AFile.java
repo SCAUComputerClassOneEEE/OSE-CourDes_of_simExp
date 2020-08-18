@@ -59,7 +59,6 @@ public class AFile{
             int i = 3 - this.fileName.length();
             while (i > 0){
                 string += " ";
-                System.out.println("string:" + string);
                 i--;
             }
         }

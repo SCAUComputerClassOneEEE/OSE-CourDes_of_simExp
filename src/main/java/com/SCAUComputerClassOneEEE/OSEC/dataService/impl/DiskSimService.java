@@ -10,6 +10,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataService.SimulationDataService;
 import javafx.scene.control.TreeItem;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @Setter
@@ -150,7 +151,27 @@ public class DiskSimService {
 
     //按块打印文件
     public boolean typeFile(TreeItem<AFile> myTreeItem){
-        return showFile(myTreeItem);
+        if(myTreeItem==null)return false;
+        String fileStr = disk.readFile(myTreeItem.getValue().getDiskNum());
+        ArrayList<String> fileTexts = new ArrayList<>();
+        int index1 = 0;
+        while (index1<fileStr.length() && fileStr.charAt(index1)!='#'){
+            int count = 0;
+            int index2 = index1;
+            while (count<16 && fileStr.charAt(index2)!='#'){
+                count++;
+                index2++;
+            }
+            fileTexts.add(fileStr.substring(index1,index2));//包含第一个不包含最后一个
+            index1 = index2;
+        }
+        for (int i=0;i<fileTexts.size();i++){
+            if(i%4==0){
+                System.out.println("----------------");
+            }
+            System.out.println(fileTexts.get(i));
+        }
+        return true;
     }
 
     //修改文件属性

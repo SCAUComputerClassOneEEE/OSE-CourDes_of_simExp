@@ -31,9 +31,9 @@ public class AOpenFile {
         this.diskNum = aFile.getDiskNum();
         this.length = aFile.getLength();
         this.openType = "关闭";
-        this.rPointerBlockNum = 0;
+        this.rPointerBlockNum = aFile.getDiskNum();
         this.rPointerLocation = 0;
-        this.wPointerBlockNum = 0;
+        this.wPointerBlockNum = aFile.getDiskNum();
         this.wPointerLocation = 0;
     }
 

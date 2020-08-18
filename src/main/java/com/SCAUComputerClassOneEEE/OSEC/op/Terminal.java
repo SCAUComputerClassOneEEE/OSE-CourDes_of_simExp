@@ -83,10 +83,10 @@ public class Terminal {
                 case "open"://ok
                     textArea.appendText(diskSimService.open_file(getLastTreeItem(filePath),value)?"打开成功":"打开失败");
                     break;
-                case "read":
+                case "read"://ok
                     textArea.appendText(diskSimService.read_file(getLastTreeItem(filePath),Integer.parseInt(value)));
                     break;
-                case "change":
+                case "change"://ok
                     textArea.appendText(diskSimService.change(getLastTreeItem(filePath),Integer.parseInt(value))?"属性修改成功":"属性修改失败");
                     break;
             }
