@@ -13,10 +13,10 @@ import lombok.Setter;
 import java.util.Arrays;
 
 @Setter
-public class DiskSimService implements SimulationDataService {
+public class DiskSimService {
     private Disk disk = Main.disk;
 
-    @Override
+    //创建文件
     public String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute){
         AFile root = myTreeItem.getValue();
         if (foundFile(root, fileName)){
@@ -37,7 +37,7 @@ public class DiskSimService implements SimulationDataService {
         }
     }
 
-    @Override
+    //删除文件
     public boolean deleteFile(TreeItem<AFile> myTreeItem) {
         AFile root = myTreeItem.getValue();
         //如果文件已经打开，关闭失败
@@ -67,7 +67,7 @@ public class DiskSimService implements SimulationDataService {
         return result;
     }
 
-    @Override
+    //用面板打开文件
     public boolean showFile(TreeItem<AFile> myTreeItem){
         if(myTreeItem == null)
             return false;
@@ -95,16 +95,18 @@ public class DiskSimService implements SimulationDataService {
         return false;
     }
 
+    //读文件
     public String read_file(TreeItem<AFile> myTreeItem, int read_length){
         if(myTreeItem == null)
             return "文件不存在";
         if(OpenFileManager.contain(myTreeItem.getValue())||open_file(myTreeItem, "read")){
             String string = disk.readFile(myTreeItem.getValue().getDiskNum());
-            return string.substring(0, Math.max(read_length, string.length())-1);
+            return string.substring(0,Math.min(read_length, string.length()));
         }
         return "方式错误";
     }
 
+    //写文件
     public boolean write_file(TreeItem<AFile> myTreeItem, String buffer,int write_length){
         if(myTreeItem == null)
             return false;
@@ -124,16 +126,19 @@ public class DiskSimService implements SimulationDataService {
         }else return false;
     }
 
+    //关闭文件
     public boolean close_file(TreeItem<AFile> myTreeItem){
         if(myTreeItem == null)
             return false;
         else return OpenFileManager.closeAFile(myTreeItem.getValue());
     }
 
+    //按块打印文件
     public boolean typeFile(TreeItem<AFile> myTreeItem){
         return showFile(myTreeItem);
     }
 
+    //修改文件属性
     public boolean change(TreeItem<AFile> myTreeItem, int property){
         if(myTreeItem == null)
             return false;
@@ -141,10 +146,6 @@ public class DiskSimService implements SimulationDataService {
         //如果文件已打开，则不能修改
         if (OpenFileManager.contain(myTreeItem.getValue()))return false;
 
-        /*else if(OpenFileManager.openAFile(myTreeItem.getValue(),"write")){
-            OpenFileManager.closeAFile(myTreeItem.getValue());
-            return false;
-        }*/
         try {
             //修改自己的
             AFile root = myTreeItem.getValue();
