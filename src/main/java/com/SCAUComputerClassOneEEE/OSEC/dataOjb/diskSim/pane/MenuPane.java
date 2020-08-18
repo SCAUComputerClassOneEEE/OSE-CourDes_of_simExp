@@ -24,7 +24,7 @@ public class MenuPane {
     public MenuPane(TreeItem<AFile> treeItem){
         addMenu.getItems().addAll(openMenu, createFileMenu, createDirectoryMenu, deleteMenu);
 
-        this.openMenu.setOnAction(actionEvent -> diskSimService.openFile(treeItem));
+        this.openMenu.setOnAction(actionEvent -> diskSimService.showFile(treeItem));
 
         this.createDirectoryMenu.setOnAction(actionEvent -> {
             TextInputBox textInputBox = new TextInputBox(treeItem, 0);

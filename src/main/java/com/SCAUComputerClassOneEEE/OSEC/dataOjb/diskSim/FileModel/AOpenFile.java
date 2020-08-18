@@ -15,7 +15,7 @@ public class AOpenFile {
     private int property;           //文件属性
     private int diskNum;            //起始盘块
     private int length;             //文件长度(文件占据的盘块数)
-    private String openType = "读写";//读写类型(操作类型)
+    private String openType;//读写类型(操作类型)
 
     //读指针
     private int rPointerBlockNum;
@@ -30,7 +30,7 @@ public class AOpenFile {
         this.property = aFile.getProperty();
         this.diskNum = aFile.getDiskNum();
         this.length = aFile.getLength();
-        //this.openType = "";暂时略过打开类型
+        this.openType = "关闭";
         this.rPointerBlockNum = 0;
         this.rPointerLocation = 0;
         this.wPointerBlockNum = 0;

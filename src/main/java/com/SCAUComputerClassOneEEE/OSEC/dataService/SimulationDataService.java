@@ -7,5 +7,5 @@ import javafx.scene.control.TreeItem;
 public interface SimulationDataService {
     String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute);
     boolean deleteFile(TreeItem<AFile> myTreeItem);
-    boolean openFile(TreeItem<AFile> myTreeItem);
+    boolean showFile(TreeItem<AFile> myTreeItem);
 }

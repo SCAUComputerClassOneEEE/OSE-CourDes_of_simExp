@@ -39,8 +39,11 @@ public class DiskSimService implements SimulationDataService {
 
     @Override
     public boolean deleteFile(TreeItem<AFile> myTreeItem) {
-        boolean result;
         AFile root = myTreeItem.getValue();
+        //如果文件已经打开，关闭失败
+        if (root.isOpen())return false;
+        
+        boolean result;
         char[] chars = new char[64];
         Arrays.fill(chars, '#');
         String str = String.valueOf(chars);
@@ -65,10 +68,10 @@ public class DiskSimService implements SimulationDataService {
     }
 
     @Override
-    public boolean openFile(TreeItem<AFile> myTreeItem){
+    public boolean showFile(TreeItem<AFile> myTreeItem){
         if(myTreeItem == null)
             return false;
-        else if (myTreeItem.isLeaf() && OpenFileManager.openAFile(myTreeItem.getValue())) {
+        else if (myTreeItem.isLeaf() && OpenFileManager.openAFile(myTreeItem.getValue(),"read&write")) {
             FileTextField fileTextField = new FileTextField(myTreeItem);
             fileTextField.show();
             return true;
@@ -88,14 +91,14 @@ public class DiskSimService implements SimulationDataService {
         //不能以写方式打开只读文件
         if(("write".equals(operation_type) && property == 4) ||
                 ("read".equals(operation_type) && (property == 3 || property == 4)))
-            return OpenFileManager.openAFile(myTreeItem.getValue());
+            return OpenFileManager.openAFile(myTreeItem.getValue(),operation_type);
         return false;
     }
 
     public String read_file(TreeItem<AFile> myTreeItem, int read_length){
         if(myTreeItem == null)
             return "文件不存在";
-        if(open_file(myTreeItem, "read")){
+        if(OpenFileManager.contain(myTreeItem.getValue())||open_file(myTreeItem, "read")){
             String string = disk.readFile(myTreeItem.getValue().getDiskNum());
             return string.substring(0, Math.max(read_length, string.length())-1);
         }
@@ -105,7 +108,7 @@ public class DiskSimService implements SimulationDataService {
     public boolean write_file(TreeItem<AFile> myTreeItem, String buffer,int write_length){
         if(myTreeItem == null)
             return false;
-        if(open_file(myTreeItem, "write")){
+        if(OpenFileManager.contain(myTreeItem.getValue())||open_file(myTreeItem, "write")){
             try {
                 AFile root = myTreeItem.getValue();
                 String file_cont = disk.readFile(root.getDiskNum());
@@ -127,17 +130,21 @@ public class DiskSimService implements SimulationDataService {
         else return OpenFileManager.closeAFile(myTreeItem.getValue());
     }
 
-    public boolean typefile(TreeItem<AFile> myTreeItem){
-        return openFile(myTreeItem);
+    public boolean typeFile(TreeItem<AFile> myTreeItem){
+        return showFile(myTreeItem);
     }
 
     public boolean change(TreeItem<AFile> myTreeItem, int property){
         if(myTreeItem == null)
             return false;
-        else if(OpenFileManager.openAFile(myTreeItem.getValue())){
+
+        //如果文件已打开，则不能修改
+        if (OpenFileManager.contain(myTreeItem.getValue()))return false;
+
+        /*else if(OpenFileManager.openAFile(myTreeItem.getValue(),"write")){
             OpenFileManager.closeAFile(myTreeItem.getValue());
             return false;
-        }
+        }*/
         try {
             //修改自己的
             AFile root = myTreeItem.getValue();
