@@ -15,6 +15,8 @@ import java.util.Arrays;
 @Setter
 public class DiskSimService {
     private Disk disk = Main.disk;
+    public String buffer1 = "cdnaufbksda,bvhdsbvhjkdasvbv,hmacbv";
+    public String buffer2 = "whlidfheaukfhaekfadkufaedhfdaf";
 
     //创建文件
     public String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute){
@@ -31,8 +33,15 @@ public class DiskSimService {
             System.out.println("新磁盘号："+header);
             char diskNum = (char)header;
             char property = (char)attribute;
-            char length = 1;
-            AFile newFile = new AFile(fileName, "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
+            char length;
+            AFile newFile = null;
+            if(attribute == 8){
+                length = 0;
+                newFile = new AFile(fileName, "  ", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
+            }else{
+                length = 1;
+                newFile = new AFile(fileName, "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
+            }
             return getString(myTreeItem, root, newFile);
         }
     }
@@ -107,11 +116,17 @@ public class DiskSimService {
     }
 
     //写文件
-    public boolean write_file(TreeItem<AFile> myTreeItem, String buffer,int write_length){
+    public boolean write_file(TreeItem<AFile> myTreeItem, int bufferNum ,int write_length){
         if(myTreeItem == null)
             return false;
         if(OpenFileManager.contain(myTreeItem.getValue())||open_file(myTreeItem, "write")){
             try {
+                String buffer = "";
+                if(bufferNum == 1)
+                    buffer = buffer1;
+                else if(bufferNum == 2)
+                    buffer = buffer2;
+                else return false;
                 AFile root = myTreeItem.getValue();
                 String file_cont = disk.readFile(root.getDiskNum());
                 String buffer_cont = buffer.substring(0, Math.max(write_length, buffer.length()));
@@ -247,8 +262,10 @@ public class DiskSimService {
         char[] block_cont = String.valueOf(disk.readFile(fatherFile.getDiskNum())).toCharArray();
         char[] root_cont = rootFile.getALLData();
         int in = fatherFile.getAFiles().indexOf(rootFile);
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++) {
             block_cont[in * 8 + i] = root_cont[i];
+            System.out.println(block_cont[in * 8 +i] + "," + root_cont[i]);
+        }
         return String.valueOf(block_cont);
     }
 }

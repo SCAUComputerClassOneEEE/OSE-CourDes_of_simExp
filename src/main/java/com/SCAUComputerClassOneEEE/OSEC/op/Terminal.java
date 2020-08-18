@@ -97,7 +97,7 @@ public class Terminal {
             int bufferNum = Integer.parseInt(matcher3.group(3));
             int length = Integer.parseInt(matcher3.group(4));
 
-
+            textArea.appendText(diskSimService.write_file(getLastTreeItem(path), bufferNum, length)?"成功":"失败");
 
         }
     }
