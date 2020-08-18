@@ -7,9 +7,11 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.MyTreeItem;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.SimulationDataService;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import lombok.Setter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -196,6 +198,23 @@ public class DiskSimService {
         return false;
     }
 
+    //打印目录下的所有信息
+    public boolean dirDirectory(TreeItem<AFile> myTreeItem){
+        if (myTreeItem == null)return false;
+        ObservableList<TreeItem<AFile>> dirs = myTreeItem.getChildren();
+        for(TreeItem<AFile> each:dirs){
+            System.out.println(each.getValue().getALLData());
+        }
+        return true;
+    }
+
+    public boolean rdDirectory(TreeItem<AFile> myTreeItem){
+        if (myTreeItem == null || myTreeItem.getValue().getAbsoluteLocation().equals("/root.  "))return false;
+        ObservableList<TreeItem<AFile>> dirs = myTreeItem.getChildren();
+        if (dirs.size()<=0)return false;
+        myTreeItem.getParent().getChildren().remove(myTreeItem);
+        return true;
+    }
     //判断是否已经创建文件(文件名不重复)
     private boolean foundFile(AFile root, String fileName){
         for(AFile aFile : root.getAFiles()){

@@ -55,6 +55,7 @@ public class Terminal {
             //文件路径
             String filePath = matcher1.group(2);
 
+            List<String> fileNameList = getFileNameList(filePath);
             switch (action){
                 case "close"://ok
                     textArea.appendText(diskSimService.close_file(getLastTreeItem(filePath))?"关闭成功":"关闭失败");
@@ -64,6 +65,18 @@ public class Terminal {
                     break;
                 case "typeFile":
                     textArea.appendText(diskSimService.typeFile(getLastTreeItem(filePath))?"显示成功":"显示失败");
+                    break;
+
+                    //下面的是目录功能
+                case "md":
+                    textArea.appendText(diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
+                            fileNameList.get(fileNameList.size() - 1), 8));
+                    break;
+                case "dir":
+                    textArea.appendText(diskSimService.dirDirectory(getLastTreeItem(filePath))?"true":"false");
+                    break;
+                case "rd":
+                    textArea.appendText(diskSimService.rdDirectory(getLastTreeItem(filePath))?"true":"false");
                     break;
             }
         } else if (matcher2.matches()) {//两个参数
@@ -221,6 +234,9 @@ public class Terminal {
         textArea.appendText("删除文件 delete /path\n");//1参
         textArea.appendText("显示文件内容 typeFile /path\n");//1参
         textArea.appendText("改变文件属性 change /path newValue\n");//2参
+        textArea.appendText("建立目录 md /path\n");//1参
+        textArea.appendText("显示目录内容 dir /path\n");//1参
+        textArea.appendText("删除空目录 rd /path\n");//1参
         textArea.appendText("(请按回车开始) ");
         final int[] currentCaretPos = {textArea.getCaretPosition()};
         textArea.setOnKeyPressed(event -> {
