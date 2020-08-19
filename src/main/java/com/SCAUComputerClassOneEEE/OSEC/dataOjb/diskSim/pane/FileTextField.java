@@ -32,6 +32,8 @@ public class FileTextField {
         String string = deleteCharString0(str, '#');
 
         textArea.setText(string);
+        if(myTreeItem.getValue().getProperty() == 3)
+            textArea.setEditable(false);
 
         save.setText("保存");
 

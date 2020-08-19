@@ -120,7 +120,8 @@ public class DiskSimService {
     public boolean write_file(TreeItem<AFile> myTreeItem, int bufferNum ,int write_length){
         if(myTreeItem == null)
             return false;
-        if(OpenFileManager.contain(myTreeItem.getValue())||open_file(myTreeItem, "write")){
+        if((OpenFileManager.contain(myTreeItem.getValue()) || open_file(myTreeItem, "write")) &&
+            myTreeItem.getValue().getProperty() == 4){
             try {
                 String buffer = "";
                 if(bufferNum == 1)
