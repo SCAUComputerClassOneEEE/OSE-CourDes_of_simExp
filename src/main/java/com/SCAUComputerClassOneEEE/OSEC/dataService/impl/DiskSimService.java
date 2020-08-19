@@ -6,12 +6,10 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.MyTreeItem;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.SimulationDataService;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import lombok.Setter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -37,7 +35,7 @@ public class DiskSimService {
             char diskNum = (char)header;
             char property = (char)attribute;
             char length;
-            AFile newFile = null;
+            AFile newFile;
             if(attribute == 8){
                 length = 0;
                 newFile = new AFile(fileName, "  ", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
@@ -131,10 +129,10 @@ public class DiskSimService {
                     buffer = buffer2;
                 else return false;
                 AFile root = myTreeItem.getValue();
-                String file_cont = disk.readFile(root.getDiskNum());
-                String buffer_cont = buffer.substring(0, Math.max(write_length, buffer.length()));
+                String file_cont = FileTextField.deleteCharString0(disk.readFile(root.getDiskNum()), '#');
+                String buffer_cont = buffer.substring(0, Math.min(write_length, buffer.length()));
                 disk.writeFile(root.getDiskNum(), file_cont+buffer_cont);
-                root.setDiskNum((char)disk.getFileSize(root.getDiskNum()));
+                root.setLength((char)disk.getFileSize(root.getDiskNum()));
                 AFile fatherFile = myTreeItem.getParent().getValue();
                 disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, root));
             } catch (Exception e) {
@@ -263,7 +261,7 @@ public class DiskSimService {
         int i;
         char[] block_cont = String.valueOf(disk.readFile(diskNum)).toCharArray();
         for(i = position * 8; i < (length-1) * 8; i++) block_cont[i] = block_cont[i + 8];
-        for(; i < length * 8; i++) block_cont[i] = '*';
+        for(; i < length * 8; i++) block_cont[i] = '#';
         System.out.print("block_cont:");
         System.out.println(block_cont);
         return String.valueOf(block_cont);
@@ -278,15 +276,15 @@ public class DiskSimService {
         for(AFile aFile : root.getAFiles()){
             if(aFile.isDirectory())
                 recoveryDisk(aFile, str);
-            disk.recovery((int)aFile.getDiskNum());
-            disk.writeFile((int)aFile.getDiskNum(), str);
+            disk.recovery(aFile.getDiskNum());
+            disk.writeFile(aFile.getDiskNum(), str);
         }
     }
 
     private String getString(TreeItem<AFile> myTreeItem, AFile root, AFile newFile) {
         String str = replaceBlock_cont(root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
         try{
-            disk.writeFile((int)root.getDiskNum(), str);
+            disk.writeFile(root.getDiskNum(), str);
             MyTreeItem treeItem = new MyTreeItem(newFile);
             myTreeItem.getChildren().add(treeItem);
             myTreeItem.setExpanded(true);
