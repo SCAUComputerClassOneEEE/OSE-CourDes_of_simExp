@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -53,7 +52,24 @@ public class Memory {
     @Getter
     @Setter
     private static class MAT{
-        final List<Map<Integer,Integer>> MAT_cont = new ArrayList<>();//Free Queue <pointer,length>
+        /*
+          Free List <pointer,length>
+          pointer为起始地址，length为空闲块长度
+         */
+        final List<FreeBlock> MAT_cont = new ArrayList<>();
+        @Getter
+        @Setter
+        private static class FreeBlock{
+            int pointer;
+            int length;
+            FreeBlock(int pointer,int length){
+                this.length = length;
+                this.pointer = pointer;
+            }
+        }
+        MAT(){
+            MAT_cont.add(new FreeBlock(0,USER_MEMORY_AREA_SIZE));
+        }
 
         int malloc_MAT(int length){
             //
@@ -64,16 +80,35 @@ public class Memory {
             return 0;
         }
 
-        void maintain_MAT_FF(){
-            //首次适配
+        /**
+         * 首次适配
+         * 空闲区链表结构：空闲区按 起始地址递增顺序排列。
+         * 分配时，从链首开始查找，从第一个满足要求的空闲区中划分出进程需要的大小并分配，其余部分作为一个新空闲区。
+         * @param size 请求空间大小
+         * @return 返回起始地址 -1 表示没有足够大的空闲块。
+         */
+        int distribution_MAT_FF(int size){
+            int retPointer = -1;
+            for (FreeBlock iFreeBlock : MAT_cont) {
+                if (iFreeBlock.getLength() >= size) {
+                    retPointer = iFreeBlock.pointer;
+                    if (iFreeBlock.getLength() > size){
+                        FreeBlock newFreeBlock = new FreeBlock(retPointer + size,
+                                iFreeBlock.getLength() - size);
+                        MAT_cont.add(MAT_cont.indexOf(iFreeBlock),newFreeBlock);
+                    }
+                    MAT_cont.remove(iFreeBlock);
+                }
+            }
+            return retPointer;
         }
-        void maintain_MAT_NF(){
+        void distribution_MAT_NF(){
             //下次适配
         }
-        void maintain_MAT_BF(){
+        void distribution_MAT_BF(){
             //最佳适配
         }
-        void maintain_MAT_WF(){
+        void distribution_MAT_WF(){
             //最差适配
         }
     }
