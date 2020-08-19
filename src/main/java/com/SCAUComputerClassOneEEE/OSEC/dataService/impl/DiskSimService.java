@@ -207,9 +207,9 @@ public class DiskSimService {
     }
 
     public boolean rdDirectory(TreeItem<AFile> myTreeItem){
-        if (myTreeItem == null || myTreeItem.getValue().getAbsoluteLocation().equals("/root.  "))return false;
+        if (myTreeItem == null /*|| myTreeItem.getValue().getAbsoluteLocation().equals("/root.  ")*/)return false;
         ObservableList<TreeItem<AFile>> dirs = myTreeItem.getChildren();
-        if (dirs.size()<=0)return false;
+        if (dirs.size()>0)return false;
         myTreeItem.getParent().getChildren().remove(myTreeItem);
         return true;
     }
