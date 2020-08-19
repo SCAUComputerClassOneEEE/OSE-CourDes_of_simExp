@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
 
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,5 +53,19 @@ public class AFile{
         return "  ".equals(this.type);
     }
     //得到文件信息
-    public char[] getALLData(){ return (this.fileName + this.type + this.property + this.diskNum + this.length).toCharArray(); }
+    public char[] getALLData(){
+        String string = "";
+        if(this.fileName.length() < 3){
+            int i = 3 - this.fileName.length();
+            while (i > 0){
+                string += " ";
+                i--;
+            }
+        }
+        return (this.fileName + string + this.type + this.property + this.diskNum + this.length).toCharArray();
+    }
+
+    public boolean isOpen(){
+        return OpenFileManager.contain(this);
+    }
 }

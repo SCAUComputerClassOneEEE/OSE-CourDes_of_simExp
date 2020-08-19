@@ -73,7 +73,7 @@ public class FileTextField {
     }
 
     //删除磁盘块中的'#'
-    String deleteCharString0(String sourceString, char chElemData) {
+    public static String deleteCharString0(String sourceString, char chElemData) {
         StringBuilder deleteString = new StringBuilder();
         for (int i = 0; i < sourceString.length(); i++) {
             if (sourceString.charAt(i) != chElemData) {
