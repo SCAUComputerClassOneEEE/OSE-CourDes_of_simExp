@@ -3,6 +3,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataService.impl;
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AOpenFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.MyTreeItem;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
@@ -16,8 +17,8 @@ import java.util.Arrays;
 @Setter
 public class DiskSimService {
     private Disk disk = Main.disk;
-    public String buffer1 = "cdnaufbksda,bvhdsbvhjkdasvbv,hmacbv";
-    public String buffer2 = "whlidfheaukfhaekfadkufaedhfdaf";
+    public String buffer1 = "";
+    public String buffer2 = "";
 
     //创建文件
     public String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute){
@@ -111,6 +112,9 @@ public class DiskSimService {
             return "文件不存在";
         if(OpenFileManager.contain(myTreeItem.getValue())||open_file(myTreeItem, "read")){
             String string = disk.readFile(myTreeItem.getValue().getDiskNum());
+            AOpenFile aOpenFile = OpenFileManager.getOpenFile(myTreeItem.getValue());
+            //修改文件指针，未完善
+            aOpenFile.setRPointerLocation(aOpenFile.getRPointerLocation()+read_length);
             return string.substring(0,Math.min(read_length, string.length()));
         }
         return "方式错误";
@@ -132,6 +136,15 @@ public class DiskSimService {
                 AFile root = myTreeItem.getValue();
                 String file_cont = FileTextField.deleteCharString0(disk.readFile(root.getDiskNum()), '#');
                 String buffer_cont = buffer.substring(0, Math.min(write_length, buffer.length()));
+
+                //数据写入文件后，删去对应的数据
+                buffer = buffer.substring(Math.min(write_length, buffer.length()));
+                if(bufferNum==1){
+                    buffer1 = buffer;
+                }else if(bufferNum==2){
+                    buffer2 = buffer;
+                }
+
                 disk.writeFile(root.getDiskNum(), file_cont+buffer_cont);
                 root.setLength((char)disk.getFileSize(root.getDiskNum()));
                 AFile fatherFile = myTreeItem.getParent().getValue();
@@ -195,6 +208,21 @@ public class DiskSimService {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean inputBuffer(int bufferNum,String str){
+        if(bufferNum!=1&&bufferNum!=2)return false;
+        String buffer = buffer1;
+        if(bufferNum == 2){
+            buffer = buffer2;
+        }
+        buffer = buffer+str;
+        if(bufferNum==1){
+            buffer1 = buffer;
+        }else if(bufferNum==2){
+            buffer2 = buffer;
+        }
+        return true;
     }
 
     //打印目录下的所有信息

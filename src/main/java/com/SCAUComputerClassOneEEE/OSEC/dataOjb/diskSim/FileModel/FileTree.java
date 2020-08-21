@@ -42,7 +42,7 @@ public class FileTree {
             //初始化一些数据
             diskSimService.createFile(rootTree,"a",4);
             try {
-                disk.writeFile(3,"143322364555888884544564bbvaegadjthafc");
+                disk.writeFile(3,"");
                 disk.writeFile(4,"你他娘的还真是个天才");
             }catch (Exception e){
                 e.printStackTrace();

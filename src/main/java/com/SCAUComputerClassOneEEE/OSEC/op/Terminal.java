@@ -102,6 +102,8 @@ public class Terminal {
                 case "change"://ok
                     textArea.appendText(diskSimService.change(getLastTreeItem(filePath),Integer.parseInt(value))?"属性修改成功":"属性修改失败");
                     break;
+                case "inputBuffer":
+                    textArea.appendText(diskSimService.inputBuffer(Integer.parseInt(filePath),value)?"写缓冲成功":"写缓冲失败");
             }
         }else if (matcher3.matches()){//三个参数
             System.out.println(matcher3.group(0));

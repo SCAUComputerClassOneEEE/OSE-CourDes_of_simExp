@@ -87,6 +87,13 @@ public class OpenFileManager {
         }
     }
 
+    public static AOpenFile getOpenFile(AFile aFile){
+        for (AOpenFile each:openFileList){
+            if (each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation()))
+                return each;
+        }
+        return null;
+    }
     /**
      * 初始化"已打开的文件"信息管理表格
      */
