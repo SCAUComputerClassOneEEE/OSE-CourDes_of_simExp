@@ -1,8 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,8 +11,7 @@ import java.util.List;
  * @author best lu
  * @since 2020/7/18 14:00
  */
-@Getter
-@Setter
+@Data
 public class Disk implements Serializable {
 
     public static final int DISK_MAX_SIZE = 128;
@@ -94,8 +91,7 @@ public class Disk implements Serializable {
      */
     public void markDamage(int position){ fat.mark_FAT(position); }
 
-    @Setter
-    @Getter
+    @Data
     private static class FAT{
 
         int freeBlocks;
@@ -197,8 +193,7 @@ public class Disk implements Serializable {
         }
     }
 
-    @Getter
-    @Setter
+    @Data
     private static class DiskBlock{
 
         int order;//块号
