@@ -32,18 +32,21 @@ public class OpenFileManager {
      * @param aFile
      * @return
      */
-    public static boolean openAFile(AFile aFile){
-        //最多打开5个
-        if (openFileList.size()>=5)
-            return false;
+    public static boolean openAFile(AFile aFile,String operation_type){
         //可能已打开
         for(AOpenFile each:openFileList){
             if (each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation())){
                 return false;
             }
         }
+        //最多打开5个
+        if (openFileList.size()>=5)
+            return false;
         //直接打开
-        openFileList.add(new AOpenFile(aFile));
+        AOpenFile aOpenFile = new AOpenFile(aFile);
+        //设置打开方式(读/写)
+        aOpenFile.setOpenType(operation_type);
+        openFileList.add(aOpenFile);
         printOpenFileMassage();
         return true;
 
@@ -58,6 +61,7 @@ public class OpenFileManager {
         for (AOpenFile each:openFileList){
             if(each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation())){
                 boolean result = openFileList.remove(each);
+                each.setOpenType("关闭");
                 printOpenFileMassage();
                 return result;
             }
@@ -65,6 +69,14 @@ public class OpenFileManager {
         return false;
     }
 
+    public static boolean contain(AFile aFile){
+        for (AOpenFile each:openFileList){
+            if(each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation())){
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * 打印当前已打开的文件信息
      */
@@ -75,6 +87,13 @@ public class OpenFileManager {
         }
     }
 
+    public static AOpenFile getOpenFile(AFile aFile){
+        for (AOpenFile each:openFileList){
+            if (each.getAbsoluteLocation().equals(aFile.getAbsoluteLocation()))
+                return each;
+        }
+        return null;
+    }
     /**
      * 初始化"已打开的文件"信息管理表格
      */
