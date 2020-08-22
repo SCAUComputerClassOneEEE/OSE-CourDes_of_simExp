@@ -45,7 +45,7 @@ public class FileTextField {
         save.setOnAction(event -> {
             try {
                 disk.writeFile(diskNum, textArea.getText());
-                aFile.setDiskNum((char)disk.getFileSize(diskNum));
+                aFile.setLength((char)disk.getFileSize(diskNum));
                 AFile fatherFile = myTreeItem.getParent().getValue();
                 disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
             } catch (Exception e) {
