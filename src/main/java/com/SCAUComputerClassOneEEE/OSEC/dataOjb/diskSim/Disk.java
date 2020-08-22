@@ -14,6 +14,9 @@ import java.util.List;
 @Data
 public class Disk implements Serializable {
 
+    /**
+qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer
+     */
     public static final int DISK_MAX_SIZE = 128;
     public static final int BLOCK_MAX_SIZE = 64;
 
@@ -53,7 +56,8 @@ public class Disk implements Serializable {
      * @throws Exception 容量不足
      */
     public void writeFile(int header,String str) throws Exception {
-        int preBlockSize = str.length()/(BLOCK_MAX_SIZE+1);
+        int preBlockSize = str.length()/(BLOCK_MAX_SIZE + 1);
+        recovery(header);
         fat.mallocForFile_FAT(header,preBlockSize);//exception
         for (int i = 0,position = header; i < preBlockSize + 1; i ++){
             String wStr;
@@ -94,13 +98,14 @@ public class Disk implements Serializable {
     @Data
     private static class FAT{
 
+        static final int EOF = 255;
         int freeBlocks;
         int frsFreePosition;//记录第一个空闲块索引
         final int[] FAT_cont = new int[DISK_MAX_SIZE];
 
         FAT(){
-            FAT_cont[0] = -1;
-            FAT_cont[1] = -1;
+            FAT_cont[0] = EOF;
+            FAT_cont[1] = EOF;
             freeBlocks = DISK_MAX_SIZE - 2;
             frsFreePosition = 2;
         }
@@ -110,14 +115,15 @@ public class Disk implements Serializable {
          * @param header 回收的首块
          */
         void recovery_FAT(int header){
+            System.out.println(header);
             if (header == 0) return;
             if (header == 1) return;
-            if (header == -1) return;
+            if (header == EOF) return;
             if (header < frsFreePosition) frsFreePosition = header;
-                FAT_cont[header] = 0;
-                /* 计算剩余空闲 */
-                freeBlocks ++;
-                recovery_FAT(FAT_cont[FAT_cont[header]]);
+            recovery_FAT(FAT_cont[header]);
+            FAT_cont[header] = 0;
+            /* 计算剩余空闲 */
+            freeBlocks ++;
         }
 
         /**
@@ -125,18 +131,17 @@ public class Disk implements Serializable {
          * @return 首个空闲块号
          */
         int getFreeBlockOrder() throws Exception {
-            FAT_cont[frsFreePosition] = -1;
+            FAT_cont[frsFreePosition] = EOF;
             int ret = frsFreePosition;
             /* 计算剩余空闲 */
             freeBlocks --;
-                int i;
-                for (i = 2; i < DISK_MAX_SIZE; i++) {
-                    if (FAT_cont[i] == 0) {
-                        frsFreePosition = i;
-                        break;
-                    }
+            int i;
+            for (i = 2; i < DISK_MAX_SIZE; i++)
+                if (FAT_cont[i] == 0) {
+                    frsFreePosition = i;
+                    break;
                 }
-                if (i == DISK_MAX_SIZE) throw new Exception("Not enough memory to be allocated.");
+            if (i == DISK_MAX_SIZE) throw new Exception("Not enough memory to be allocated.");
             return ret;
         }
 
@@ -153,7 +158,7 @@ public class Disk implements Serializable {
                 FAT_cont[header] = freeOrder;
                 header = freeOrder;
             }
-            FAT_cont[header] = -1;
+            FAT_cont[header] = EOF;
         }
         /**
          * 损坏的磁盘块标记
@@ -171,9 +176,9 @@ public class Disk implements Serializable {
          * @return 文件块数
          */
         int getFileSize(int header){
-            if (FAT_cont[header] == 0) return 0;
-            if (FAT_cont[header] == -1) return 1;
-            else return getFileSize(FAT_cont[FAT_cont[header]]) + 1;
+            if (header == 0) return 0;
+            if (header == EOF) return 0;
+            else return getFileSize(FAT_cont[header]) + 1;
         }
 
         /**
@@ -185,7 +190,7 @@ public class Disk implements Serializable {
             List<Integer> list = new ArrayList<>();
             list.add(header);
             while(true){
-                if (FAT_cont[header] != -1) list.add(FAT_cont[header]);
+                if (FAT_cont[header] != EOF) list.add(FAT_cont[header]);
                 else break;
                 header = FAT_cont[header];
             }
