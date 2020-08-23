@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
  */
 public class Terminal {
     private MyTreeItem rootTree;
+    private static  int[] currentCaretPos;
 
     public static TextArea textArea = new TextArea();
 
@@ -56,29 +57,49 @@ public class Terminal {
             String filePath = matcher1.group(2);
 
             List<String> fileNameList = getFileNameList(filePath);
+            String info;
             switch (action){
                 case "close"://ok
-                    textArea.appendText(diskSimService.close_file(getLastTreeItem(filePath))?"关闭成功":"关闭失败");
+                    info = diskSimService.close_file(getLastTreeItem(filePath))?"关闭成功":"关闭失败";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "delete"://ok
-                    textArea.appendText(diskSimService.deleteFile(getLastTreeItem(filePath))?"删除成功":"删除失败");
+                    info = diskSimService.deleteFile(getLastTreeItem(filePath))?"删除成功":"删除失败";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "typeFile":
-                    textArea.appendText(diskSimService.typeFile(getLastTreeItem(filePath))?"显示成功":"显示失败");
+                    info = diskSimService.typeFile(getLastTreeItem(filePath))?"显示成功":"显示失败";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
 
                     //下面的是目录功能
                 case "md":
-                    textArea.appendText(diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
-                            fileNameList.get(fileNameList.size() - 1), 8));
+                    info = diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
+                            fileNameList.get(fileNameList.size() - 1), 8);
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "dir":
-                    textArea.appendText(diskSimService.dirDirectory(getLastTreeItem(filePath))?"true":"false");
+                    info = diskSimService.dirDirectory(getLastTreeItem(filePath))?"true":"false";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "rd":
-                    textArea.appendText(diskSimService.rdDirectory(getLastTreeItem(filePath))?"true":"false");
+                    info = diskSimService.rdDirectory(getLastTreeItem(filePath))?"true":"false";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
             }
+
         } else if (matcher2.matches()) {//两个参数
             System.out.println(matcher2.group(0));
             String action = matcher2.group(1);
@@ -87,24 +108,40 @@ public class Terminal {
             String value = matcher2.group(3);
 
             List<String> fileNameList = getFileNameList(filePath);
-
+            String info;
             switch (action){
                 case "create"://ok
-                    textArea.appendText(diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
-                            fileNameList.get(fileNameList.size() - 1), Integer.parseInt(value)));
+                    info = diskSimService.createFile(getFatherTreeItem(fileNameList, rootTree, 0),
+                            fileNameList.get(fileNameList.size() - 1), Integer.parseInt(value));
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "open"://ok
-                    textArea.appendText(diskSimService.open_file(getLastTreeItem(filePath),value)?"打开成功":"打开失败");
+                    info = diskSimService.open_file(getLastTreeItem(filePath),value)?"打开成功":"打开失败";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "read"://ok
-                    textArea.appendText(diskSimService.read_file(getLastTreeItem(filePath),Integer.parseInt(value)));
+                    info = diskSimService.read_file(getLastTreeItem(filePath),Integer.parseInt(value));
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "change"://ok
-                    textArea.appendText(diskSimService.change(getLastTreeItem(filePath),Integer.parseInt(value))?"属性修改成功":"属性修改失败");
+                    info = diskSimService.change(getLastTreeItem(filePath),Integer.parseInt(value))?"属性修改成功":"属性修改失败";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
                     break;
                 case "inputBuffer":
-                    textArea.appendText(diskSimService.inputBuffer(Integer.parseInt(filePath),value)?"写缓冲成功":"写缓冲失败");
+                    info = diskSimService.inputBuffer(Integer.parseInt(filePath),value)?"写缓冲成功":"写缓冲失败";
+                    textArea.appendText(info);
+                    textArea.appendText("\n>> ");
+                    currentCaretPos[0]+=info.length()+4;
             }
+
         }else if (matcher3.matches()){//三个参数
             System.out.println(matcher3.group(0));
             String action = matcher3.group(1);
@@ -112,8 +149,10 @@ public class Terminal {
             int bufferNum = Integer.parseInt(matcher3.group(3));
             int length = Integer.parseInt(matcher3.group(4));
 
-            textArea.appendText(diskSimService.write_file(getLastTreeItem(path), bufferNum, length)?"成功":"失败");
-
+            String info = diskSimService.write_file(getLastTreeItem(path), bufferNum, length)?"成功":"失败";
+            textArea.appendText(info);
+            textArea.appendText("\n>> ");
+            currentCaretPos[0]+=info.length()+4;
         }
     }
 
@@ -240,9 +279,8 @@ public class Terminal {
         textArea.appendText("显示目录内容 dir /path\n");//1参
         textArea.appendText("删除空目录 rd /path\n");//1参
         textArea.appendText("(请按回车开始) ");
-        final int[] currentCaretPos = {textArea.getCaretPosition()};
+        currentCaretPos = new int[]{textArea.getCaretPosition()};
         textArea.setOnKeyPressed(event -> {
-
             if (event.getCode() == KeyCode.BACK_SPACE && currentCaretPos[0] == textArea.getCaretPosition()) {
                 textArea.setEditable(false);
             } else {
@@ -252,13 +290,13 @@ public class Terminal {
         textArea.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-
                 if (event.getCode() == KeyCode.ENTER) {
                     String command = textArea.getText(currentCaretPos[0], textArea.getCaretPosition() - 1);
                     currentCaretPos[0] = textArea.getCaretPosition() + 3;
                     textArea.appendText(">> ");
                     textArea.positionCaret(textArea.getCaretPosition());
                     formatStr(command);
+                    System.out.println(currentCaretPos[0]+":"+textArea.getCaretPosition());
                 }
             }
         });
