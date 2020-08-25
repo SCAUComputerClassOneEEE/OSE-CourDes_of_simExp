@@ -34,17 +34,5 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        //test();
-    }
-
-    void test() throws Exception {
-        Memory memoryTest = new Memory();
-        System.out.println("return process pointer " + memoryTest.malloc(10, "1234567890"));
-        System.out.println("return process pointer " + memoryTest.malloc(10, "1234567890"));
-        System.out.println("return process pointer " + memoryTest.malloc(10, "1234567890"));
-        memoryTest.recovery(10);
-        System.out.println("return process pointer " + memoryTest.malloc(20, "12345678901234567890"));
-        memoryTest.recovery(30);
-        memoryTest.MAT_display();
     }
 }

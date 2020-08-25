@@ -181,7 +181,7 @@ public class Memory {
                     i--;//防止三个及以上的相邻空闲区
                 }
             }
-            System.out.println("-------------end-------------");
+            System.out.println("-------------end--------------");
         }
 
         /**
