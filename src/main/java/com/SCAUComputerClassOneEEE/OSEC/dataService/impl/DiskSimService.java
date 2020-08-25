@@ -30,6 +30,7 @@ public class DiskSimService {
         }else if(root.getAFiles().size() >= 8){
             return "该目录已满，创建失败！";
         }
+        //获取可用磁盘头
         int header = disk.malloc_F_Header();
         if(header == -1){
             return "磁盘已满，创建失败！";
@@ -303,6 +304,7 @@ public class DiskSimService {
     }
 
     private String getString(TreeItem<AFile> myTreeItem, AFile root, AFile newFile) {
+        //读出父目录中存放的所有子目录信息
         String str = replaceBlock_cont(root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
         try{
             disk.writeFile(root.getDiskNum(), str);

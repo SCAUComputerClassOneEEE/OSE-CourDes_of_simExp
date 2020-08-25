@@ -297,7 +297,7 @@ public class Terminal {
                     textArea.appendText(">> ");
                     textArea.positionCaret(textArea.getCaretPosition());
                     formatStr(command);
-                    System.out.println(currentCaretPos[0]+":"+textArea.getCaretPosition());
+                    //System.out.println(currentCaretPos[0]+":"+textArea.getCaretPosition());
                 }
             }
         });
