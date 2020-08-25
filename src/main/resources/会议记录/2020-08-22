@@ -1,3 +1,5 @@
+2020/8/22会议记录
+-----------------------
 1.用255代替-1表示文件结束
 2.java.lang.ArrayIndexOutOfBoundsException: -1
 	at com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk$FAT.getFileSize(Disk.java:174)
