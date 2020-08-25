@@ -2,6 +2,7 @@ package com.SCAUComputerClassOneEEE.OSEC;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
@@ -24,9 +25,10 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         BorderPane root = new BorderPane();
 
-        FileTree fileTree = new FileTree(new VBox(), disk);
+        FileTree fileTree = new FileTree(new VBox());
         Terminal terminal = new Terminal(fileTree);
 
+        root.setRight(new FilePane());
         root.setLeft(fileTree.getVBox());
         root.setCenter(terminal.textArea);
         root.setBottom(OpenFileManager.openFileTableView);

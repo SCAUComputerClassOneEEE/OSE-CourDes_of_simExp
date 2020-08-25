@@ -5,6 +5,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AOpenFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.MyTreeItem;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import javafx.collections.ObservableList;
@@ -23,6 +24,7 @@ public class DiskSimService {
     //创建文件
     public String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute){
         AFile root = myTreeItem.getValue();
+        System.out.println("根盘号:"+(int)root.getDiskNum());
         if (foundFile(root, fileName)){
             return "文件名重复，创建失败！";
         }else if(root.getAFiles().size() >= 8){
@@ -70,6 +72,7 @@ public class DiskSimService {
             disk.writeFile(aFile.getDiskNum(), resetChip(aFile.getAFiles().indexOf(root), aFile.getAFiles().size(), aFile.getDiskNum()));
             aFile.getAFiles().remove(root);
             myTreeItem.getParent().getChildren().remove(myTreeItem);
+            FilePane.update(myTreeItem);
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -268,17 +271,6 @@ public class DiskSimService {
         return String.valueOf(chars);
     }
 
-    //判断磁盘块是否已满
-    private boolean directory_full(String block_cont){
-        int num = 0;
-        char[] block_conts = block_cont.toCharArray();
-        for(char b : block_conts){
-            if(b != '#') num++;
-        }
-        System.out.println("num:"+num);
-        return num >= 64;
-    }
-
     /**
      * 删除文件的信息替换读出的磁盘块内容
      * @param position 删除碎片位置
@@ -318,6 +310,7 @@ public class DiskSimService {
             myTreeItem.getChildren().add(treeItem);
             myTreeItem.setExpanded(true);
             root.getAFiles().add(newFile);
+            FilePane.update(myTreeItem);
         }catch (Exception e){
             e.printStackTrace();
         }

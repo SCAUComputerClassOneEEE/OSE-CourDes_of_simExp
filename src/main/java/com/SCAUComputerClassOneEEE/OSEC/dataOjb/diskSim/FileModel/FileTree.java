@@ -1,6 +1,8 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -19,8 +21,13 @@ public class FileTree {
 
     private DiskSimService diskSimService = new DiskSimService();
 
-    public FileTree(VBox vBox, Disk disk) {
-        this.disk = disk;
+    public FileTree(VBox vBox) {
+        init(vBox);
+        addListener();
+    }
+
+    private void init(VBox vBox){
+        this.disk = Main.disk;
         this.vBox = vBox;
         int header = disk.malloc_F_Header();
         if(header == -1){
@@ -63,6 +70,13 @@ public class FileTree {
                 setRootFileTreeItems(file, treeItem);
             }
         }
+    }
+
+    private void addListener(){
+        this.getTreeView().getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null) return;
+            else FilePane.setTreeNode(newValue);
+        });
     }
 
 }
