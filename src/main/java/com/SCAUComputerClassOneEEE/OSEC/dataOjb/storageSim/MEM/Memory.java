@@ -4,6 +4,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,13 +25,17 @@ public class Memory {
 
     private char[] userMemoryArea = new char[USER_MEMORY_AREA_SIZE];
 
+    public Memory(){
+        Arrays.fill(userMemoryArea,'#');
+    }
     /**
      *
      * @param size 分配大小
      * @param exeChars 写入数据
      * @throws Exception 内存已满
+     * @return pointer
      */
-    public void malloc(int size,char[] exeChars) throws Exception {
+    public int malloc(int size,String exeChars) throws Exception {
         int pointer = mat.malloc_MAT(size);
         if (pointer == -1) {
             maintain();
@@ -38,7 +43,8 @@ public class Memory {
         }
         if (pointer == -1) throw new Exception("The memory is full");
         if (size - pointer >= 0)
-            System.arraycopy(exeChars, 0, userMemoryArea, pointer, size - pointer);
+            System.arraycopy(exeChars.toCharArray(), 0, userMemoryArea, pointer, size - pointer);
+        return pointer;
     }
 
     /**
@@ -56,7 +62,19 @@ public class Memory {
      * 维护
      */
     public void maintain(){
+        //MAT_OccupyCont的更新
+        //userMemoryArea的移动
+    }
 
+    public void MAT_display(){
+        System.out.println();
+        for (MAT.FreeBlock f: mat.getMAT_FreeCont()) {
+            System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
+        }
+        System.out.println();
+        for (MAT.ProcessBlock p:mat.getMAT_OccupyCont()){
+            System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
+        }
     }
 
     /**
@@ -81,6 +99,9 @@ public class Memory {
             FreeBlock(int pointer,int length){
                 this.length = length;
                 this.pointer = pointer;
+            }
+            int endOfFreePointer(){
+                return pointer + length;
             }
         }
         @Data
@@ -111,52 +132,56 @@ public class Memory {
             return pPointer;
         }
 
+        int totalProcessLength(){
+            int total = 0;
+            for (ProcessBlock processBlock:MAT_OccupyCont) total+=processBlock.getLength();
+            return total;
+        }
+
+        int totalFreeLength(){
+            return USER_MEMORY_AREA_SIZE - totalProcessLength();
+        }
+
         void recovery_MAT(int pointer,int length) throws Exception {
+            System.out.println("-------------recovery---------");
             if (MAT_OccupyCont.size() == 0) throw new Exception("NO PROCESS");
             if (MAT_OccupyCont.size() == 1){
+                System.out.println("    MAT_OccupyCont.size() == 1 is true");
                 MAT_FreeCont.clear();
                 MAT_OccupyCont.clear();
                 MAT_FreeCont.add(new FreeBlock(0,USER_MEMORY_AREA_SIZE));
                 return;
             }
+            System.out.println("    MAT_OccupyCont.size() == 1 is false");
             MAT_OccupyCont.removeIf(processBlock -> processBlock.getPointer() == pointer);
-            int lastIndex = MAT_FreeCont.size() - 1;
-            FreeBlock firstFree = MAT_FreeCont.get(0);
-            FreeBlock lastFree = MAT_FreeCont.get(lastIndex);
-            if (firstFree.getPointer() > pointer){
-                //回收块在空闲队列的前面
-                if (pointer + length < firstFree.getPointer())
-                    //RPF
-                    MAT_FreeCont.add(0,new FreeBlock(pointer,length));
-                else {
-                    //RF
-                    MAT_FreeCont.remove(0);
-                    firstFree.setPointer(pointer);
-                    firstFree.setLength(firstFree.getLength() + length);
-                    MAT_FreeCont.add(0,firstFree);
+            System.out.println("    remove " + pointer + " successfully");
+            //加入新空闲区
+            if (pointer > MAT_FreeCont.get(MAT_FreeCont.size() - 1).getPointer()){
+                MAT_FreeCont.add(new FreeBlock(pointer,length));
+                System.out.println("    add to end of freeList");
+            }
+            else for (int i = 0; i < MAT_FreeCont.size(); i++)
+                if (MAT_FreeCont.get(i).getPointer() > pointer){
+                    MAT_FreeCont.add(i,new FreeBlock(pointer,length));
+                    System.out.println("    add to " + i + " of freeList");
+                    break;
                 }
-            }else if (lastFree.getPointer() < pointer){
-                //回收块在空闲队列的后面
-                if (lastFree.getPointer() + lastFree.getLength() == pointer){
-                    //PFR
-                    MAT_FreeCont.remove(lastIndex);
-                    lastFree.setLength(lastFree.getLength() + length);
-                    MAT_FreeCont.add(lastFree);
-                }else
-                    //PR
-                    MAT_FreeCont.add(new FreeBlock(pointer,length));
-            }else{
-                //回收块在空闲块的中间
-                for (FreeBlock freeBlock : MAT_FreeCont){
-                    FreeBlock nextFreeBlock = MAT_FreeCont.get(MAT_FreeCont.indexOf(freeBlock) + 1);
-                    if (freeBlock.getPointer() < pointer && pointer < nextFreeBlock.getPointer()){
-                        //PRP
-                        //FRP
-                        //FRF
-                        //PRF
-                    }
+
+            //MAT_FreeCont.size() > 1 时，合并所有相邻区
+            for (int i = 0; i < MAT_FreeCont.size() - 1; i++) {
+                FreeBlock currFreeBlock = MAT_FreeCont.get(i);
+                FreeBlock nextFreeBlock = MAT_FreeCont.get(i + 1);
+                //判断是否相邻
+                if (currFreeBlock.endOfFreePointer() == nextFreeBlock.getPointer()){
+                    System.out.println("    currFreeBlock.endOfFreePointer() == nextFreeBlock.getPointer() is true");
+                    //把下一个相邻的空闲区合到当前空闲区
+                    currFreeBlock.setLength(currFreeBlock.getLength() + nextFreeBlock.getLength());
+                    System.out.println("    Merger of " + i + " and " + (i + 1));
+                    MAT_FreeCont.remove(i + 1);
+                    i--;//防止三个及以上的相邻空闲区
                 }
             }
+            System.out.println("-------------end--------------");
         }
 
         /**
@@ -170,8 +195,10 @@ public class Memory {
             int retPointer = -1;
             for (FreeBlock iFreeBlock : MAT_FreeCont) {
                 if (iFreeBlock.getLength() >= size) {
-                    retPointer = iFreeBlock.pointer;
+                    //找到第一个满足要求的空闲区
+                    retPointer = iFreeBlock.getPointer();
                     if (iFreeBlock.getLength() > size){
+                        //其余部分作为一个新空闲区
                         FreeBlock newFreeBlock = new FreeBlock(retPointer + size,
                                 iFreeBlock.getLength() - size);
                         MAT_FreeCont.add(MAT_FreeCont.indexOf(iFreeBlock),newFreeBlock);

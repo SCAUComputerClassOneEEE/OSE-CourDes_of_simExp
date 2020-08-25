@@ -8,7 +8,7 @@ public class Equipment {
     private boolean isFree;
     private int workTime;
 
-    public Equipment(char name, boolean isFree){
+    public Equipment(char name){
         this.name = name;
         this.isFree = true;
     }

@@ -278,6 +278,7 @@ public class Terminal {
         textArea.appendText("建立目录 md /path\n");//1参
         textArea.appendText("显示目录内容 dir /path\n");//1参
         textArea.appendText("删除空目录 rd /path\n");//1参
+        textArea.appendText("往缓冲区写入数据 inputBuffer bufferNum str\n");
         textArea.appendText("(请按回车开始) ");
         currentCaretPos = new int[]{textArea.getCaretPosition()};
         textArea.setOnKeyPressed(event -> {

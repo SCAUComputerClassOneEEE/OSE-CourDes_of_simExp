@@ -40,14 +40,12 @@ public class FileTree {
             vBox.getChildren().add(treeView);
 
             //初始化一些数据
-            diskSimService.createFile(rootTree,"a",4);
+            diskSimService.createFile(rootTree,"a",4);//这个4是属性
             try {
-                disk.writeFile(3,"");
-                disk.writeFile(4,"你他娘的还真是个天才");
+                disk.writeFile(3,"你他娘的还真是个天才");
             }catch (Exception e){
                 e.printStackTrace();
             }
-            diskSimService.createFile(rootTree,"b",3);
         }
     }
 
