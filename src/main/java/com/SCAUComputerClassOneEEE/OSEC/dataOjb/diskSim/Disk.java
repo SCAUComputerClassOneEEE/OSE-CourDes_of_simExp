@@ -14,9 +14,6 @@ import java.util.List;
 @Data
 public class Disk implements Serializable {
 
-    /**
-qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer
-     */
     public static final int DISK_MAX_SIZE = 128;
     public static final int BLOCK_MAX_SIZE = 64;
 
