@@ -11,35 +11,35 @@ import java.util.List;
  * @author best lu
  * @since 2020/7/18 14:00
  */
-@Data
 public class Disk implements Serializable {
 
-    private volatile static boolean initialized = false;
-    private static final Object lock = new Object();
+    private volatile static Disk disk;
 
-    private static Disk disk = new Disk();
     public static final int DISK_MAX_SIZE = 128;
     public static final int BLOCK_MAX_SIZE = 64;
 
-    private static final FAT fat = new FAT();//文件分配表，占两字节，磁盘的 0、1 号
-    private static final DiskBlock[] diskBlocks = new DiskBlock[DISK_MAX_SIZE - 2];//模拟的磁盘数据区，（ 2 ~ 127 号）
+    //文件分配表，占两字节，磁盘的 0、1 号
+    private final FAT fat;
+    //模拟的磁盘数据区，（ 2 ~ 127 号）
+    private final DiskBlock[] diskBlocks;
 
     public static Disk getDisk(){
-        if (!initialized){
-            synchronized (lock){
-                if (!initialized){
-                    for (int i = 0; i < diskBlocks.length; i++) {
-                        diskBlocks[i] = new DiskBlock(i + 2);
-                    }
-                    initialized = true;
+        if (disk == null){
+            synchronized (Disk.class){
+                if (disk == null){
+                    disk = new Disk();
                 }
             }
         }
         return disk;
     }
 
-    private Disk(){
-
+    private Disk() {
+        fat = new FAT();
+        diskBlocks = new DiskBlock[DISK_MAX_SIZE - 2];
+        for (int i = 0; i < diskBlocks.length; i++) {
+            diskBlocks[i] = new DiskBlock(i + 2);
+        }
     }
     
     public void recovery(int header){

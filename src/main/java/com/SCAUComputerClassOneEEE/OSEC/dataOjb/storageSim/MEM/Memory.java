@@ -2,9 +2,11 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -14,19 +16,35 @@ import java.util.List;
  * @author best lu
  * @since 2020/08/15
  */
-@Data
 public class Memory {
+
+    private volatile static Memory memory;
 
     public static final int PCB_SIZE = 10;
     public static final int USER_MEMORY_AREA_SIZE = 512;
 
-    private static final List<PCB> pcbList = new ArrayList<>(PCB_SIZE);
-    private static final MAT mat = new MAT();
+    @Getter
+    private final List<PCB> PCB_LIST;
+    private final MAT mat;
 
-    private char[] userMemoryArea = new char[USER_MEMORY_AREA_SIZE];
+    private char[] userMemoryArea;
 
-    public Memory(){
+    private Memory(){
+        userMemoryArea = new char[USER_MEMORY_AREA_SIZE];
         Arrays.fill(userMemoryArea,'#');
+        mat = new MAT();
+        PCB_LIST = new ArrayList<>(PCB_SIZE);
+    }
+
+    public static Memory getMemory(){
+        if (memory == null){
+            synchronized (Memory.class){
+                if (memory == null){
+                    memory = new Memory();
+                }
+            }
+        }
+        return memory;
     }
     /**
      *
@@ -35,16 +53,21 @@ public class Memory {
      * @throws Exception 内存已满
      * @return pointer
      */
-    public int malloc(int size,String exeChars) throws Exception {
-        int pointer = mat.malloc_MAT(size);
-        if (pointer == -1) {
-            maintain();
-            pointer = mat.malloc_MAT(size);
+    public int malloc(int size,char[] exeChars) throws Exception {
+        synchronized (mat){
+            int pointer = mat.malloc_MAT(size);
+            if (pointer == -1) {
+                System.out.println("##compression auto");
+                compression();
+                pointer = mat.malloc_MAT(size);
+            }
+            if (pointer == -1) throw new Exception("The memory is full");
+            if (size >= 0){
+                System.out.println("##copying into " + pointer + " length: " + (size));
+                System.arraycopy(exeChars, 0, userMemoryArea, pointer, size);
+            }
+            return pointer;
         }
-        if (pointer == -1) throw new Exception("The memory is full");
-        if (size - pointer >= 0)
-            System.arraycopy(exeChars.toCharArray(), 0, userMemoryArea, pointer, size - pointer);
-        return pointer;
     }
 
     /**
@@ -53,25 +76,48 @@ public class Memory {
      * @throws Exception 进程不存在
      */
     public void recovery(int pointer) throws Exception {
-        MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
-        if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
-        mat.recovery_MAT(pointer,thisProcessBlock.getLength());
+        synchronized (mat){
+            MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
+            if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
+            mat.recovery_MAT(pointer,thisProcessBlock.getLength());
+        }
     }
 
     /**
      * 维护
      */
-    public void maintain(){
+    public void compression(){
         //MAT_OccupyCont的更新
         //userMemoryArea的移动
+        System.out.println("-------------compression-----------");
+        synchronized (mat){
+            Iterator<MAT.ProcessBlock> processBlockIterator = mat.MAT_OccupyCont.iterator();
+            int iProcessLength = 0;
+            while(processBlockIterator.hasNext()){
+                MAT.ProcessBlock processBlock = processBlockIterator.next();
+                if (processBlock.getLength() >= 0)
+                    System.arraycopy(userMemoryArea, processBlock.getPointer(), userMemoryArea, iProcessLength, processBlock.getLength());
+                iProcessLength += processBlock.getLength();
+                //processBlockIterator.remove();
+            }
+            mat.getMAT_FreeCont().clear();
+            mat.getMAT_FreeCont().add(new MAT.FreeBlock(iProcessLength,mat.totalFreeLength()));
+            mat.compressionProcessBlocks();
+        }
+    }
+
+    public char[] readByPCB(PCB pcb){
+        return userMemoryArea;
     }
 
     public void MAT_display(){
         System.out.println();
+        System.out.println(mat.getMAT_FreeCont().size());
         for (MAT.FreeBlock f: mat.getMAT_FreeCont()) {
             System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
         }
         System.out.println();
+        System.out.println(mat.getMAT_OccupyCont().size());
         for (MAT.ProcessBlock p:mat.getMAT_OccupyCont()){
             System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
         }
@@ -134,8 +180,19 @@ public class Memory {
 
         int totalProcessLength(){
             int total = 0;
-            for (ProcessBlock processBlock:MAT_OccupyCont) total+=processBlock.getLength();
+            for (ProcessBlock processBlock:MAT_OccupyCont) total += processBlock.getLength();
             return total;
+        }
+
+        void compressionProcessBlocks(){
+            MAT_OccupyCont.get(0).setPointer(0);
+            int processLength = 0;
+            for (ProcessBlock p:MAT_OccupyCont) {
+                processLength += p.length;
+                int i = MAT_OccupyCont.indexOf(p) + 1;
+                if (i >= MAT_OccupyCont.size()) break;
+                MAT_OccupyCont.get(i).setPointer(processLength);
+            }
         }
 
         int totalFreeLength(){
