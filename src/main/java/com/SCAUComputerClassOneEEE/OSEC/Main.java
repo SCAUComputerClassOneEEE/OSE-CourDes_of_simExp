@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Main extends Application {
 
-    public static Disk disk = new Disk();
+    public static Disk disk = Disk.getDisk();
     public static void main(String[] args) {
         Application.launch(args);
     }

@@ -3,10 +3,10 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-
+        memoryTest();
     }
     public static void diskTest() throws Exception {
-        Disk testDisk = new Disk();
+        Disk testDisk = Disk.getDisk();
         int header1 = testDisk.malloc_F_Header();
         testDisk.writeFile(header1,"header1 wrote.");
         int header2 = testDisk.malloc_F_Header();

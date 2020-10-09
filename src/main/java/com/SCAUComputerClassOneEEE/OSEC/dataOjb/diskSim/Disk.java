@@ -14,16 +14,32 @@ import java.util.List;
 @Data
 public class Disk implements Serializable {
 
+    private volatile static boolean initialized = false;
+    private static final Object lock = new Object();
+
+    private static Disk disk = new Disk();
     public static final int DISK_MAX_SIZE = 128;
     public static final int BLOCK_MAX_SIZE = 64;
 
     private static final FAT fat = new FAT();//文件分配表，占两字节，磁盘的 0、1 号
     private static final DiskBlock[] diskBlocks = new DiskBlock[DISK_MAX_SIZE - 2];//模拟的磁盘数据区，（ 2 ~ 127 号）
 
-    public Disk(){
-        for (int i = 0; i < diskBlocks.length; i++) {
-            diskBlocks[i] = new DiskBlock(i + 2);
+    public static Disk getDisk(){
+        if (!initialized){
+            synchronized (lock){
+                if (!initialized){
+                    for (int i = 0; i < diskBlocks.length; i++) {
+                        diskBlocks[i] = new DiskBlock(i + 2);
+                    }
+                    initialized = true;
+                }
+            }
         }
+        return disk;
+    }
+
+    private Disk(){
+
     }
     
     public void recovery(int header){
