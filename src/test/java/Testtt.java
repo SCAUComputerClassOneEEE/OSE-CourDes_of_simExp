@@ -30,15 +30,15 @@ public class Testtt {
     @Test
     public void memoryTest() throws Exception {
         Memory memoryTest = Memory.getMemory();
-        System.out.println("return process pointer " + memoryTest.malloc(10, "1234567890".toCharArray()));
-        System.out.println("return process pointer " + memoryTest.malloc(10, "1234567890".toCharArray()));
-        System.out.println("return process pointer " + memoryTest.malloc(10, "1234567890".toCharArray()));
+        System.out.println("return process pointer " + memoryTest.malloc("1234567890".toCharArray()));
+        System.out.println("return process pointer " + memoryTest.malloc( "1234567890".toCharArray()));
+        System.out.println("return process pointer " + memoryTest.malloc("1234567890".toCharArray()));
         memoryTest.recovery(10);
-        System.out.println("return process pointer " + memoryTest.malloc(20, "12345678901234567890".toCharArray()));
+        System.out.println("return process pointer " + memoryTest.malloc("12345678901234567890".toCharArray()));
         memoryTest.recovery(20);
         memoryTest.MAT_display();
         memoryTest.compression();
-        System.out.println("return process pointer " + memoryTest.malloc(10, "abcuytegfd".toCharArray()));
+        System.out.println("return process pointer " + memoryTest.malloc( "abcuytegfd".toCharArray()));
         memoryTest.MAT_display();
     }
     @Test

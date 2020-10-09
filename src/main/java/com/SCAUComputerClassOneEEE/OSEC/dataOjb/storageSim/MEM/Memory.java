@@ -22,7 +22,7 @@ public class Memory {
 
     public static final int PCB_SIZE = 10;
     public static final int USER_MEMORY_AREA_SIZE = 512;
-
+    public static final int ERROR_RETURN_POINTER = -1;
     @Getter
     private final List<PCB> PCB_LIST;
     private final MAT mat;
@@ -48,22 +48,21 @@ public class Memory {
     }
     /**
      *
-     * @param size 分配大小
      * @param exeChars 写入数据
      * @throws Exception 内存已满
      * @return pointer
      */
-    public synchronized int malloc(int size,char[] exeChars) throws Exception {
-        int pointer = mat.malloc_MAT(size);
-        if (pointer == -1) {
+    public synchronized int malloc(char[] exeChars) throws Exception {
+        int pointer = mat.malloc_MAT(exeChars.length);
+        if (pointer == ERROR_RETURN_POINTER) {
             System.out.println("##compression auto");
             compression();
-            pointer = mat.malloc_MAT(size);
+            pointer = mat.malloc_MAT(exeChars.length);
         }
-        if (pointer == -1) throw new Exception("The memory is full");
-        if (size >= 0){
-            System.out.println("##copying into " + pointer + " length: " + (size));
-            System.arraycopy(exeChars, 0, userMemoryArea, pointer, size);
+        if (pointer == ERROR_RETURN_POINTER) throw new Exception("The memory is full");
+        if (exeChars.length > 0){
+            System.out.println("##copying into " + pointer + " length: " + (exeChars.length));
+            System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
         }
         return pointer;
     }
