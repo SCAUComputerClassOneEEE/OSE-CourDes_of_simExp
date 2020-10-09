@@ -53,21 +53,19 @@ public class Memory {
      * @throws Exception 内存已满
      * @return pointer
      */
-    public int malloc(int size,char[] exeChars) throws Exception {
-        synchronized (mat){
-            int pointer = mat.malloc_MAT(size);
-            if (pointer == -1) {
-                System.out.println("##compression auto");
-                compression();
-                pointer = mat.malloc_MAT(size);
-            }
-            if (pointer == -1) throw new Exception("The memory is full");
-            if (size >= 0){
-                System.out.println("##copying into " + pointer + " length: " + (size));
-                System.arraycopy(exeChars, 0, userMemoryArea, pointer, size);
-            }
-            return pointer;
+    public synchronized int malloc(int size,char[] exeChars) throws Exception {
+        int pointer = mat.malloc_MAT(size);
+        if (pointer == -1) {
+            System.out.println("##compression auto");
+            compression();
+            pointer = mat.malloc_MAT(size);
         }
+        if (pointer == -1) throw new Exception("The memory is full");
+        if (size >= 0){
+            System.out.println("##copying into " + pointer + " length: " + (size));
+            System.arraycopy(exeChars, 0, userMemoryArea, pointer, size);
+        }
+        return pointer;
     }
 
     /**
@@ -75,38 +73,31 @@ public class Memory {
      * @param pointer 被回收的进程指针
      * @throws Exception 进程不存在
      */
-    public void recovery(int pointer) throws Exception {
-        synchronized (mat){
-            MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
-            if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
-            mat.recovery_MAT(pointer,thisProcessBlock.getLength());
-        }
+    public synchronized void recovery(int pointer) throws Exception {
+        MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
+        if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
+        mat.recovery_MAT(pointer,thisProcessBlock.getLength());
     }
 
     /**
      * 维护
      */
-    public void compression(){
-        //MAT_OccupyCont的更新
-        //userMemoryArea的移动
+    public synchronized void compression(){
         System.out.println("-------------compression-----------");
-        synchronized (mat){
-            Iterator<MAT.ProcessBlock> processBlockIterator = mat.MAT_OccupyCont.iterator();
-            int iProcessLength = 0;
-            while(processBlockIterator.hasNext()){
-                MAT.ProcessBlock processBlock = processBlockIterator.next();
-                if (processBlock.getLength() >= 0)
-                    System.arraycopy(userMemoryArea, processBlock.getPointer(), userMemoryArea, iProcessLength, processBlock.getLength());
-                iProcessLength += processBlock.getLength();
-                //processBlockIterator.remove();
-            }
-            mat.getMAT_FreeCont().clear();
-            mat.getMAT_FreeCont().add(new MAT.FreeBlock(iProcessLength,mat.totalFreeLength()));
-            mat.compressionProcessBlocks();
+        Iterator<MAT.ProcessBlock> processBlockIterator = mat.MAT_OccupyCont.iterator();
+        int iProcessLength = 0;
+        while(processBlockIterator.hasNext()){
+            MAT.ProcessBlock processBlock = processBlockIterator.next();
+            if (processBlock.getLength() >= 0)
+                System.arraycopy(userMemoryArea, processBlock.getPointer(), userMemoryArea, iProcessLength, processBlock.getLength());
+            iProcessLength += processBlock.getLength();
         }
+        mat.getMAT_FreeCont().clear();
+        mat.getMAT_FreeCont().add(new MAT.FreeBlock(iProcessLength,mat.totalFreeLength()));
+        mat.compressionProcessBlocks();
     }
 
-    public char[] readByPCB(PCB pcb){
+    public char[] readPChars(int pId){
         return userMemoryArea;
     }
 

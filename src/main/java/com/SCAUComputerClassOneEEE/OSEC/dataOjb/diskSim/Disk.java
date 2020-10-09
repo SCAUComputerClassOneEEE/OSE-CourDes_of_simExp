@@ -51,7 +51,7 @@ public class Disk implements Serializable {
      * @return -1表示没有足够空间
      *         others 文件头盘块号
      */
-    public int malloc_F_Header() {
+    public synchronized int malloc_F_Header() {
         int header;
         try{
             header = fat.getFreeBlockOrder();
@@ -68,7 +68,7 @@ public class Disk implements Serializable {
      * @param str 内容
      * @throws Exception 容量不足
      */
-    public void writeFile(int header,String str) throws Exception {
+    public synchronized void writeFile(int header,String str) throws Exception {
         int preBlockSize = str.length()/(BLOCK_MAX_SIZE + 1);
         fat.mallocForFile_FAT(header,preBlockSize);//exception
         for (int i = 0,position = header; i < preBlockSize + 1; i ++){

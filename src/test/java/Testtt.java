@@ -6,7 +6,8 @@ import java.util.Arrays;
 
 public class Testtt {
 
-    public static void diskTest() throws Exception {
+    @Test
+    public void diskTest() throws Exception {
         Disk testDisk = Disk.getDisk();
         int header1 = testDisk.malloc_F_Header();
         testDisk.writeFile(header1,"header1 wrote.");
@@ -25,6 +26,7 @@ public class Testtt {
                 "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
                 "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer");
     }
+
     @Test
     public void memoryTest() throws Exception {
         Memory memoryTest = Memory.getMemory();
