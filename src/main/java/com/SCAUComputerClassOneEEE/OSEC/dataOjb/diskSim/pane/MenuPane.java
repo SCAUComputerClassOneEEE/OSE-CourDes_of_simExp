@@ -15,14 +15,15 @@ import lombok.Setter;
 public class MenuPane {
     private ContextMenu addMenu = new ContextMenu();
     private MenuItem openMenu = new MenuItem("打开");
-    private MenuItem createFileMenu = new MenuItem("创建文件");
+    private MenuItem createFileMenu = new MenuItem("创建文本文件");
+    private MenuItem createExeFileMenu = new MenuItem("创建可执行文件");
     private MenuItem createDirectoryMenu = new MenuItem("创建目录");
     private MenuItem deleteMenu = new MenuItem("删除");
 
     private DiskSimService diskSimService = new DiskSimService();
 
     public MenuPane(TreeItem<AFile> treeItem){
-        addMenu.getItems().addAll(openMenu, createFileMenu, createDirectoryMenu, deleteMenu);
+        addMenu.getItems().addAll(openMenu, createExeFileMenu, createFileMenu, createDirectoryMenu, deleteMenu);
 
         this.openMenu.setOnAction(actionEvent -> diskSimService.showFile(treeItem));
 
@@ -33,6 +34,11 @@ public class MenuPane {
 
         this.createFileMenu.setOnAction(actionEvent -> {
             TextInputBox textInputBox = new TextInputBox(treeItem, 1);
+            textInputBox.show();
+        });
+
+        this.createExeFileMenu.setOnAction(actionEvent -> {
+            TextInputBox textInputBox = new TextInputBox(treeItem, 2);
             textInputBox.show();
         });
 

@@ -3,6 +3,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -19,6 +20,7 @@ public class FileTextField {
     private final MenuItem save = new MenuItem();
     private final Stage stage = new Stage();
     private final Disk disk = Main.disk;
+    private final DiskSimService diskSimService = new DiskSimService();
 
     public FileTextField(TreeItem<AFile> myTreeItem){
         init(myTreeItem);
@@ -28,10 +30,14 @@ public class FileTextField {
         AFile aFile = myTreeItem.getValue();
         int diskNum = aFile.getDiskNum();
         //读取块中内容并进行转化
-        String str = disk.readFile(diskNum);
-        String string = deleteCharString0(str, '#');
+        if(aFile.isFile())
+            textArea.setText(aFile.getDiskContent());
+        else if(aFile.isExeFile())
+            //等待hlf的反编译
+            textArea.setText(aFile.getDiskContent());
+        else
+            textArea.setText(null);
 
-        textArea.setText(string);
         if(myTreeItem.getValue().getProperty() == 3)
             textArea.setEditable(false);
 
@@ -44,8 +50,12 @@ public class FileTextField {
 
         save.setOnAction(event -> {
             try {
-                disk.writeFile(diskNum, textArea.getText());
-                aFile.setLength((char)disk.getFileSize(diskNum));
+                if(aFile.isFile()){
+                    disk.writeFile(diskNum, textArea.getText());
+                    aFile.setLength((char)disk.getFileSize(diskNum));
+                }else if(aFile.isExeFile()){
+                    diskSimService.write_exeFile(aFile, textArea.getText());
+                }
                 AFile fatherFile = myTreeItem.getParent().getValue();
                 disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
             } catch (Exception e) {

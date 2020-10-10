@@ -44,6 +44,7 @@ final class TextFieldTreeCellImpl extends TreeCell<AFile> {
                 menuPane = new MenuPane(getTreeItem());
                 menuPane.getCreateDirectoryMenu().setDisable(true);
                 menuPane.getCreateFileMenu().setDisable(true);
+                menuPane.getCreateExeFileMenu().setDisable(true);
                 setContextMenu(menuPane.getAddMenu());
             }else{
                 //空白处

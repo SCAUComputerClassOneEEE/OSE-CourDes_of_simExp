@@ -100,8 +100,9 @@ public class TextInputBox {
         });
         button.setOnAction(event -> {
             primaryStage.close();
-            //1为文件，0为目录
-            if(type == 1) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 4);
+            //2为可执行文件，1为文本文件，0为目录
+            if(type == 2) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 16);
+            else if(type == 1) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 4);
             else if(type == 0) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 8);
         });
     }

@@ -14,6 +14,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Setter
 public class DiskSimService {
@@ -43,9 +45,12 @@ public class DiskSimService {
             if(attribute == 8){
                 length = 0;
                 newFile = new AFile(fileName, "  ", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
-            }else{
+            }else if(attribute == 4){
                 length = 1;
                 newFile = new AFile(fileName, "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
+            }else{
+                length = 1;
+                newFile = new AFile(fileName, "ex", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
             }
             return getString(myTreeItem, root, newFile);
         }
@@ -143,9 +148,9 @@ public class DiskSimService {
 
                 //数据写入文件后，删去对应的数据
                 buffer = buffer.substring(Math.min(write_length, buffer.length()));
-                if(bufferNum==1){
+                if(bufferNum == 1){
                     buffer1 = buffer;
-                }else if(bufferNum==2){
+                }else if(bufferNum == 2){
                     buffer2 = buffer;
                 }
 
@@ -158,6 +163,72 @@ public class DiskSimService {
             }
             return true;
         }else return false;
+    }
+
+    //写可执行文件
+    /**
+     *  8个bit，前三位为操作码
+     *  000为自加(大写字母)，001为自加（小写字母），剩余从0开始编码
+     *  010为自减(大写字母)，011为自减（小写字母）
+     *  100为申请设备，00为A设备，01为B设备，10为C设备，后3位为使用时间
+     *  101为赋值，110
+     *  111为end，后面全为1
+     */
+    /**
+     *  8个bit，前三位为操作码
+     *  000自加，001自减，后面全为0
+     *  010为申请设备，00为A设备，01为B设备，10为C设备，后3位为使用时间
+     *  011为赋值,后面为赋值数据
+     *  100为end，后面全为0
+     */
+    public boolean write_exeFile(AFile aFile, String string) throws Exception {
+        int machineCode = 0;
+        StringBuilder contents = new StringBuilder();
+        Pattern format1 =Pattern.compile("(^[a-zA-Z]+)(\\++|--)");//匹配自（加/减）
+        Matcher matcher1;
+
+        Pattern format2 =Pattern.compile("!([A|B|C])(\\d{1,2})");//申请设备
+        Matcher matcher2;
+
+        String format3 ="end";
+
+        Pattern format4 =Pattern.compile("(^[a-zA-Z]+)=(\\d{1,2})"); //匹配赋值语句
+        Matcher matcher4;
+        while (string != "" && string.indexOf(";") != -1){
+            String b = string.substring(0, string.indexOf(";"));
+            string = string.substring(string.indexOf(";") + 1);
+
+            matcher1 = format1.matcher(b);    //自（加/减）
+            if(matcher1.matches()){
+                String action = matcher1.group(1);
+                if("++".equals(action))
+                    contents.append((char)0);
+                else
+                    contents.append((char)32);
+            }
+
+            matcher2 = format2.matcher(b);    //申请设备
+            if(matcher2.matches()){
+                String deviceName = matcher2.group(1);
+                System.out.println("deviceName:" + deviceName);
+                int deviceCode = deviceName.charAt(0) - 65;
+                machineCode = Integer.parseInt(matcher2.group(2)) + 64 + deviceCode * 8;
+                contents.append((char)machineCode);
+            }
+
+            if(b.matches(format3))            //end
+                contents.append((char)128);
+
+            matcher4 = format4.matcher(b);    //赋值语句
+            if(matcher4.matches()){
+                int num = Integer.parseInt(matcher4.group(2));
+                contents.append((char)(num + 96));
+            }
+            System.out.println("contents:" + contents);
+        }
+        disk.writeFile(aFile.getDiskNum(), contents.toString());
+        aFile.setLength((char)disk.getFileSize(aFile.getDiskNum()));
+        return false;
     }
 
     //关闭文件
@@ -246,6 +317,7 @@ public class DiskSimService {
         myTreeItem.getParent().getChildren().remove(myTreeItem);
         return true;
     }
+
     //判断是否已经创建文件(文件名不重复)
     private boolean foundFile(AFile root, String fileName){
         for(AFile aFile : root.getAFiles()){

@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,13 @@ public class AFile{
      * 3 个字节
      */
     private String type;           //2个字节   类型
+
+    /*
+    第 7 位   第 6 位   第 5 位   第 4 位   第 3 位   第 2 位     第 1 位     第 0 位
+    未使用     未使用     未使用    执行文件   目录属性   普通文件    系统文件     只读文件
+     */
     private char property;       //1个字节  属性
+
     private char diskNum;        //1个字节 起始盘块号
     private char length;         //1个字节,盘数
 
@@ -36,7 +43,6 @@ public class AFile{
         this.length = length;
         this.location = location;
         this.absoluteLocation = location+"/"+fileName+"."+type;
-
     }
 
     @Override
@@ -46,12 +52,14 @@ public class AFile{
 
     //是文本文件为true
     public boolean isFile(){
-        return !"  ".equals(this.type);
+        return "tx".equals(this.type);
     }
     //是目录为true
     public boolean isDirectory(){
         return "  ".equals(this.type);
     }
+    //是可执行文件
+    public boolean isExeFile() {return "ex".equals(this.type); }
     //得到文件信息
     public char[] getALLData(){
         String string = "";
@@ -63,6 +71,15 @@ public class AFile{
             }
         }
         return (this.fileName + string + this.type + this.property + this.diskNum + this.length).toCharArray();
+    }
+    //得到文件内容
+    public String getDiskContent(){
+        String str = Main.disk.readFile(diskNum);
+        StringBuilder deleteString = new StringBuilder();
+        for (int i = 0; i < str.length(); i++)
+            if (str.charAt(i) != '#')
+                deleteString.append(str.charAt(i));
+        return deleteString.toString();
     }
 
     public boolean isOpen(){
