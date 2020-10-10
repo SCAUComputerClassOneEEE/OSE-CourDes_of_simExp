@@ -22,6 +22,9 @@ public class PCB {
     private Date timeWhenProcessStart;//启动时间
     //资源（占用设备、内存大小）
 
+    private int AX;//运行中x的值
+    private int PC;//程序计数器
+
     public enum ProcessState{
 
         NEW(0,"新建"),
