@@ -42,7 +42,7 @@ public class AFile{
         this.diskNum = diskNum;
         this.length = length;
         this.location = location;
-        this.absoluteLocation = location+"/"+fileName+"."+type;
+        this.absoluteLocation = location+"/"+fileName;
     }
 
     @Override
@@ -62,11 +62,11 @@ public class AFile{
     public boolean isExeFile() {return "ex".equals(this.type); }
     //得到文件信息
     public char[] getALLData(){
-        String string = "";
+        StringBuilder string = new StringBuilder();
         if(this.fileName.length() < 3){
             int i = 3 - this.fileName.length();
             while (i > 0){
-                string += " ";
+                string.append(" ");
                 i--;
             }
         }

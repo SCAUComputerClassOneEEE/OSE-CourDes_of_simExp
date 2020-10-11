@@ -59,39 +59,28 @@ public class Compile {
 
         Pattern format4 = Pattern.compile("(^[a-zA-Z]+)=(\\d{1,2})"); //匹配赋值语句
         Matcher matcher4;
-        while (result != "" && result.indexOf(";") != -1) {
-            String b = result.substring(0, result.indexOf(";"));
-            result = result.substring(result.indexOf(";") + 1);
+        matcher1 = format1.matcher(result);    //自（加/减）
+        if (matcher1.matches()) {
+            String action = matcher1.group(2);
+            if ("++".equals(action)) contents.append((char) 0);
+            else contents.append((char) 32);
+        }
 
-            matcher1 = format1.matcher(b);    //自（加/减）
-            if (matcher1.matches()) {
-                String action = matcher1.group(2);
-                System.out.println(matcher1.group(2));
-                if ("++".equals(action)) {
-                    contents.append((char) 0);
-                } else {
-                    contents.append((char) 32);
+        matcher2 = format2.matcher(result);    //申请设备
+        if (matcher2.matches()) {
+            String deviceName = matcher2.group(1);
+            int deviceCode = deviceName.charAt(0) - 65;
+            machineCode = Integer.parseInt(matcher2.group(2)) + 64 + deviceCode * 8;
+            contents.append((char) machineCode);
+        }
 
-                }
-            }
+        if (result.matches(format3))       //end
+            contents.append((char) 128);
 
-            matcher2 = format2.matcher(b);    //申请设备
-            if (matcher2.matches()) {
-                String deviceName = matcher2.group(1);
-                int deviceCode = deviceName.charAt(0) - 65;
-                machineCode = Integer.parseInt(matcher2.group(2)) + 64 + deviceCode * 8;
-                contents.append((char) machineCode);
-            }
-
-            if (b.matches(format3)) {      //end
-                contents.append((char) 128);
-            }
-
-            matcher4 = format4.matcher(b);    //赋值语句
-            if (matcher4.matches()) {
-                int num = Integer.parseInt(matcher4.group(2));
-                contents.append((char) (num + 96));
-            }
+        matcher4 = format4.matcher(result);    //赋值语句
+        if (matcher4.matches()) {
+            int num = Integer.parseInt(matcher4.group(2));
+            contents.append((char) (num + 96));
         }
         return contents.toString();
     }
@@ -102,7 +91,7 @@ public class Compile {
     }
 
     public static void main(String[] args) {
-        String result = Compile.decompile(Compile.compile("X=6;").charAt(0));
+        String result = Compile.decompile(Compile.compile("X=6").charAt(0));
         System.out.println(result);
 
     }

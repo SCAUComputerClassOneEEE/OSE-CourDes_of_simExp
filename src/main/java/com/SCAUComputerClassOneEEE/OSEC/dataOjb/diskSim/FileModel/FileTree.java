@@ -14,6 +14,9 @@ import java.util.ArrayList;
 @Getter
 @Setter
 public class FileTree {
+
+    private volatile static FileTree fileTree;
+
     private TreeView<AFile> treeView;
     private MyTreeItem rootTree;
     private VBox vBox;
@@ -21,7 +24,18 @@ public class FileTree {
 
     private DiskSimService diskSimService = new DiskSimService();
 
-    public FileTree(VBox vBox) {
+    public static FileTree getFileTree(){
+        if (fileTree == null){
+            synchronized (FileTree.class){
+                if (fileTree == null){
+                    fileTree = new FileTree(new VBox());
+                }
+            }
+        }
+        return fileTree;
+    }
+
+    private FileTree(VBox vBox) {
         init(vBox);
         addListener();
     }

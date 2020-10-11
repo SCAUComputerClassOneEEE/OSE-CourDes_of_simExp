@@ -1,7 +1,8 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.sun.tools.javac.util.Convert;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,13 +22,12 @@ public class CPU {
     public static Pattern format1 =Pattern.compile("(^[a-zA-Z]+)(\\++|--)");//匹配自（加/减）
     public static Matcher matcher1;
 
-    public static Pattern format2 =Pattern.compile("!([A|B|C])(\\d{1,2})");//匹配设备
+    public static Pattern format2 =Pattern.compile("!([A|B|C])(\\d{1,2})");
     public static Matcher matcher2;
 
     public static String format3 ="end";
     public static Pattern format4 =Pattern.compile("(^[a-zA-Z]+)=(\\d{1,2})"); //匹配赋值语句
     public static Matcher matcher4;
-
 
     private int psw=0;//程序状态字
 
@@ -37,6 +37,9 @@ public class CPU {
 
     //预先设置的10个可运行文件，形式仅仅是文件
     private ArrayList<AFile> exeFile = new ArrayList<>();
+
+    //数据服务层
+    private DiskSimService diskSimService = new DiskSimService();
 
     /**
      * cpu
@@ -69,9 +72,7 @@ public class CPU {
         create(executeFile);//创建进程
 
         //执行指令部分
-        for(int i=0;i<6;i++){
 
-        }
 
     }
 
@@ -116,30 +117,20 @@ public class CPU {
      * 创建10个可执行文件
      */
     private void initExeFile(){
-
+        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "a", 8);
+        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "b", 8);
+        for (int i = 0; i < 2; i++)
+            for (int j = 0; j < 5; j++) {
+                exeFile.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
+                try {
+                    diskSimService.write_exeFile(exeFile.get(i*5+j), "X++;X--;X=6;!A2;!B6;end;");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
     }
-    public static StringBuffer decompile(String compliedResult){
-        /**
-         *  8个bit，前三位为操作码
-         *  000自加，001自减，后面全为0
-         *  010为申请设备，00为A设备，01为B设备，10为C设备，后3位为使用时间
-         *  011为赋值,后面为赋值数据
-         *  100为end，后面全为0
-         */
-
-        String op = compliedResult.substring(0,2);
-        switch (op){
-            case "000":
-            case "001":
-                break;
-            case "100":
-                break;
-            case "010":
-                break;
-            case "011":
-                break;
-        }
-        return null;
+    public void init(){
+        initExeFile();
     }
     public static void main(String[] args) {
         File file = new File("/Users/apple/Desktop/test.txt");
@@ -147,7 +138,7 @@ public class CPU {
         type(file,contents);
         for(String each:contents){
             System.out.println(each);
-            String compiledResult = null;
+
             matcher1 = format1.matcher(each);
             if(matcher1.matches()){
                 String name = matcher1.group(1);
@@ -155,73 +146,32 @@ public class CPU {
                 int value = map.get(name);
                 if(action.equals("++")){
                     value++;
-                    compiledResult="00000000";
-                    System.out.println("这是自加，编译结果为："+compiledResult);
                 }else{
                     value--;
-                    compiledResult="00100000";
-                    System.out.println("这是自减，编译结果为："+compiledResult);
                 }
                 PC++;
                 map.put(name,value);
                 System.out.println(name+":"+value);
-
             }
 
             matcher2 = format2.matcher(each);
             if(matcher2.matches()){
-                compiledResult="010";
                 String deviceName = matcher2.group(1);
-                switch (deviceName){
-                    case "A":compiledResult+=00;
-                    break;
-                    case "B":compiledResult+=01;
-                    break;
-                    case "C":compiledResult+=10;
-                    break;
-                }
                 int time = Integer.parseInt(matcher2.group(2));
                 System.out.println(deviceName+":"+time);
-
-                String result = Integer.toBinaryString(time);
-                StringBuffer s = new StringBuffer();
-                for(int i=result.length();i<=3;i++){
-                    s.append("0");
-                }
-                s.append(result);
-                result = s.toString();
-
-                compiledResult+=result;
-                System.out.println(result);
-                System.out.println("这是设备申请，编译结果为："+compiledResult);
                 PC++;
             }
 
             if(each.matches(format3)){
-                compiledResult="10000000";
                 PC++;
-                System.out.println("这是结束，编译结果为："+compiledResult);
             }
 
             matcher4 = format4.matcher(each);
             if(matcher4.matches()){
-                compiledResult = "011";
                 String name = matcher4.group(1);
                 int num = Integer.parseInt(matcher4.group(2));
-
-                String result = Integer.toBinaryString(num);
-                StringBuffer s = new StringBuffer();
-                for(int i=result.length();i<5;i++){
-                    s.append("0");
-                }
-                s.append(result);
-                result = s.toString();
-
-                compiledResult+=result;
-
                 map.put(name,num);
                 PC++;
-                System.out.println("这是赋值，编译结果为："+compiledResult);
             }
             System.out.println("正在执行第"+PC+"条指令");
             System.out.println("-------");
