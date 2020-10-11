@@ -4,21 +4,25 @@ import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AOpenFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.MyTreeItem;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.Compile;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Setter
 public class DiskSimService {
+    private FileTree fileTree = Main.fileTree;
     private Disk disk = Main.disk;
     public String buffer1 = "";
     public String buffer2 = "";
@@ -48,11 +52,45 @@ public class DiskSimService {
             }else if(attribute == 4){
                 length = 1;
                 newFile = new AFile(fileName, "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
+            }else if(attribute == 16){
+                length = 1;
+                newFile = new AFile(fileName, "ex", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
+            }else
+                newFile = null;
+            return getString(myTreeItem, root, newFile);
+        }
+    }
+
+    public AFile createFile(AFile root, String fileName, int attribute){
+        System.out.println("根盘号:"+(int)root.getDiskNum());
+        if (foundFile(root, fileName)){
+            return null;
+        }else if(root.getAFiles().size() >= 8){
+            return null;
+        }
+        //获取可用磁盘头
+        int header = disk.malloc_F_Header();
+        if(header == -1){
+            return null;
+        }else{
+            System.out.println("新磁盘号："+header);
+            char diskNum = (char)header;
+            char property = (char)attribute;
+            char length;
+            AFile newFile;
+            if(attribute == 8){
+                length = 0;
+                newFile = new AFile(fileName, "  ", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
+            }else if(attribute == 4){
+                length = 1;
+                newFile = new AFile(fileName, "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
             }else{
                 length = 1;
                 newFile = new AFile(fileName, "ex", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
             }
-            return getString(myTreeItem, root, newFile);
+            String filePath = newFile.getAbsoluteLocation().substring(5);
+            getString(getFatherTreeItem(getFileNameList(filePath), fileTree.getRootTree(), 0), root, newFile);
+            return newFile;
         }
     }
 
@@ -182,49 +220,11 @@ public class DiskSimService {
      *  100为end，后面全为0
      */
     public boolean write_exeFile(AFile aFile, String string) throws Exception {
-        int machineCode = 0;
         StringBuilder contents = new StringBuilder();
-        Pattern format1 =Pattern.compile("(^[a-zA-Z]+)(\\++|--)");//匹配自（加/减）
-        Matcher matcher1;
-
-        Pattern format2 =Pattern.compile("!([A|B|C])(\\d{1,2})");//申请设备
-        Matcher matcher2;
-
-        String format3 ="end";
-
-        Pattern format4 =Pattern.compile("(^[a-zA-Z]+)=(\\d{1,2})"); //匹配赋值语句
-        Matcher matcher4;
         while (string != "" && string.indexOf(";") != -1){
             String b = string.substring(0, string.indexOf(";"));
             string = string.substring(string.indexOf(";") + 1);
-
-            matcher1 = format1.matcher(b);    //自（加/减）
-            if(matcher1.matches()){
-                String action = matcher1.group(1);
-                if("++".equals(action))
-                    contents.append((char)0);
-                else
-                    contents.append((char)32);
-            }
-
-            matcher2 = format2.matcher(b);    //申请设备
-            if(matcher2.matches()){
-                String deviceName = matcher2.group(1);
-                System.out.println("deviceName:" + deviceName);
-                int deviceCode = deviceName.charAt(0) - 65;
-                machineCode = Integer.parseInt(matcher2.group(2)) + 64 + deviceCode * 8;
-                contents.append((char)machineCode);
-            }
-
-            if(b.matches(format3))            //end
-                contents.append((char)128);
-
-            matcher4 = format4.matcher(b);    //赋值语句
-            if(matcher4.matches()){
-                int num = Integer.parseInt(matcher4.group(2));
-                contents.append((char)(num + 96));
-            }
-            System.out.println("contents:" + contents);
+            contents.append(Compile.compile(b));
         }
         disk.writeFile(aFile.getDiskNum(), contents.toString());
         aFile.setLength((char)disk.getFileSize(aFile.getDiskNum()));
@@ -401,5 +401,108 @@ public class DiskSimService {
             System.out.println(block_cont[in * 8 +i] + "," + root_cont[i]);
         }
         return String.valueOf(block_cont);
+    }
+
+    public List<String> getFileNameList(String filePath){
+        //将字符串以 / 拆分成几个字符串，其中fileNames[0]是第一个 / 前面的字符，如果第一个字符是 / ，则fileNames[0]为空(可打印
+        String[] fileNames = filePath.split("/");
+        //将数组第一个空内容去掉,并转化成List类型
+        List<String> fileNameList = new ArrayList<String>(Arrays.asList(fileNames));
+        fileNameList.remove(0);
+//解开注释证明从下标 0 开始
+//            for(int i = 0; i < fileNameList.size(); i++){
+//                System.out.println(fileNameList.get(i));
+//
+//            }
+        return fileNameList;
+
+    }
+
+    /**
+     * 递归找到fileNameList对应的父节点
+     * @param fileNameList
+     * @param fatherTreeItem
+     * @return
+     */
+    public TreeItem<AFile> getFatherTreeItem(List<String> fileNameList, TreeItem<AFile> fatherTreeItem, int i){
+//        textArea.appendText(fatherTreeItem.toString());
+        // i从0开始,务必让 i 初值为0
+        //假如只有长度1，则直接返回根目录作为子目录
+        if(fileNameList.size() == 1){
+            return fileTree.getRootTree();
+        }else{
+
+            //长度不为1，是多级目录
+            ObservableList<TreeItem<AFile>> myTreeItems = fatherTreeItem.getChildren();
+
+//            textArea.appendText("的myTreeItems大小:" + myTreeItems.size());
+            //如果函数传入的父节点没有孩子，传入的父节点即为所需父节点，片面理解，防止不了用户错误操作
+            // mkdir /a/b(有父目录） 和 mkdir /a/b(无父目录）判断条件重复,后续再修复,判断核心是有无a
+            if(myTreeItems.size()  == 0){
+                return fatherTreeItem;
+            }
+            //如果传入父节点有孩子，就用for匹配是否有相同名字，有就继续递归，没有 传入的父节点即为所需父节点
+            for (int j = 0; j < myTreeItems.size(); j++){
+                if(fileNameList.get(i).equals(myTreeItems.get(j).getValue().getFileName())){
+                    i++;
+                    fatherTreeItem = getFatherTreeItem(fileNameList, myTreeItems.get(j), i);
+                }
+                //           没找到,循环结束后 j = myTreeItems.size()  退出条件
+                if(j == (myTreeItems.size() - 1)){
+//                    textArea.appendText("father not found");
+                    return fatherTreeItem;
+                }
+            }
+        }
+        return null;
+    }
+
+    public TreeItem<AFile> getLastTreeItem(String name){
+        int 起始 = 0;
+        int num = 2;
+        int second = getCharacterPosition(name, num++);
+        System.out.println("second:"+second);
+        boolean flag = true;
+        String str = null;
+        ObservableList<TreeItem<AFile>> treeItems = fileTree.getRootTree().getChildren();
+        while (second != -1){
+            int i = 0;
+            str = name.substring(起始 + 1,second);
+            System.out.println("截取的:"+str);
+            for (i = 0; i < treeItems.size(); i++) {
+                if(str.equals(treeItems.get(i).getValue().getFileName()))
+                    break;
+            }
+            System.out.println("i:"+i);
+            if(i < treeItems.size()){
+                起始 = second;
+                second = getCharacterPosition(name,num++);
+                treeItems = treeItems.get(i).getChildren();
+            }else {
+                flag = false;
+                break;
+            }
+        }
+        if(flag){
+            str = name.substring(起始+1);
+            System.out.println("截取的:"+str);
+            for (int i = 0; i < treeItems.size(); i++)
+                if(str.equals(treeItems.get(i).getValue().getFileName()))
+                    return  treeItems.get(i);
+        }
+        return  null;
+    }
+
+    int getCharacterPosition(String string,int num){
+        Matcher slashMatcher = Pattern.compile("/").matcher(string);
+        int mIdx = 0;
+        while(slashMatcher.find()) {
+            mIdx++;
+            if(mIdx == num){
+                break;
+            }
+        }
+        if(mIdx < num) return  -1;
+        return slashMatcher.start();
     }
 }

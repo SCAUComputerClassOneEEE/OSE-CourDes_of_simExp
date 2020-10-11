@@ -3,6 +3,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.Compile;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -32,9 +33,13 @@ public class FileTextField {
         //读取块中内容并进行转化
         if(aFile.isFile())
             textArea.setText(aFile.getDiskContent());
-        else if(aFile.isExeFile())
-            //等待hlf的反编译
-            textArea.setText(aFile.getDiskContent());
+        else if(aFile.isExeFile()) {
+            StringBuilder contents = new StringBuilder();
+            char[] chars = aFile.getDiskContent().toCharArray();
+            for (char c:chars)
+               contents.append(Compile.decompile(c) + (char)10);
+            textArea.setText(contents.toString());
+        }
         else
             textArea.setText(null);
 
