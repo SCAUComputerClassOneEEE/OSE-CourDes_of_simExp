@@ -102,8 +102,8 @@ public class CPU {
     /**
      * 给乐烽做，要求:识别IR中的指令，写出分支语句，分支语句的具体功能可以留给ky写
      */
-    private void execute(){
-
+    public static int execute(){
+        return 0;
     }
 
     /**
