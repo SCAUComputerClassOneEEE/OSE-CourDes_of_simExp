@@ -1,13 +1,15 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import lombok.SneakyThrows;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,9 +17,8 @@ import java.util.regex.Pattern;
  * @author hlf
  * @date 25/8/2020
  */
-public class CPU implements Runnable{
+public class CPU {
     private static CPU cpu = new CPU();
-
     public static String IR;
     public static int PC = 0;
     public static Map<String,Integer> map = new HashMap<>();
@@ -32,6 +33,7 @@ public class CPU implements Runnable{
     public static Matcher matcher4;
 
     public static int psw = 0;//程序状态字
+    private int AX =0;
 
     private ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
     private ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
@@ -40,107 +42,148 @@ public class CPU implements Runnable{
     //预先设置的10个可运行文件，形式仅仅是文件
     private ArrayList<AFile> exeFile = new ArrayList<>();
 
-    private static final Clock clock = Clock.getClock();
-    private static final Thread clockThead = new Thread(clock);
+    //数据服务层
+    private DiskSimService diskSimService = new DiskSimService();
 
-    public static CPU getCPU(){
+    private PCB curPCB;
+
+    public static CPU getCpu(){
         return cpu;
     }
 
-    private CPU(){
-
-    }
-
-    @SneakyThrows
-    @Override
-    public void run(){
-        cpu();
-    }
-
     /**
-     *
      * cpu
      */
-    public void cpu() throws InterruptedException, ExecutionException {
-        initExeFile();
-        while (true){
+    public void cpu() throws Exception {
+        initExeFile();//初始化10个可执行文件先
+        AFile executeFile = exeFile.get((int)(10*Math.random()));
+        create(executeFile);//创建进程
+        curPCB = readyQueue.get(0);
+        //以下为cpu正式循环运行
+        //while (true){ //还没加入多线程，会卡住主界面
+            //先处理中断
 
-            switch (psw){
-                case 0://无中断
-                    psw = clock.timeRotation();
-                    break;
-                case 1://程序结束中断
-                    break;
-                case 2://时间片结束中断
-                   break;
-                case 4://I/O中断
-                    break;
-                default:
-                    break;
+            psw = psw & 7;//保证得到的String长度为3
+            StringBuilder interrupts = new StringBuilder(Integer.toBinaryString(psw));//得到2进制
+            if(interrupts.length()<3){
+                for(int i=0;i<3-interrupts.length()+1;i++){
+                    interrupts.insert(0, "0");
+                }
             }
-        }
+
+            System.out.println("psw:"+interrupts);
+
+            if (interrupts.charAt(0)=='1'){//最高位为1,I/O中断
+                psw = psw - 4;//处理完中断，解除中断
+            }
+            else if(interrupts.charAt(1)=='1'){//时间片中断
+                psw = psw - 2;
+            }
+            else if(interrupts.charAt(2)=='1'){//程序结束中断
+                psw = psw - 1;
+            }
+
+            //程序运行区，一次运行一条指令
+            takeAndDecompileCommand();  //此时IR即为正在运行的指令
+            //执行指令，需要配合时钟
+            execute();
+
+        //}
     }
 
 
     /**
      * 进程调度
      */
-    private void processScheduling(){
-        AFile executeFile = exeFile.get((int)(10*Math.random()));
-        create(executeFile);//创建进程
-
-        //执行指令部分
-
+    private void processScheduling() throws Exception {
 
     }
 
-    public static int execute(){
-        //
-        return 0;
+    /**
+     * 给乐烽做，要求:识别IR中的指令，写出分支语句，分支语句的具体功能可以留给ky写
+     */
+    private void execute(){
+
     }
 
+    /**
+     * 获取一条指令并将结果表示成String类型，存入IR
+     */
+    private void takeAndDecompileCommand(){
+        char ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
+        curPCB.setPC(curPCB.getPC()+1);
+        IR = Compile.decompile(ir);
+        System.out.println("当前指令:"+IR);
+    }
     /**进程控制原语
      * 进程申请
      */
-    private void create(AFile aFile){
+    private void create(AFile aFile) throws Exception {
         PCB newProcess = new PCB();//空白进程控制块
-        //个人认为PCB中需要文件参数，向内存申请空间时，直接传递可执行文件中的所有字节
         //申请内存
+        System.out.println("可执行文件"+aFile.getAbsoluteLocation()+"的编码内容是:"+aFile.getDiskContent());
+        int pointer = Memory.getMemory().malloc(aFile.getDiskContent().toCharArray());
+        System.out.println("进程分配到的内存首地址:"+pointer);
         //填写PCB
-        //显示结果
+        newProcess.setPointerToMemory(pointer);
+        newProcess.setPC(0);
+        //添加进就绪队列并显示结果
+        readyQueue.add(newProcess);
+        MainUI.mainUI.getFinalResult().setText("进程创建成功！");
+
     }
 
     /**进程控制原语
      * 进程销毁
      */
-    private void destroy(){
+    private void destroy(PCB pcb) throws Exception {
         //回收内存空间
-        //回收PCB
+        Memory.getMemory().recovery(pcb.getPointerToMemory());
+        //回收PCB,运行时会把pcb从就绪队列中拿出来
+        //pcb.free
         //显示结果
+        MainUI.mainUI.getFinalResult().setText("进程删除成功！");
     }
 
     /**进程控制原语
      * 进程阻塞
      */
-    private void block(){
+    private void block(PCB blockPCB){
         //保存运行进程的 CPU 现场
+        blockPCB.setPC(PC);
+        blockPCB.setAX(AX);
         //修改进程状态
-        //将进程链入对应的阻塞队列，然后转向进程调度
+        //blockPCB.setProcessState();
+        //将进程链入对应的阻塞队列
+        blockedQueue.add(blockPCB);
+        //转向进程调度
     }
 
 
     /**进程控制原语
      * 进程唤醒
      */
-    private void awake(){
+    private void awake(PCB awakePCB){
         //进程唤醒的主要工作是将进程由阻塞队列中摘下，修改进程状态为就绪，然后链入就绪队列
+        blockedQueue.remove(awakePCB);
+        readyQueue.add(awakePCB);
     }
 
     /**
      * 创建10个可执行文件
      */
-    private void initExeFile(){
-
+    public void initExeFile(){
+        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "a", 8);
+        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "b", 8);
+        for (int i = 0; i < 2; i++)
+            for (int j = 0; j < 5; j++) {
+                exeFile.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
+                try {
+                    diskSimService.write_exeFile(exeFile.get(i*5+j), "X++;X--;X=6;!A2;!B6;end;");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
     }
 
     public static void main(String[] args) {

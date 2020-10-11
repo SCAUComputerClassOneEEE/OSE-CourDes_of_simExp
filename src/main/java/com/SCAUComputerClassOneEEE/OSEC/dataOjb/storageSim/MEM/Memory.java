@@ -26,7 +26,7 @@ public class Memory {
     @Getter
     private final List<PCB> PCB_LIST;
     private final MAT mat;
-
+    @Getter
     private char[] userMemoryArea;
 
     private Memory(){

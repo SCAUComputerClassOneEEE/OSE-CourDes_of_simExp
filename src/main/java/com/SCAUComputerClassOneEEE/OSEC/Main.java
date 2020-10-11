@@ -7,29 +7,31 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
-import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
+import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.List;
+
 
 public class Main extends Application {
 
     public static Disk disk = Disk.getDisk();
-    public static CPU cpu = CPU.getCPU();
-
+    public static FileTree fileTree = FileTree.getFileTree();
+    public static CPU cpu = CPU.getCpu();
     public static void main(String[] args) {
         Application.launch(args);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane root = new BorderPane();
+        /*BorderPane root = new BorderPane();
 
-        FileTree fileTree = new FileTree(new VBox());
         Terminal terminal = new Terminal(fileTree);
 
         root.setRight(new FilePane());
@@ -37,15 +39,15 @@ public class Main extends Application {
         root.setCenter(terminal.textArea);
         root.setBottom(OpenFileManager.openFileTableView);
 
-
-
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+
+        CPU cpu = new CPU();
+        cpu.init();*/
+        MainUI.mainUI.show();
+        cpu.cpu();
     }
 
-    private void boot(){
-        TaskThreadPools.execute(cpu);
-    }
 
 }
