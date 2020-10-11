@@ -1,11 +1,13 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import lombok.SneakyThrows;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +15,9 @@ import java.util.regex.Pattern;
  * @author hlf
  * @date 25/8/2020
  */
-public class CPU {
+public class CPU implements Runnable{
+    private static CPU cpu = new CPU();
+
     public static String IR;
     public static int PC = 0;
     public static Map<String,Integer> map = new HashMap<>();
@@ -27,7 +31,7 @@ public class CPU {
     public static Pattern format4 =Pattern.compile("(^[a-zA-Z]+)=(\\d{1,2})"); //匹配赋值语句
     public static Matcher matcher4;
 
-    private int psw=0;//程序状态字
+    public static int psw = 0;//程序状态字
 
     private ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
     private ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
@@ -36,21 +40,40 @@ public class CPU {
     //预先设置的10个可运行文件，形式仅仅是文件
     private ArrayList<AFile> exeFile = new ArrayList<>();
 
+    private static final Clock clock = Clock.getClock();
+    private static final Thread clockThead = new Thread(clock);
+
+    public static CPU getCPU(){
+        return cpu;
+    }
+
+    private CPU(){
+
+    }
+
+    @SneakyThrows
+    @Override
+    public void run(){
+        cpu();
+    }
+
     /**
+     *
      * cpu
      */
-    public void cpu(){
+    public void cpu() throws InterruptedException, ExecutionException {
         initExeFile();
         while (true){
+
             switch (psw){
                 case 0://无中断
-                    processScheduling();
+                    psw = clock.timeRotation();
                     break;
                 case 1://程序结束中断
                     break;
                 case 2://时间片结束中断
-                    break;
-                    case 3://I/O中断
+                   break;
+                case 4://I/O中断
                     break;
                 default:
                     break;
@@ -69,6 +92,11 @@ public class CPU {
         //执行指令部分
 
 
+    }
+
+    public static int execute(){
+        //
+        return 0;
     }
 
     /**进程控制原语

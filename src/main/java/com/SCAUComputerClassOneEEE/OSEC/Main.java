@@ -4,8 +4,10 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
+import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -17,6 +19,8 @@ import java.util.List;
 public class Main extends Application {
 
     public static Disk disk = Disk.getDisk();
+    public static CPU cpu = CPU.getCPU();
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -33,8 +37,15 @@ public class Main extends Application {
         root.setCenter(terminal.textArea);
         root.setBottom(OpenFileManager.openFileTableView);
 
+
+
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
+
+    private void boot(){
+        TaskThreadPools.execute(cpu);
+    }
+
 }

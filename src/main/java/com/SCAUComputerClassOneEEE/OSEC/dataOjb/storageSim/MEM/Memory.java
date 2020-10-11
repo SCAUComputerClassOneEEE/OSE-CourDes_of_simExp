@@ -55,13 +55,13 @@ public class Memory {
     public synchronized int malloc(char[] exeChars) throws Exception {
         int pointer = mat.malloc_MAT(exeChars.length);
         if (pointer == ERROR_RETURN_POINTER) {
-            System.out.println("##compression auto");
-            compression();
+            System.out.println("## compress auto");
+            compress();
             pointer = mat.malloc_MAT(exeChars.length);
+            if (pointer == ERROR_RETURN_POINTER) throw new Exception("The memory is full");
         }
-        if (pointer == ERROR_RETURN_POINTER) throw new Exception("The memory is full");
         if (exeChars.length > 0){
-            System.out.println("##copying into " + pointer + " length: " + (exeChars.length));
+            System.out.println("## copying into " + pointer + " length: " + (exeChars.length));
             System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
         }
         return pointer;
@@ -81,7 +81,7 @@ public class Memory {
     /**
      * 维护
      */
-    public synchronized void compression(){
+    public synchronized void compress(){
         System.out.println("-------------compression-----------");
         Iterator<MAT.ProcessBlock> processBlockIterator = mat.MAT_OccupyCont.iterator();
         int iProcessLength = 0;

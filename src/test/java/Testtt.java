@@ -37,7 +37,7 @@ public class Testtt {
         System.out.println("return process pointer " + memoryTest.malloc("12345678901234567890".toCharArray()));
         memoryTest.recovery(20);
         memoryTest.MAT_display();
-        memoryTest.compression();
+        memoryTest.compress();
         System.out.println("return process pointer " + memoryTest.malloc( "abcuytegfd".toCharArray()));
         memoryTest.MAT_display();
     }
