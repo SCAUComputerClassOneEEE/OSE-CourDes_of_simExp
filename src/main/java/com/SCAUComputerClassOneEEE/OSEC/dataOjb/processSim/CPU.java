@@ -6,6 +6,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
+import javafx.application.Platform;
 import lombok.SneakyThrows;
 
 import java.io.*;
@@ -146,7 +147,7 @@ public class CPU implements Runnable{
         newProcess.setPC(0);
         //添加进就绪队列并显示结果
         readyQueue.add(newProcess);
-        //MainUI.mainUI.getFinalResult().setText("进程创建成功！");
+        Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("进程创建成功！"));
 
     }
 
