@@ -5,6 +5,8 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
+import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
+import lombok.SneakyThrows;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,7 +19,12 @@ import java.util.regex.Pattern;
  * @author hlf
  * @date 25/8/2020
  */
-public class CPU {
+public class CPU implements Runnable{
+
+    public static int EOP = 1;//程序结束
+    public static int TSE = 1 << 1;//时间片结束
+    public static int IOI = 1 << 2;//IO中断发生
+
     private static CPU cpu = new CPU();
     public static String IR;
     public static int PC = 0;
@@ -45,12 +52,20 @@ public class CPU {
     //数据服务层
     private DiskSimService diskSimService = new DiskSimService();
 
-    private PCB curPCB;
+    private static PCB curPCB;//当前正在运行的进程的控制块
+
+    private final Clock clock = Clock.getClock();
 
     public static CPU getCpu(){
         return cpu;
     }
 
+    @SneakyThrows
+    @Override
+    public void run() {
+        TaskThreadPools.execute(clock);
+        cpu();
+    }
     /**
      * cpu
      */
@@ -60,10 +75,10 @@ public class CPU {
         create(executeFile);//创建进程
         curPCB = readyQueue.get(0);
         //以下为cpu正式循环运行
-        //while (true){ //还没加入多线程，会卡住主界面
+        while (true){ //还没加入多线程，会卡住主界面
             //先处理中断
 
-            psw = psw & 7;//保证得到的String长度为3
+/*            psw = psw & 7;//保证得到的String长度为3
             StringBuilder interrupts = new StringBuilder(Integer.toBinaryString(psw));//得到2进制
             if(interrupts.length()<3){
                 for(int i=0;i<3-interrupts.length()+1;i++){
@@ -82,13 +97,20 @@ public class CPU {
             else if(interrupts.charAt(2)=='1'){//程序结束中断
                 psw = psw - 1;
             }
-
+*/
+            if ((psw&CPU.EOP)!=0){
+                //程序结束
+            }
+            if ((psw&CPU.TSE)!=0){
+                //时间片结束,调用轮转调度算法
+            }
+            if((psw&CPU.IOI)!=0){
+                //IO中断(请求设备)
+            }
             //程序运行区，一次运行一条指令
-            takeAndDecompileCommand();  //此时IR即为正在运行的指令
             //执行指令，需要配合时钟
-            execute();
-
-        //}
+            psw = clock.timeRotation();
+        }
     }
 
 
@@ -102,19 +124,29 @@ public class CPU {
     /**
      * 给乐烽做，要求:识别IR中的指令，写出分支语句，分支语句的具体功能可以留给ky写
      */
-    public static int execute(){
+    public static int CPUCycles(){
+        //从内存中取出指令字符
+        char ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
+        //pc+1
+        curPCB.setPC(curPCB.getPC()+1);
+        //编译
+        IR = Compile.decompile(ir);
+        System.out.println("当前指令:"+IR);
+
+        //执行指令
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+        /*****************和乐风看这里****@hlf****************/
+
         return 0;
     }
 
-    /**
-     * 获取一条指令并将结果表示成String类型，存入IR
-     */
-    private void takeAndDecompileCommand(){
-        char ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
-        curPCB.setPC(curPCB.getPC()+1);
-        IR = Compile.decompile(ir);
-        System.out.println("当前指令:"+IR);
-    }
     /**进程控制原语
      * 进程申请
      */
@@ -247,5 +279,6 @@ public class CPU {
         }
 
     }
+
 }
 
