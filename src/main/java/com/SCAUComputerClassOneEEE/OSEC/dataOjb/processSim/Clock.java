@@ -49,19 +49,10 @@ public class Clock implements Runnable{
         System.out.println("剩余时间：" + timeSlice);
 
         //返回中断字
-        int psw;
-        FutureTask<Integer> execution = new FutureTask<>(CPU::CPUCycles);
-        Thread cpuExecuteThread = new Thread(execution,"cpuExecuteThread");
-        cpuExecuteThread.start();
-
+        int psw = CPU.CPUCycles();
         long end1 = System.currentTimeMillis();
-
         //补足1000ms时间
         Thread.sleep(999 - end1 + sTime);
-
-        //取执行结果的中断字
-        psw = execution.get();
-
         long end2 = System.currentTimeMillis();
 
         if (timeSlice == 0){

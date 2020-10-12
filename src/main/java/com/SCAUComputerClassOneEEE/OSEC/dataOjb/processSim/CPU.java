@@ -40,7 +40,7 @@ public class CPU implements Runnable{
     public static Matcher matcher4;
 
     public static int psw = 0;//程序状态字
-    private int AX =0;
+    private static int AX =0;
 
     private ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
     private ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
@@ -77,27 +77,6 @@ public class CPU implements Runnable{
         //以下为cpu正式循环运行
         while (true){ //还没加入多线程，会卡住主界面
             //先处理中断
-
-/*            psw = psw & 7;//保证得到的String长度为3
-            StringBuilder interrupts = new StringBuilder(Integer.toBinaryString(psw));//得到2进制
-            if(interrupts.length()<3){
-                for(int i=0;i<3-interrupts.length()+1;i++){
-                    interrupts.insert(0, "0");
-                }
-            }
-
-            System.out.println("psw:"+interrupts);
-
-            if (interrupts.charAt(0)=='1'){//最高位为1,I/O中断
-                psw = psw - 4;//处理完中断，解除中断
-            }
-            else if(interrupts.charAt(1)=='1'){//时间片中断
-                psw = psw - 2;
-            }
-            else if(interrupts.charAt(2)=='1'){//程序结束中断
-                psw = psw - 1;
-            }
-*/
             if ((psw&CPU.EOP)!=0){
                 //程序结束
             }
@@ -110,6 +89,7 @@ public class CPU implements Runnable{
             //程序运行区，一次运行一条指令
             //执行指令，需要配合时钟
             psw = clock.timeRotation();
+
         }
     }
 
@@ -132,17 +112,22 @@ public class CPU implements Runnable{
         //编译
         IR = Compile.decompile(ir);
         System.out.println("当前指令:"+IR);
-
-        //执行指令
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
-        /*****************和乐风看这里****@hlf****************/
+        if(IR.contains("++")){
+            System.out.println(++AX);
+        }else if(IR.contains("--")){
+            System.out.println(--AX);
+        }else if(IR.contains("!")){
+/*            String equipment = matcher2.group(1);
+            String time = matcher2.group(2);*/
+            System.out.println("设备");
+        }else if(IR.contains("=")){
+//            String num = matcher4.group(2);
+            System.out.println("赋值");
+        }
+        else{
+            //end
+            System.out.println("结束啦");
+        }
 
         return 0;
     }
@@ -161,7 +146,7 @@ public class CPU implements Runnable{
         newProcess.setPC(0);
         //添加进就绪队列并显示结果
         readyQueue.add(newProcess);
-        MainUI.mainUI.getFinalResult().setText("进程创建成功！");
+        //MainUI.mainUI.getFinalResult().setText("进程创建成功！");
 
     }
 

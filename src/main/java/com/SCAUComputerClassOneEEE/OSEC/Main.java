@@ -8,6 +8,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
+import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -45,8 +46,8 @@ public class Main extends Application {
 
         CPU cpu = new CPU();
         cpu.init();*/
-        MainUI.mainUI.show();
-        cpu.cpu();
+        //MainUI.mainUI.show();
+        TaskThreadPools.execute(cpu);
     }
 
 
