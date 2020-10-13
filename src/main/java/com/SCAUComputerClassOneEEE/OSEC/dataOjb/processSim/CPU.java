@@ -10,7 +10,6 @@ import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Platform;
 import lombok.SneakyThrows;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +53,7 @@ public class CPU implements Runnable{
     //数据服务层
     private DiskSimService diskSimService = new DiskSimService();
 
-    private static PCB curPCB;//当前正在运行的进程的控制块
+    private static PCB curPCB = null;//当前正在运行的进程的控制块
 
     private final Clock clock = Clock.getClock();
 
@@ -73,26 +72,38 @@ public class CPU implements Runnable{
      */
     public void cpu() throws Exception {
         initExeFile();//初始化10个可执行文件先
-        AFile executeFile = exeFiles.get((int)(10*Math.random()));
-        create(executeFile);//创建进程
-        create(executeFile);
-        create(executeFile);
-        showQueue();
-        curPCB = readyQueue.get(0);
-        readyQueue.remove(curPCB);
-        showQueue();
+
         //以下为cpu正式循环运行
         while (true){
-
-            if (curPCB==null&&readyQueue.size()>0){
-                processScheduling();
-            }
-            System.out.println(psw);
             //中断处理区
             interruptHandling();
+
+            showReadyAndBlockQueue();
+            randomPosses();
+
+            if (curPCB==null){
+                if (readyQueue.size()>0){
+                    curPCB = processScheduling();
+                    System.out.println("进程:"+curPCB.getProcessId()+"正在运行");
+                }
+            }else {
+                System.out.println("进程:"+curPCB.getProcessId()+"正在运行");
+            }
+
             //程序运行区，一次运行一条指令
             psw = clock.timeRotation();
 
+        }
+    }
+
+    /**
+     * 随机产生进程申请
+     */
+    private void randomPosses(){
+        if ((int)(Math.random()*10)==5){
+            AFile executeFile = exeFiles.get((int)(10*Math.random()));
+            create(executeFile);//创建进程
+            System.out.println("随机生成了新进程");
         }
     }
 
@@ -102,25 +113,32 @@ public class CPU implements Runnable{
     private void interruptHandling(){
         //先处理程序结束中断
         if ((psw&CPU.EOP)!=0){//程序结束
+            System.out.println("程序结束中断");
             //输出X的最终结果
             Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("X="+AX));
             //调度
             curPCB = processScheduling();
             //去除程序结束中断与时间片结束中断
-            psw = psw | CPU.EOP;
+            psw = psw ^ CPU.EOP ^ CPU.TSE;
         }
 
         //轮到设备中断，防止时间片到期还未发出设备申请
         if((psw&CPU.IOI)!=0){
+            block(curPCB);
             //IO中断(请求设备)
-                /*
-                得到请求的设备与请求的时间，向设备管理器申请设备
-                 */
-            psw = psw | CPU.IOI;
+            System.out.println("设备中断");
+            char equip = IR.charAt(1);
+            int time = Integer.parseInt(IR.substring(2));
+            //请求分配设备
+            Equipment.getEquipment().distributeEQ(equip,curPCB,time);
+            System.out.println("申请设备"+equip+":"+time+"秒");
+            curPCB = processScheduling();
+            psw = psw ^ CPU.IOI;
         }
 
         //时间片结束中断
         if ((psw&CPU.TSE)!=0){
+            System.out.println("时间片结束中断");
             if (curPCB != null){
                 //保存X的值
                 curPCB.setAX(AX);
@@ -129,6 +147,8 @@ public class CPU implements Runnable{
             }
             //调度
             curPCB = processScheduling();
+
+            psw = psw ^ CPU.TSE;
         }
 
     }
@@ -137,13 +157,13 @@ public class CPU implements Runnable{
      * 进程调度
      */
     private PCB processScheduling(){
-        showQueue();
+        clock.setTimeSlice(6);
         PCB newProcess = null;
         if (readyQueue.size()>0){
             newProcess = readyQueue.get(0);
             //恢复现场
             AX = newProcess.getAX();
-            System.out.println("删除--------------"+readyQueue.remove(newProcess));
+            readyQueue.remove(newProcess);
         }
         return newProcess;
     }
@@ -152,44 +172,42 @@ public class CPU implements Runnable{
      * 一个cpu周期
      */
     public static int CPUCycles(){
+        Equipment.decTime();
+        int result = 0;
         //如果当前无进程，闲逛，啥也不做
         if (curPCB==null){
             IR = "当前无进程";
-            return 0;
+            System.out.println("我在闲逛");
         }
+        else {
+            //从内存中取出指令字符
+            char ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
+            //pc+1
+            curPCB.setPC(curPCB.getPC()+1);
+            //编译
+            IR = Compile.decompile(ir);
+            System.out.println("正在执行指令:"+IR);
+            //执行
+            if(IR.contains("++")){
+                AX++;
+                System.out.println("X的值为:"+AX);
+            }else if(IR.contains("--")){
+                AX--;
+                System.out.println("X的值为:"+AX);
+            }else if(IR.contains("!")){
+                result = psw | CPU.IOI;
+            }else if(IR.contains("=")){
+                AX = Integer.parseInt(IR.substring(2));
+                System.out.println("X赋值为"+AX);
+            }
+            else{
+                destroy(curPCB);
+                System.out.println("程序结束");
+                result = psw | CPU.EOP;
+            }
 
-        //从内存中取出指令字符
-        char ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
-        //pc+1
-        curPCB.setPC(curPCB.getPC()+1);
-        //编译
-        IR = Compile.decompile(ir);
-        System.out.println("正在执行指令:"+IR);
-        //执行
-        if(IR.contains("++")){
-            AX++;
-            System.out.println("X的值为:"+AX);
-        }else if(IR.contains("--")){
-            AX--;
-            System.out.println("X的值为:"+AX);
-        }else if(IR.contains("!")){
-            char equip = IR.charAt(1);
-            int time = Integer.parseInt(IR.substring(2));
-            Equipment.getEquipment().distributeEQ(equip,curPCB,time);
-            System.out.println("申请设备"+equip+":"+time+"秒");
-            psw = psw | CPU.IOI;
-        }else if(IR.contains("=")){
-            int value = Integer.parseInt(IR.substring(2));
-            AX = value;
-            System.out.println("X赋值为"+AX);
         }
-        else{
-            destroy(curPCB);
-            psw = psw | CPU.EOP;
-            System.out.println("程序结束");
-        }
-
-        return 0;
+        return result;
     }
 
     /**进程控制原语
@@ -248,7 +266,7 @@ public class CPU implements Runnable{
     /**进程控制原语
      * 进程唤醒
      */
-    private static void awake(PCB awakePCB){
+    public static void awake(PCB awakePCB){
         //进程唤醒的主要工作是将进程由阻塞队列中摘下，修改进程状态为就绪，然后链入就绪队列
         blockedQueue.remove(awakePCB);
         readyQueue.add(awakePCB);
@@ -271,7 +289,7 @@ public class CPU implements Runnable{
             }
     }
 
-    private static void showQueue(){
+    private static void showReadyAndBlockQueue(){
         System.out.print("就绪队列进程id:");
         for (PCB each:readyQueue){
             System.out.print(each.getProcessId()+" ");
@@ -283,68 +301,6 @@ public class CPU implements Runnable{
             System.out.print(each.getProcessId()+" ");
         }
         System.out.println();
-    }
-
-    public static void main(String[] args) {
-        File file = new File("/Users/apple/Desktop/test.txt");
-        ArrayList<String> contents = new ArrayList<>();
-        type(file,contents);
-        for(String each:contents){
-            System.out.println(each);
-
-            matcher1 = format1.matcher(each);
-            if(matcher1.matches()){
-                String name = matcher1.group(1);
-                String action = matcher1.group(2);
-                int value = map.get(name);
-                if(action.equals("++")){
-                    value++;
-                }else{
-                    value--;
-                }
-                PC++;
-                map.put(name,value);
-                System.out.println(name+":"+value);
-            }
-
-            matcher2 = format2.matcher(each);
-            if(matcher2.matches()){
-                String deviceName = matcher2.group(1);
-                int time = Integer.parseInt(matcher2.group(2));
-                System.out.println(deviceName+":"+time);
-                PC++;
-            }
-
-            if(each.matches(format3)){
-                PC++;
-            }
-
-            matcher4 = format4.matcher(each);
-            if(matcher4.matches()){
-                String name = matcher4.group(1);
-                int num = Integer.parseInt(matcher4.group(2));
-                map.put(name,num);
-                PC++;
-            }
-            System.out.println("正在执行第"+PC+"条指令");
-            System.out.println("-------");
-        }
-
-    }
-    public static void type(File exeFile, ArrayList<String> contents) {
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(exeFile));
-            String s = null;
-            while ((s = br.readLine()) != null) {
-                contents.add(s);
-                IR = s;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
 }

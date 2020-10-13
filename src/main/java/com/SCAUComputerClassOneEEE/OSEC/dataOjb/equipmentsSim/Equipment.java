@@ -32,15 +32,15 @@ public class Equipment {
     }
 
     public static void decTime(){
+        ArrayList<EAT> deleted = new ArrayList<>();
         ArrayList<EAT> buffer = new ArrayList<>();
         for(EAT each: runningLists){
             each.time = each.time - 1;
             if (each.time==0){
                 //这两句可能有问题
-                CPU.blockedQueue.remove(each.pcb);
-                CPU.readyQueue.add(each.pcb);
+                CPU.awake(each.pcb);
 
-                runningLists.remove(each);
+                deleted.add(each);
 
                 EAT eat = canRun(each.eqID);//检查waitList里面有没有能够运行的，如果有么就返回EAT对象
                 if (eat != null){
@@ -49,6 +49,8 @@ public class Equipment {
             }
         }
         runningLists.addAll(buffer);
+        runningLists.removeAll(deleted);
+
     }
     private static int getNumOf(char eqID){
         int count = 0;

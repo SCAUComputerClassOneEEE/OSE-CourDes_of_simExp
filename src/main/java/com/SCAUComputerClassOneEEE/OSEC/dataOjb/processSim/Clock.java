@@ -19,6 +19,10 @@ public class Clock implements Runnable{
     private volatile static int timeSlice = 6;
     private static final Clock clock = new Clock();
 
+    public void setTimeSlice(int timeSlice){
+        Clock.timeSlice = timeSlice;
+    }
+
     private Clock(){
 
     }
@@ -45,8 +49,8 @@ public class Clock implements Runnable{
         System.out.println("========timeRotation=======");
         System.out.println("一条代码开始执行");
         //时间片减一
-        timeSlice --;
         System.out.println("剩余时间：" + timeSlice);
+        timeSlice --;
 
         //返回中断字
         int psw = CPU.CPUCycles();
