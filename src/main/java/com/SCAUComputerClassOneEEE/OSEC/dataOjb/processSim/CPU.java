@@ -2,6 +2,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment1;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
@@ -43,9 +44,9 @@ public class CPU implements Runnable{
     public static int psw = 0;//程序状态字
     private static int AX =0;
 
-    private static final ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
-    private static final ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
-    private static final ArrayList<PCB> blockedQueue = new ArrayList<>();//阻塞队列
+    public static final ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
+    public static final ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
+    public static final ArrayList<PCB> blockedQueue = new ArrayList<>();//阻塞队列
 
     //预先设置的10个可运行文件，形式仅仅是文件
     private ArrayList<AFile> exeFiles = new ArrayList<>();
@@ -76,16 +77,17 @@ public class CPU implements Runnable{
         create(executeFile);//创建进程
         create(executeFile);
         create(executeFile);
+        showQueue();
         curPCB = readyQueue.get(0);
         readyQueue.remove(curPCB);
+        showQueue();
         //以下为cpu正式循环运行
         while (true){
 
-            //如果上一条为闲逛进程且当前就绪队列有进程
             if (curPCB==null&&readyQueue.size()>0){
                 processScheduling();
             }
-            System.out.println("psw=" + psw);
+            System.out.println(psw);
             //中断处理区
             interruptHandling();
             //程序运行区，一次运行一条指令
@@ -135,12 +137,13 @@ public class CPU implements Runnable{
      * 进程调度
      */
     private PCB processScheduling(){
+        showQueue();
         PCB newProcess = null;
         if (readyQueue.size()>0){
             newProcess = readyQueue.get(0);
             //恢复现场
             AX = newProcess.getAX();
-            readyQueue.remove(newProcess);
+            System.out.println("删除--------------"+readyQueue.remove(newProcess));
         }
         return newProcess;
     }
@@ -152,7 +155,6 @@ public class CPU implements Runnable{
         //如果当前无进程，闲逛，啥也不做
         if (curPCB==null){
             IR = "当前无进程";
-            System.out.println("我在闲逛");
             return 0;
         }
 
@@ -173,16 +175,18 @@ public class CPU implements Runnable{
         }else if(IR.contains("!")){
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
+            Equipment1.getEquipment().distributeEQ(equip,curPCB,time);
             System.out.println("申请设备"+equip+":"+time+"秒");
-            return psw | CPU.IOI;
+            psw = psw | CPU.IOI;
         }else if(IR.contains("=")){
-            AX = Integer.parseInt(IR.substring(2));
+            int value = Integer.parseInt(IR.substring(2));
+            AX = value;
             System.out.println("X赋值为"+AX);
         }
         else{
             destroy(curPCB);
+            psw = psw | CPU.EOP;
             System.out.println("程序结束");
-            return psw | CPU.EOP;
         }
 
         return 0;

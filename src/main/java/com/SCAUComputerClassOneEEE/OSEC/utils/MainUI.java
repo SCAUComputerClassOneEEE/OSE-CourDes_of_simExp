@@ -1,7 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.utils;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.EquipmentUI;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -12,7 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * @Author: Sky
