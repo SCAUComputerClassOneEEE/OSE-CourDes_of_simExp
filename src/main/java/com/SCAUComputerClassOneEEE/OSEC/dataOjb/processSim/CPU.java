@@ -43,12 +43,12 @@ public class CPU implements Runnable{
     public static int psw = 0;//程序状态字
     private static int AX =0;
 
-    private ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
-    private ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
-    private ArrayList<PCB> blockedQueue = new ArrayList<>();//阻塞队列
+    private static final ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
+    private static final ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
+    private static final ArrayList<PCB> blockedQueue = new ArrayList<>();//阻塞队列
 
     //预先设置的10个可运行文件，形式仅仅是文件
-    private ArrayList<AFile> exeFile = new ArrayList<>();
+    private ArrayList<AFile> exeFiles = new ArrayList<>();
 
     //数据服务层
     private DiskSimService diskSimService = new DiskSimService();
@@ -72,62 +72,119 @@ public class CPU implements Runnable{
      */
     public void cpu() throws Exception {
         initExeFile();//初始化10个可执行文件先
-        AFile executeFile = exeFile.get((int)(10*Math.random()));
+        AFile executeFile = exeFiles.get((int)(10*Math.random()));
         create(executeFile);//创建进程
+        create(executeFile);
+        create(executeFile);
+        showQueue();
         curPCB = readyQueue.get(0);
+        readyQueue.remove(curPCB);
+        showQueue();
         //以下为cpu正式循环运行
-        while (true){ //还没加入多线程，会卡住主界面
-            //先处理中断
-            if ((psw&CPU.EOP)!=0){
-                //程序结束
+        while (true){
+
+            if (curPCB==null&&readyQueue.size()>0){
+                processScheduling();
             }
-            if ((psw&CPU.TSE)!=0){
-                //时间片结束,调用轮转调度算法
-            }
-            if((psw&CPU.IOI)!=0){
-                //IO中断(请求设备)
-            }
+            System.out.println(psw);
+            //中断处理区
+            interruptHandling();
             //程序运行区，一次运行一条指令
-            //执行指令，需要配合时钟
             psw = clock.timeRotation();
 
         }
     }
 
-
     /**
-     * 进程调度
+     * 中断处理
      */
-    private void processScheduling() throws Exception {
+    private void interruptHandling(){
+        //先处理程序结束中断
+        if ((psw&CPU.EOP)!=0){//程序结束
+            //输出X的最终结果
+            Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("X="+AX));
+            //调度
+            curPCB = processScheduling();
+            //去除程序结束中断与时间片结束中断
+            psw = psw | CPU.EOP;
+        }
+
+        //轮到设备中断，防止时间片到期还未发出设备申请
+        if((psw&CPU.IOI)!=0){
+            //IO中断(请求设备)
+                /*
+                得到请求的设备与请求的时间，向设备管理器申请设备
+                 */
+            psw = psw | CPU.IOI;
+        }
+
+        //时间片结束中断
+        if ((psw&CPU.TSE)!=0){
+            if (curPCB != null){
+                //保存X的值
+                curPCB.setAX(AX);
+                //添加回就绪队列
+                readyQueue.add(curPCB);
+            }
+            //调度
+            curPCB = processScheduling();
+        }
 
     }
 
     /**
-     * 给乐烽做，要求:识别IR中的指令，写出分支语句，分支语句的具体功能可以留给ky写
+     * 进程调度
+     */
+    private PCB processScheduling(){
+        showQueue();
+        PCB newProcess = null;
+        if (readyQueue.size()>0){
+            newProcess = readyQueue.get(0);
+            //恢复现场
+            AX = newProcess.getAX();
+            System.out.println("删除--------------"+readyQueue.remove(newProcess));
+        }
+        return newProcess;
+    }
+
+    /**
+     * 一个cpu周期
      */
     public static int CPUCycles(){
+        //如果当前无进程，闲逛，啥也不做
+        if (curPCB==null){
+            IR = "当前无进程";
+            return 0;
+        }
+
         //从内存中取出指令字符
         char ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
         //pc+1
         curPCB.setPC(curPCB.getPC()+1);
         //编译
         IR = Compile.decompile(ir);
-        System.out.println("当前指令:"+IR);
+        System.out.println("正在执行指令:"+IR);
+        //执行
         if(IR.contains("++")){
-            System.out.println(++AX);
+            AX++;
+            System.out.println("X的值为:"+AX);
         }else if(IR.contains("--")){
-            System.out.println(--AX);
+            AX--;
+            System.out.println("X的值为:"+AX);
         }else if(IR.contains("!")){
-/*            String equipment = matcher2.group(1);
-            String time = matcher2.group(2);*/
-            System.out.println("设备");
+            char equip = IR.charAt(1);
+            int time = Integer.parseInt(IR.substring(2));
+            System.out.println("申请设备"+equip+":"+time+"秒");
+            psw = psw | CPU.IOI;
         }else if(IR.contains("=")){
-//            String num = matcher4.group(2);
-            System.out.println("赋值");
+            int value = Integer.parseInt(IR.substring(2));
+            AX = value;
+            System.out.println("X赋值为"+AX);
         }
         else{
-            //end
-            System.out.println("结束啦");
+            destroy(curPCB);
+            psw = psw | CPU.EOP;
+            System.out.println("程序结束");
         }
 
         return 0;
@@ -135,43 +192,51 @@ public class CPU implements Runnable{
 
     /**进程控制原语
      * 进程申请
+     * 参数为一个可执行文件对象
      */
-    private void create(AFile aFile) throws Exception {
+    private static void create(AFile aFile){
         PCB newProcess = new PCB();//空白进程控制块
         //申请内存
-        System.out.println("可执行文件"+aFile.getAbsoluteLocation()+"的编码内容是:"+aFile.getDiskContent());
-        int pointer = Memory.getMemory().malloc(aFile.getDiskContent().toCharArray());
-        System.out.println("进程分配到的内存首地址:"+pointer);
-        //填写PCB
+        //System.out.println("可执行文件"+aFile.getAbsoluteLocation()+"的编码内容是:"+aFile.getDiskContent());
+        int pointer = -1;
+        try {
+            pointer = Memory.getMemory().malloc(aFile.getDiskContent().toCharArray());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            //未分配到内存，进入空白pcb队列
+            blankQueue.add(newProcess);
+        }
+        //System.out.println("进程分配到的内存首地址:"+pointer);
+        //成功分配内存，开始填写PCB
         newProcess.setPointerToMemory(pointer);
-        newProcess.setPC(0);
         //添加进就绪队列并显示结果
         readyQueue.add(newProcess);
-        Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("进程创建成功！"));
-
+        //Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("进程创建成功！"));
     }
 
     /**进程控制原语
      * 进程销毁
      */
-    private void destroy(PCB pcb) throws Exception {
+    private static void destroy(PCB destroyProcess){
         //回收内存空间
-        Memory.getMemory().recovery(pcb.getPointerToMemory());
+        try{
+            Memory.getMemory().recovery(destroyProcess.getPointerToMemory());
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         //回收PCB,运行时会把pcb从就绪队列中拿出来
-        //pcb.free
+        readyQueue.remove(destroyProcess);
         //显示结果
-        MainUI.mainUI.getFinalResult().setText("进程删除成功！");
+        //Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("进程删除成功！"));
     }
 
     /**进程控制原语
      * 进程阻塞
      */
-    private void block(PCB blockPCB){
-        //保存运行进程的 CPU 现场
-        blockPCB.setPC(PC);
+    private static void block(PCB blockPCB){
+        //保存运行进程的 CPU 现场 PC直接存在于PCB中，无需保存
         blockPCB.setAX(AX);
-        //修改进程状态
-        //blockPCB.setProcessState();
         //将进程链入对应的阻塞队列
         blockedQueue.add(blockPCB);
         //转向进程调度
@@ -181,7 +246,7 @@ public class CPU implements Runnable{
     /**进程控制原语
      * 进程唤醒
      */
-    private void awake(PCB awakePCB){
+    private static void awake(PCB awakePCB){
         //进程唤醒的主要工作是将进程由阻塞队列中摘下，修改进程状态为就绪，然后链入就绪队列
         blockedQueue.remove(awakePCB);
         readyQueue.add(awakePCB);
@@ -195,13 +260,27 @@ public class CPU implements Runnable{
         diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "b", 8);
         for (int i = 0; i < 2; i++)
             for (int j = 0; j < 5; j++) {
-                exeFile.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
+                exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
                 try {
-                    diskSimService.write_exeFile(exeFile.get(i*5+j), "X++;X--;X=6;!A2;!B6;end;");
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;X--;X=6;!A2;!B6;end;");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+    }
+
+    private static void showQueue(){
+        System.out.print("就绪队列进程id:");
+        for (PCB each:readyQueue){
+            System.out.print(each.getProcessId()+" ");
+        }
+        System.out.println();
+
+        System.out.print("阻塞队列进程id:");
+        for (PCB each:blockedQueue){
+            System.out.print(each.getProcessId()+" ");
+        }
+        System.out.println();
     }
 
     public static void main(String[] args) {

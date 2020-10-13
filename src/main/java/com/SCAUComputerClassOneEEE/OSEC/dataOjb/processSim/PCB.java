@@ -3,6 +3,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class PCB {
-
+    private static int nextProcessID = 0;
     private int processId;//进程id
     private ProcessState processState;//进程状态
     private int pointerToMemory;//内存指针 0 ~ 512
@@ -24,6 +25,13 @@ public class PCB {
 
     private int AX;//运行中x的值
     private int PC;//程序计数器
+
+    public PCB(){
+        this.setAX(0);
+        this.setPC(0);
+        this.setPointerToMemory(-1);//一开始不可用，创建时需要赋值
+        this.setProcessId(PCB.nextProcessID++);//分配唯一的进程id,编号从零开始一直递增
+    }
 
     public enum ProcessState{
 
