@@ -76,17 +76,16 @@ public class CPU implements Runnable{
         create(executeFile);//创建进程
         create(executeFile);
         create(executeFile);
-        showQueue();
         curPCB = readyQueue.get(0);
         readyQueue.remove(curPCB);
-        showQueue();
         //以下为cpu正式循环运行
         while (true){
 
+            //如果上一条为闲逛进程且当前就绪队列有进程
             if (curPCB==null&&readyQueue.size()>0){
                 processScheduling();
             }
-            System.out.println(psw);
+            System.out.println("psw=" + psw);
             //中断处理区
             interruptHandling();
             //程序运行区，一次运行一条指令
@@ -136,13 +135,12 @@ public class CPU implements Runnable{
      * 进程调度
      */
     private PCB processScheduling(){
-        showQueue();
         PCB newProcess = null;
         if (readyQueue.size()>0){
             newProcess = readyQueue.get(0);
             //恢复现场
             AX = newProcess.getAX();
-            System.out.println("删除--------------"+readyQueue.remove(newProcess));
+            readyQueue.remove(newProcess);
         }
         return newProcess;
     }
@@ -154,6 +152,7 @@ public class CPU implements Runnable{
         //如果当前无进程，闲逛，啥也不做
         if (curPCB==null){
             IR = "当前无进程";
+            System.out.println("我在闲逛");
             return 0;
         }
 
@@ -175,16 +174,15 @@ public class CPU implements Runnable{
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
             System.out.println("申请设备"+equip+":"+time+"秒");
-            psw = psw | CPU.IOI;
+            return psw | CPU.IOI;
         }else if(IR.contains("=")){
-            int value = Integer.parseInt(IR.substring(2));
-            AX = value;
+            AX = Integer.parseInt(IR.substring(2));
             System.out.println("X赋值为"+AX);
         }
         else{
             destroy(curPCB);
-            psw = psw | CPU.EOP;
             System.out.println("程序结束");
+            return psw | CPU.EOP;
         }
 
         return 0;

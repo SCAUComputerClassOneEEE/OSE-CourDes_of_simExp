@@ -39,7 +39,7 @@ public class Clock implements Runnable{
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public synchronized int timeRotation() throws InterruptedException, ExecutionException {
+    public synchronized int timeRotation() throws InterruptedException{
 
         long sTime = System.currentTimeMillis();
         System.out.println("========timeRotation=======");
