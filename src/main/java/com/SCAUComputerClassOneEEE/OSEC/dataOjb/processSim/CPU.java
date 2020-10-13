@@ -2,7 +2,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment1;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
@@ -175,7 +175,7 @@ public class CPU implements Runnable{
         }else if(IR.contains("!")){
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
-            Equipment1.getEquipment().distributeEQ(equip,curPCB,time);
+            Equipment.getEquipment().distributeEQ(equip,curPCB,time);
             System.out.println("申请设备"+equip+":"+time+"秒");
             psw = psw | CPU.IOI;
         }else if(IR.contains("=")){

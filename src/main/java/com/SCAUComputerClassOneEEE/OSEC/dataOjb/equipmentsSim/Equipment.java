@@ -5,8 +5,8 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 
 import java.util.ArrayList;
 
-public class Equipment1 {
-    private static Equipment1 equipment = new Equipment1();
+public class Equipment {
+    private static Equipment equipment = new Equipment();
     private static ArrayList<EAT> runningLists = new ArrayList<>();
     private static ArrayList<EAT> waitLists = new ArrayList<>();
 
@@ -16,7 +16,7 @@ public class Equipment1 {
         }
     }
 
-    public static Equipment1 getEquipment(){
+    public static Equipment getEquipment(){
         return equipment;
     }
 
