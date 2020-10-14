@@ -19,17 +19,21 @@ import java.util.List;
 public class Memory {
 
     private volatile static Memory memory;
+
+    public static final int PCB_SIZE = 10;
     public static final int USER_MEMORY_AREA_SIZE = 512;
     public static final int ERROR_RETURN_POINTER = -1;
-
+    @Getter
+    private final List<PCB> PCB_LIST;
     private final MAT mat;
     @Getter
-    private final char[] userMemoryArea;
+    private char[] userMemoryArea;
 
     private Memory(){
         userMemoryArea = new char[USER_MEMORY_AREA_SIZE];
         Arrays.fill(userMemoryArea,'#');
         mat = new MAT();
+        PCB_LIST = new ArrayList<>(PCB_SIZE);
     }
 
     public static Memory getMemory(){
@@ -54,9 +58,7 @@ public class Memory {
             //System.out.println("## compress auto");
             compress();
             pointer = mat.malloc_MAT(exeChars.length);
-        }
-        if (pointer == ERROR_RETURN_POINTER) {
-            throw new Exception("The memory is full");
+            if (pointer == ERROR_RETURN_POINTER) throw new Exception("The memory is full");
         }
         if (exeChars.length > 0){
             //System.out.println("## copying into " + pointer + " length: " + (exeChars.length));
@@ -102,12 +104,12 @@ public class Memory {
         System.out.println();
         System.out.println(mat.getMAT_FreeCont().size());
         for (MAT.FreeBlock f: mat.getMAT_FreeCont()) {
-            System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
+            //System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
         }
         System.out.println();
         System.out.println(mat.getMAT_OccupyCont().size());
         for (MAT.ProcessBlock p:mat.getMAT_OccupyCont()){
-            System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
+            //System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
         }
     }
 

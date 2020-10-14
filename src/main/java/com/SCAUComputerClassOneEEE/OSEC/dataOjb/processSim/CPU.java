@@ -2,10 +2,11 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipments;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
+import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Platform;
 import lombok.SneakyThrows;
 
@@ -63,6 +64,7 @@ public class CPU implements Runnable{
     @SneakyThrows
     @Override
     public void run() {
+        TaskThreadPools.execute(clock);
         cpu();
     }
     /**
@@ -102,7 +104,7 @@ public class CPU implements Runnable{
      */
     private void randomPosses(){
         System.out.println("\n----------随机产生进程-------------");
-        if ((int)(Math.random()*4)==2){
+        if ((int)(Math.random()*10)==5){
             AFile executeFile = exeFiles.get((int)(10*Math.random()));
             create(executeFile);//创建进程
             System.out.println("随机生成了新进程");
@@ -141,7 +143,7 @@ public class CPU implements Runnable{
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
             //请求分配设备
-            Equipments.getEquipments().distributeEQ(equip,curPCB,time);
+            Equipment.getEquipment().distributeEQ(equip,curPCB,time);
             System.out.println("申请设备"+equip+":"+time+"秒");
             curPCB = processScheduling();
             psw = psw ^ CPU.IOI;
@@ -204,16 +206,7 @@ public class CPU implements Runnable{
         }
         else {
             //从内存中取出指令字符
-            System.out.println(curPCB.toString());
-            char ir = 'a';
-            try{
-                ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
-            }catch (Exception e){
-                Memory.getMemory().MAT_display();
-                e.printStackTrace();
-                System.out.println(Thread.currentThread().getName());
-                Thread.currentThread().stop();
-            }
+            char ir = Memory.getMemory().getUserMemoryArea()[curPCB.getPointerToMemory()+curPCB.getPC()];
             //pc+1
             curPCB.setPC(curPCB.getPC()+1);
             //编译
@@ -241,7 +234,7 @@ public class CPU implements Runnable{
 
         }
         //设备时间-1
-        Equipments.decTime();
+        Equipment.decTime();
 
         return result;
     }
@@ -254,19 +247,16 @@ public class CPU implements Runnable{
         PCB newProcess = new PCB();//空白进程控制块
         //申请内存
         //System.out.println("可执行文件"+aFile.getAbsoluteLocation()+"的编码内容是:"+aFile.getDiskContent());
-        int pointer;
+        int pointer = -1;
         try {
             pointer = Memory.getMemory().malloc(aFile.getDiskContent().toCharArray());
-            System.out.println(pointer);
         }catch (Exception e){
-            /*
-            内存满了，界面显示
-             */
-            e.printStackTrace();//未分配到内存，进入空白pcb队列
+            System.out.println(e.getMessage());
+            //未分配到内存，进入空白pcb队列
             blankQueue.add(newProcess);
             return;
         }
-        System.out.println("进程分配到的内存首地址:"+pointer);
+        //System.out.println("进程分配到的内存首地址:"+pointer);
         //成功分配内存，开始填写PCB
         newProcess.setPointerToMemory(pointer);
         //添加进就绪队列并显示结果
@@ -322,7 +312,7 @@ public class CPU implements Runnable{
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
                 try {
-                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;!A2;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;");
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;!A2;X++;end;");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

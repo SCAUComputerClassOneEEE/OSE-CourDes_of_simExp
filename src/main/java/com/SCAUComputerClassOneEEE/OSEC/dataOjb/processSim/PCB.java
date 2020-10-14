@@ -62,16 +62,4 @@ public class PCB {
             return null;
         }
     }
-
-    @Override
-    public String toString() {
-        return "PCB{" +
-                "processId=" + processId +
-                ", processState=" + processState +
-                ", pointerToMemory=" + pointerToMemory +
-                ", timeWhenProcessStart=" + timeWhenProcessStart +
-                ", AX=" + AX +
-                ", PC=" + PC +
-                '}';
-    }
 }
