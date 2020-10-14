@@ -12,16 +12,13 @@ import java.util.concurrent.FutureTask;
  * @author hlf
  * @date 25/8/2020
  */
-@Data
-public class Clock implements Runnable{
+@Getter
+@Setter
+public class Clock {
 
     private static long cpuRanTime = 0;
-    private volatile static int timeSlice = 6;
+    private volatile int timeSlice = 6;
     private static final Clock clock = new Clock();
-
-    public void setTimeSlice(int timeSlice){
-        Clock.timeSlice = timeSlice;
-    }
 
     private Clock(){
 
@@ -29,11 +26,6 @@ public class Clock implements Runnable{
 
     public static Clock getClock(){
         return clock;
-    }
-
-    @Override
-    public void run() {
-
     }
 
     /**
@@ -51,7 +43,7 @@ public class Clock implements Runnable{
         //时间片减一
         System.out.println("剩余时间片：" + timeSlice);
         timeSlice --;
-
+        cpuRanTime ++;
         //返回中断字
         int psw = CPU.CPUCycles();
         long end1 = System.currentTimeMillis();

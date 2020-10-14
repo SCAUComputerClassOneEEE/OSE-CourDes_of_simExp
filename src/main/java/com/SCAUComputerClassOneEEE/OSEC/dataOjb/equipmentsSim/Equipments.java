@@ -5,8 +5,8 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 
 import java.util.ArrayList;
 
-public class Equipment {
-    private static Equipment equipment = new Equipment();
+public class Equipments {
+    private static Equipments equipments = new Equipments();
     private static ArrayList<EAT> runningLists = new ArrayList<>();
     private static ArrayList<EAT> waitLists = new ArrayList<>();
 
@@ -18,8 +18,8 @@ public class Equipment {
         System.out.println("-----------设备分配表------------");
     }
 
-    public static Equipment getEquipment(){
-        return equipment;
+    public static Equipments getEquipments(){
+        return equipments;
     }
 
     public void distributeEQ(char eqID,PCB pcb, int time){
@@ -53,7 +53,7 @@ public class Equipment {
         runningLists.addAll(buffer);
         runningLists.removeAll(deleted);
         if (runningLists.size()>0)
-            equipment.showEAT();
+            equipments.showEAT();
     }
     private static int getNumOf(char eqID){
         int count = 0;

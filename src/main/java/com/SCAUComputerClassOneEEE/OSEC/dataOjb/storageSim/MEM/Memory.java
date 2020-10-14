@@ -19,21 +19,17 @@ import java.util.List;
 public class Memory {
 
     private volatile static Memory memory;
-
-    public static final int PCB_SIZE = 10;
     public static final int USER_MEMORY_AREA_SIZE = 512;
     public static final int ERROR_RETURN_POINTER = -1;
-    @Getter
-    private final List<PCB> PCB_LIST;
+
     private final MAT mat;
     @Getter
-    private char[] userMemoryArea;
+    private final char[] userMemoryArea;
 
     private Memory(){
         userMemoryArea = new char[USER_MEMORY_AREA_SIZE];
         Arrays.fill(userMemoryArea,'#');
         mat = new MAT();
-        PCB_LIST = new ArrayList<>(PCB_SIZE);
     }
 
     public static Memory getMemory(){
