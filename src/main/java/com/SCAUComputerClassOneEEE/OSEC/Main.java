@@ -10,7 +10,9 @@ import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -31,22 +33,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        /*BorderPane root = new BorderPane();
-
-        Terminal terminal = new Terminal(fileTree);
-
-        root.setRight(new FilePane());
-        root.setLeft(fileTree.getVBox());
-        root.setCenter(terminal.textArea);
-        root.setBottom(OpenFileManager.openFileTableView);
-
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-
-        CPU cpu = new CPU();
-        cpu.init();*/
-        MainUI.mainUI.show();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("MyScene.fxml"));
+            Scene scene = new Scene(root);
+            //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            stage.setScene(scene);
+            stage.show();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        //MainUI.mainUI.show();
         //TaskThreadPools.execute(cpu);
     }
 
