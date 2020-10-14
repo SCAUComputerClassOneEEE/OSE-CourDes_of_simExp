@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
@@ -96,6 +97,8 @@ public class CPU implements Runnable{
             System.out.println("\n----------指令执行-------------");
             psw = clock.timeRotation();
             System.out.println("----------指令执行-------------");
+
+
         }
     }
 

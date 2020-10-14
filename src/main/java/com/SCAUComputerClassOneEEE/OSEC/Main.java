@@ -43,7 +43,7 @@ public class Main extends Application {
             e.printStackTrace();
         }
         //MainUI.mainUI.show();
-        //TaskThreadPools.execute(cpu);
+        TaskThreadPools.execute(cpu);
     }
 
 

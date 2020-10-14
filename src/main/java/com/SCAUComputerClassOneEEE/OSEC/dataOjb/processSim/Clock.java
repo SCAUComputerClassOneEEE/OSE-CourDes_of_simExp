@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
+import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,10 @@ public class Clock implements Runnable{
 
     public void setTimeSlice(int timeSlice){
         Clock.timeSlice = timeSlice;
+    }
+
+    public long getCpuRanTime(){
+        return cpuRanTime;
     }
 
     private Clock(){
@@ -50,7 +55,6 @@ public class Clock implements Runnable{
         //System.out.println("一条代码开始执行");
         //时间片减一
         System.out.println("剩余时间片：" + timeSlice);
-        timeSlice --;
 
         //返回中断字
         int psw = CPU.CPUCycles();
@@ -59,11 +63,14 @@ public class Clock implements Runnable{
         Thread.sleep(999 - end1 + sTime);
         long end2 = System.currentTimeMillis();
 
+        MySceneController.cpuTimeSim.set(cpuRanTime++);
+        MySceneController.timeSliceSim.setValue(timeSlice--);
         if (timeSlice == 0){
-            System.out.println("##时间片结束");
+            //System.out.println("##时间片结束");
             timeSlice = 6;
             return CPU.TSE | psw;
         }
+
         //System.out.println("一条代码结束执行，用时： " + (end2-sTime));
         return psw;
     }
