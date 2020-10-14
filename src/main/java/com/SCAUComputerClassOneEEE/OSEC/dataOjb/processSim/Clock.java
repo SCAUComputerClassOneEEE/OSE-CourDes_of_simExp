@@ -46,10 +46,10 @@ public class Clock implements Runnable{
     public synchronized int timeRotation() throws InterruptedException{
 
         long sTime = System.currentTimeMillis();
-        System.out.println("========timeRotation=======");
-        System.out.println("一条代码开始执行");
+        //System.out.println("========timeRotation=======");
+        //System.out.println("一条代码开始执行");
         //时间片减一
-        System.out.println("剩余时间：" + timeSlice);
+        System.out.println("剩余时间片：" + timeSlice);
         timeSlice --;
 
         //返回中断字
@@ -64,7 +64,7 @@ public class Clock implements Runnable{
             timeSlice = 6;
             return CPU.TSE | psw;
         }
-        System.out.println("一条代码结束执行，用时： " + (end2-sTime));
+        //System.out.println("一条代码结束执行，用时： " + (end2-sTime));
         return psw;
     }
 }

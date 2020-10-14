@@ -11,9 +11,11 @@ public class Equipment {
     private static ArrayList<EAT> waitLists = new ArrayList<>();
 
     public void showEAT(){
+        System.out.println("\n-----------设备分配表------------");
         for (EAT eat:runningLists){
             System.out.println(eat.toString());
         }
+        System.out.println("-----------设备分配表------------");
     }
 
     public static Equipment getEquipment(){
@@ -50,7 +52,8 @@ public class Equipment {
         }
         runningLists.addAll(buffer);
         runningLists.removeAll(deleted);
-
+        if (runningLists.size()>0)
+            equipment.showEAT();
     }
     private static int getNumOf(char eqID){
         int count = 0;

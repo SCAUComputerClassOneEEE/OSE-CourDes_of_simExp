@@ -55,13 +55,13 @@ public class Memory {
     public synchronized int malloc(char[] exeChars) throws Exception {
         int pointer = mat.malloc_MAT(exeChars.length);
         if (pointer == ERROR_RETURN_POINTER) {
-            System.out.println("## compress auto");
+            //System.out.println("## compress auto");
             compress();
             pointer = mat.malloc_MAT(exeChars.length);
             if (pointer == ERROR_RETURN_POINTER) throw new Exception("The memory is full");
         }
         if (exeChars.length > 0){
-            System.out.println("## copying into " + pointer + " length: " + (exeChars.length));
+            //System.out.println("## copying into " + pointer + " length: " + (exeChars.length));
             System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
         }
         return pointer;
@@ -82,7 +82,7 @@ public class Memory {
      * 维护
      */
     public synchronized void compress(){
-        System.out.println("-------------compression-----------");
+        //System.out.println("-------------compression-----------");
         Iterator<MAT.ProcessBlock> processBlockIterator = mat.MAT_OccupyCont.iterator();
         int iProcessLength = 0;
         while(processBlockIterator.hasNext()){
@@ -104,12 +104,12 @@ public class Memory {
         System.out.println();
         System.out.println(mat.getMAT_FreeCont().size());
         for (MAT.FreeBlock f: mat.getMAT_FreeCont()) {
-            System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
+            //System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
         }
         System.out.println();
         System.out.println(mat.getMAT_OccupyCont().size());
         for (MAT.ProcessBlock p:mat.getMAT_OccupyCont()){
-            System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
+            //System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
         }
     }
 
@@ -190,27 +190,27 @@ public class Memory {
         }
 
         void recovery_MAT(int pointer,int length) throws Exception {
-            System.out.println("-------------recovery---------");
+            //System.out.println("-------------recovery---------");
             if (MAT_OccupyCont.size() == 0) throw new Exception("NO PROCESS");
             if (MAT_OccupyCont.size() == 1){
-                System.out.println("    MAT_OccupyCont.size() == 1 is true");
+                //System.out.println("    MAT_OccupyCont.size() == 1 is true");
                 MAT_FreeCont.clear();
                 MAT_OccupyCont.clear();
                 MAT_FreeCont.add(new FreeBlock(0,USER_MEMORY_AREA_SIZE));
                 return;
             }
-            System.out.println("    MAT_OccupyCont.size() == 1 is false");
+            //System.out.println("    MAT_OccupyCont.size() == 1 is false");
             MAT_OccupyCont.removeIf(processBlock -> processBlock.getPointer() == pointer);
-            System.out.println("    remove " + pointer + " successfully");
+            //System.out.println("    remove " + pointer + " successfully");
             //加入新空闲区
             if (pointer > MAT_FreeCont.get(MAT_FreeCont.size() - 1).getPointer()){
                 MAT_FreeCont.add(new FreeBlock(pointer,length));
-                System.out.println("    add to end of freeList");
+                //System.out.println("    add to end of freeList");
             }
             else for (int i = 0; i < MAT_FreeCont.size(); i++)
                 if (MAT_FreeCont.get(i).getPointer() > pointer){
                     MAT_FreeCont.add(i,new FreeBlock(pointer,length));
-                    System.out.println("    add to " + i + " of freeList");
+                    //System.out.println("    add to " + i + " of freeList");
                     break;
                 }
 
@@ -220,15 +220,15 @@ public class Memory {
                 FreeBlock nextFreeBlock = MAT_FreeCont.get(i + 1);
                 //判断是否相邻
                 if (currFreeBlock.endOfFreePointer() == nextFreeBlock.getPointer()){
-                    System.out.println("    currFreeBlock.endOfFreePointer() == nextFreeBlock.getPointer() is true");
+                    //System.out.println("    currFreeBlock.endOfFreePointer() == nextFreeBlock.getPointer() is true");
                     //把下一个相邻的空闲区合到当前空闲区
                     currFreeBlock.setLength(currFreeBlock.getLength() + nextFreeBlock.getLength());
-                    System.out.println("    Merger of " + i + " and " + (i + 1));
+                    //System.out.println("    Merger of " + i + " and " + (i + 1));
                     MAT_FreeCont.remove(i + 1);
                     i--;//防止三个及以上的相邻空闲区
                 }
             }
-            System.out.println("-------------end--------------");
+            //System.out.println("-------------end--------------");
         }
 
         /**

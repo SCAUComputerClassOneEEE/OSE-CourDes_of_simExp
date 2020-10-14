@@ -71,28 +71,31 @@ public class CPU implements Runnable{
      * cpu
      */
     public void cpu() throws Exception {
-        initExeFile();//初始化10个可执行文件先
+        initExeFile();//初始化10个可执行文件
 
+        curPCB = processScheduling();
         //以下为cpu正式循环运行
         while (true){
             //中断处理区
             interruptHandling();
 
-            showReadyAndBlockQueue();
             randomPosses();
+
+            showReadyAndBlockQueue();
 
             if (curPCB==null){
                 if (readyQueue.size()>0){
                     curPCB = processScheduling();
-                    System.out.println("进程:"+curPCB.getProcessId()+"正在运行");
                 }
-            }else {
+            }
+            if (curPCB!=null){
                 System.out.println("进程:"+curPCB.getProcessId()+"正在运行");
             }
 
             //程序运行区，一次运行一条指令
+            System.out.println("\n----------指令执行-------------");
             psw = clock.timeRotation();
-
+            System.out.println("----------指令执行-------------");
         }
     }
 
@@ -100,33 +103,43 @@ public class CPU implements Runnable{
      * 随机产生进程申请
      */
     private void randomPosses(){
+        System.out.println("\n----------随机产生进程-------------");
         if ((int)(Math.random()*10)==5){
             AFile executeFile = exeFiles.get((int)(10*Math.random()));
             create(executeFile);//创建进程
             System.out.println("随机生成了新进程");
+        }else {
+            System.out.println("没有产生新进程");
         }
+        System.out.println("----------随机产生进程-------------");
     }
 
     /**
      * 中断处理
      */
     private void interruptHandling(){
+        System.out.println("\n----------处理中断-------------");
+        System.out.println("正在检测中断···");
+        System.out.println("程序状态字为:"+psw);
         //先处理程序结束中断
         if ((psw&CPU.EOP)!=0){//程序结束
-            System.out.println("程序结束中断");
+            System.out.println("正在处理程序结束中断···");
             //输出X的最终结果
             Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("X="+AX));
             //调度
             curPCB = processScheduling();
             //去除程序结束中断与时间片结束中断
-            psw = psw ^ CPU.EOP ^ CPU.TSE;
+            psw = psw ^ CPU.EOP;
+            if ((psw & CPU.TSE) != 0){
+                psw = psw ^ CPU.TSE;
+            }
         }
 
         //轮到设备中断，防止时间片到期还未发出设备申请
         if((psw&CPU.IOI)!=0){
             block(curPCB);
             //IO中断(请求设备)
-            System.out.println("设备中断");
+            System.out.println("正在处理设备中断···");
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
             //请求分配设备
@@ -138,7 +151,9 @@ public class CPU implements Runnable{
 
         //时间片结束中断
         if ((psw&CPU.TSE)!=0){
-            System.out.println("时间片结束中断");
+
+            System.out.println("正在处理时间片结束中断···");
+
             if (curPCB != null){
                 //保存X的值
                 curPCB.setAX(AX);
@@ -150,13 +165,16 @@ public class CPU implements Runnable{
 
             psw = psw ^ CPU.TSE;
         }
-
+        System.out.println("----------处理中断-------------");
     }
 
     /**
      * 进程调度
      */
     private PCB processScheduling(){
+
+        System.out.println("\n----------调度-------------");
+        System.out.println("正在执行调度算法···");
         clock.setTimeSlice(6);
         PCB newProcess = null;
         if (readyQueue.size()>0){
@@ -165,6 +183,13 @@ public class CPU implements Runnable{
             AX = newProcess.getAX();
             readyQueue.remove(newProcess);
         }
+
+        if (newProcess==null){
+            System.out.println("调度闲逛进程开始运行");
+        }else {
+            System.out.println("调度"+newProcess.getProcessId()+"号进程开始运行");
+        }
+        System.out.println("-----------调度------------");
         return newProcess;
     }
 
@@ -172,7 +197,7 @@ public class CPU implements Runnable{
      * 一个cpu周期
      */
     public static int CPUCycles(){
-        Equipment.decTime();
+
         int result = 0;
         //如果当前无进程，闲逛，啥也不做
         if (curPCB==null){
@@ -201,12 +226,16 @@ public class CPU implements Runnable{
                 System.out.println("X赋值为"+AX);
             }
             else{
+                //进程运行结束，销毁进程
                 destroy(curPCB);
-                System.out.println("程序结束");
+                System.out.println("进程:"+curPCB.getProcessId()+"的执行结果为:X="+AX);
                 result = psw | CPU.EOP;
             }
 
         }
+        //设备时间-1
+        Equipment.decTime();
+
         return result;
     }
 
@@ -282,7 +311,7 @@ public class CPU implements Runnable{
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
                 try {
-                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;X--;X=6;!A2;!B6;end;");
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;!A2;X++;end;");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -290,6 +319,7 @@ public class CPU implements Runnable{
     }
 
     private static void showReadyAndBlockQueue(){
+        System.out.println("\n-------------队列展示--------------");
         System.out.print("就绪队列进程id:");
         for (PCB each:readyQueue){
             System.out.print(each.getProcessId()+" ");
@@ -301,7 +331,7 @@ public class CPU implements Runnable{
             System.out.print(each.getProcessId()+" ");
         }
         System.out.println();
-    }
+        System.out.println("-------------队列展示--------------");    }
 
 }
 
