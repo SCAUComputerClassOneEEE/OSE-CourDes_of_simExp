@@ -22,9 +22,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    public static Disk disk = Disk.getDisk();
+    public OS os = new OS();
     public static FileTree fileTree = FileTree.getFileTree();
-    public static CPU cpu = CPU.getCpu();
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -47,7 +46,7 @@ public class Main extends Application {
         CPU cpu = new CPU();
         cpu.init();*/
         //MainUI.mainUI.show();
-        TaskThreadPools.execute(cpu);
+        TaskThreadPools.execute(os.cpu);
     }
 
 

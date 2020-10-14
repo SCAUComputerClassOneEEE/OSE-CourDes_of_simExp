@@ -2,11 +2,10 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipments;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
-import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Platform;
 import lombok.SneakyThrows;
 
@@ -64,7 +63,6 @@ public class CPU implements Runnable{
     @SneakyThrows
     @Override
     public void run() {
-        TaskThreadPools.execute(clock);
         cpu();
     }
     /**
@@ -143,7 +141,7 @@ public class CPU implements Runnable{
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
             //请求分配设备
-            Equipment.getEquipment().distributeEQ(equip,curPCB,time);
+            Equipments.getEquipments().distributeEQ(equip,curPCB,time);
             System.out.println("申请设备"+equip+":"+time+"秒");
             curPCB = processScheduling();
             psw = psw ^ CPU.IOI;
@@ -234,7 +232,7 @@ public class CPU implements Runnable{
 
         }
         //设备时间-1
-        Equipment.decTime();
+        Equipments.decTime();
 
         return result;
     }
