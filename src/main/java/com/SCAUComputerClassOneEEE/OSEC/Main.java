@@ -46,8 +46,8 @@ public class Main extends Application {
 
         CPU cpu = new CPU();
         cpu.init();*/
-        //MainUI.mainUI.show();
-        TaskThreadPools.execute(cpu);
+        MainUI.mainUI.show();
+        //TaskThreadPools.execute(cpu);
     }
 
 
