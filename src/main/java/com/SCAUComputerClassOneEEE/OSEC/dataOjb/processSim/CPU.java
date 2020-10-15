@@ -9,6 +9,9 @@ import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
@@ -45,7 +48,7 @@ public class CPU implements Runnable{
     private static int AX =0;
 
     public static final ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列
-    public static final ArrayList<PCB> readyQueue = new ArrayList<>();//就绪队列
+    public static final ObservableList<PCB> readyQueue = FXCollections.observableArrayList();//就绪队列
     public static final ArrayList<PCB> blockedQueue = new ArrayList<>();//阻塞队列
 
     //预先设置的10个可运行文件，形式仅仅是文件
@@ -107,7 +110,7 @@ public class CPU implements Runnable{
      */
     private void randomPosses(){
         System.out.println("\n----------随机产生进程-------------");
-        if ((int)(Math.random()*10)==5){
+        if ((int)(Math.random()*5)==4){
             AFile executeFile = exeFiles.get((int)(10*Math.random()));
             create(executeFile);//创建进程
             System.out.println("随机生成了新进程");
@@ -315,7 +318,7 @@ public class CPU implements Runnable{
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
                 try {
-                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;!A2;X++;end;");
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;!A2;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

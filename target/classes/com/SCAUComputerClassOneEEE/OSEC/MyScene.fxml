@@ -83,9 +83,9 @@
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <TableView prefHeight="284.0" prefWidth="266.0">
+                                                <TableView fx:id="readyTable" prefHeight="284.0" prefWidth="266.0">
                                                    <columns>
-                                                      <TableColumn prefWidth="145.0" text="PID" />
+                                                      <TableColumn fx:id="readyID" prefWidth="145.0" text="PID" />
                                                       <TableColumn prefWidth="145.0" text="总时长" />
                                                       <TableColumn prefWidth="145.0" text="剩余时间" />
                                                       <TableColumn prefWidth="145.0" text="上次运行剩余时间" />

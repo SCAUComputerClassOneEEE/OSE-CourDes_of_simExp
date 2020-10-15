@@ -4,13 +4,14 @@ package com.SCAUComputerClassOneEEE.OSEC.controller;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
@@ -37,6 +38,12 @@ public class MySceneController implements Initializable {
 
     @FXML
     private Tab fileSystem;
+
+    @FXML
+    private TableView<PCB> readyTable;
+
+    @FXML
+    private TableColumn<PCB,Integer> readyID;
 
     @FXML
     public void test(){
@@ -73,5 +80,10 @@ public class MySceneController implements Initializable {
         timeSliceSim.addListener((observable, oldValue, newValue)->{
             setTimeSlice(newValue.intValue());
         });
+
+        readyTable.setItems(CPU.readyQueue);
+
+        readyID.setCellValueFactory(new PropertyValueFactory<>("processId"));
+
     }
 }
