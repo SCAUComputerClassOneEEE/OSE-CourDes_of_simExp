@@ -114,11 +114,11 @@ public class CPU implements Runnable{
      */
     private void randomPosses(){
         System.out.println("\n----------随机产生进程-------------");
-        if (readyQueue.size()+blockedQueue.size()>10){
+        if (readyQueue.size()+blockedQueue.size()+(curPCB==null?0:1)>=10){
             System.out.println("系统最多存在10个进程");
             return;
         }
-        if ((int)(Math.random()*5)==4){
+        if ((int)(Math.random())==0){
             AFile executeFile = exeFiles.get((int)(10*Math.random()));
             create(executeFile);//创建进程
             System.out.println("随机生成了新进程");
@@ -252,7 +252,7 @@ public class CPU implements Runnable{
                 //进程运行结束，销毁进程
                 destroy(curPCB);
                 System.out.println("进程"+curPCB.getProcessId()+"执行结果为:X="+AX);
-                MySceneController.finalResultSim.setValue("进程:"+curPCB.getProcessId()+"的执行结果为:X="+AX);
+                MySceneController.finalResultSim.setValue("进程"+curPCB.getProcessId()+"执行结果为X="+AX);
                 result = psw | CPU.EOP;
             }
 
@@ -292,7 +292,7 @@ public class CPU implements Runnable{
             Memory.getMemory().recovery(destroyProcess.getPointerToMemory());
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         //回收PCB,运行时会把pcb从就绪队列中拿出来
         readyQueue.remove(destroyProcess);
