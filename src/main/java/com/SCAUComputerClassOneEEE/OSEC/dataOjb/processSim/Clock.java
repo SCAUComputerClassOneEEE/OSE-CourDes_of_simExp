@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,7 +56,7 @@ public class Clock implements Runnable{
         //System.out.println("一条代码开始执行");
         //时间片减一
         System.out.println("剩余时间片：" + timeSlice);
-
+        Equipment.decTime();
         //返回中断字
         int psw = CPU.CPUCycles();
         long end1 = System.currentTimeMillis();

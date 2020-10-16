@@ -2,13 +2,17 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
+
 public class Equipment {
     private static Equipment equipment = new Equipment();
-    private static ArrayList<EAT> runningLists = new ArrayList<>();
-    private static ArrayList<EAT> waitLists = new ArrayList<>();
+    public static ObservableList<EAT> runningLists = FXCollections.observableArrayList();
+    private static ObservableList<EAT> waitLists = FXCollections.observableArrayList();
 
     public void showEAT(){
         System.out.println("\n-----------设备分配表------------");
@@ -30,15 +34,16 @@ public class Equipment {
         else {
             waitLists.add(eat);
         }
-        showEAT();
+
     }
 
     public static void decTime(){
-        ArrayList<EAT> deleted = new ArrayList<>();
-        ArrayList<EAT> buffer = new ArrayList<>();
+
+        ObservableList<EAT> deleted = FXCollections.observableArrayList();
+        ObservableList<EAT> needAdd = FXCollections.observableArrayList();
         for(EAT each: runningLists){
-            each.time = each.time - 1;
-            if (each.time==0){
+            each.time.setValue(each.time.getValue() - 1);
+            if (each.time.get()<=0){
                 //这两句可能有问题
                 CPU.awake(each.pcb);
 
@@ -46,14 +51,18 @@ public class Equipment {
 
                 EAT eat = canRun(each.eqID);//检查waitList里面有没有能够运行的，如果有么就返回EAT对象
                 if (eat != null){
-                    buffer.add(eat);
+                    needAdd.add(eat);
                 }
             }
         }
-        runningLists.addAll(buffer);
+        runningLists.addAll(needAdd);
+        waitLists.removeAll(needAdd);
         runningLists.removeAll(deleted);
+        System.out.println(runningLists.size());
+
         if (runningLists.size()>0)
             equipment.showEAT();
+
     }
     private static int getNumOf(char eqID){
         int count = 0;
@@ -73,20 +82,4 @@ public class Equipment {
         return null;
     }
 
-    class EAT{
-        char eqID;
-        PCB pcb;
-        int time;
-
-        public EAT(char eqID, PCB pcb, int time) {
-            this.eqID = eqID;
-            this.pcb = pcb;
-            this.time = time;
-        }
-
-        @Override
-        public String toString(){
-            return "设备:"+this.eqID+" 进程ID:"+this.pcb.getProcessId()+" 剩余时间:"+this.time;
-        }
-    }
 }

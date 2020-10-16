@@ -20,10 +20,11 @@
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="108.0">
                                  <children>
                                     <Button fx:id="button" layoutX="138.0" layoutY="81.0" mnemonicParsing="false" onAction="#test" prefHeight="37.0" prefWidth="82.0" text="开始/暂停" />
-                                    <TableView layoutX="46.0" layoutY="464.0" prefHeight="284.0" prefWidth="266.0">
+                                    <TableView fx:id="equipmentTable" layoutX="46.0" layoutY="437.0" prefHeight="286.0" prefWidth="282.0">
                                        <columns>
-                                          <TableColumn prefWidth="112.0" text="设备" />
-                                          <TableColumn prefWidth="153.0" text="占用进程" />
+                                          <TableColumn fx:id="equipmentID" prefWidth="85.0" text="设备" />
+                                          <TableColumn fx:id="useEquipmentPCBID" prefWidth="106.0" text="进程ID" />
+                                          <TableColumn fx:id="time" prefWidth="89.0" text="剩余时间" />
                                        </columns>
                                     </TableView>
                                     <StackPane layoutX="46.0" layoutY="245.0" prefHeight="150.0" prefWidth="266.0">
@@ -105,9 +106,9 @@
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <TableView prefHeight="284.0" prefWidth="266.0">
+                                                <TableView fx:id="blockTable" prefHeight="284.0" prefWidth="266.0">
                                                    <columns>
-                                                      <TableColumn prefWidth="145.0" text="PID" />
+                                                      <TableColumn fx:id="blockID" prefWidth="145.0" text="PID" />
                                                       <TableColumn prefWidth="145.0" text="总时长" />
                                                       <TableColumn prefWidth="145.0" text="剩余时间" />
                                                       <TableColumn prefWidth="145.0" text="上次运行剩余时间" />
@@ -140,7 +141,7 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab fx:id="file" text="文件系统" />
+          <Tab fx:id="fileSystem" text="文件系统" />
         </tabs>
       </TabPane>
    </children>

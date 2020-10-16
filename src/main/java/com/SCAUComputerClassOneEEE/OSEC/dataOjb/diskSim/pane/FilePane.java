@@ -1,6 +1,8 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -96,13 +98,14 @@ public class FilePane extends BorderPane {
 
     public static void update(TreeItem<AFile> newValue){
         try {
-            flowPane.getChildren().remove(0, flowPane.getChildren().size());
+            Platform.runLater(()-> flowPane.getChildren().remove(0, flowPane.getChildren().size()));
         } catch (Exception e) {
             e.printStackTrace();
         }
         if(newValue.getValue().isDirectory()){
             for(TreeItem<AFile> ti : newValue.getChildren()){
-                flowPane.getChildren().add(initPicture(ti));
+                Platform.runLater(()-> flowPane.getChildren().add(initPicture(ti)));
+                //flowPane.getChildren().add(initPicture(ti));
             }
         }
     }

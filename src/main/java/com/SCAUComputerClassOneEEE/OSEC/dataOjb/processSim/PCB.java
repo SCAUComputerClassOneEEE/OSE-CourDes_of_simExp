@@ -17,8 +17,11 @@ import java.util.Date;
 @Setter
 public class PCB {
     private static int nextProcessID = 0;
+
+
     private int processId;//进程id
-    private ProcessState processState;//进程状态
+    private String processState;
+    //private ProcessState processState;//进程状态
     private int pointerToMemory;//内存指针 0 ~ 512
     private Date timeWhenProcessStart;//启动时间
     //资源（占用设备、内存大小）
