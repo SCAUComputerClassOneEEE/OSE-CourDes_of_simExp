@@ -58,7 +58,6 @@ public class Equipment {
         runningLists.addAll(needAdd);
         waitLists.removeAll(needAdd);
         runningLists.removeAll(deleted);
-        System.out.println(runningLists.size());
 
         if (runningLists.size()>0)
             equipment.showEAT();

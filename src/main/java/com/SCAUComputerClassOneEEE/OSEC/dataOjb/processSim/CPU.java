@@ -95,6 +95,10 @@ public class CPU implements Runnable{
             }
             if (curPCB!=null){
                 System.out.println("进程:"+curPCB.getProcessId()+"正在运行");
+                MySceneController.runningPCBIDSim.setValue(String.valueOf(curPCB.getProcessId()));
+            }
+            else {
+                MySceneController.runningPCBIDSim.setValue("当前进程为闲逛进程");
             }
 
             //程序运行区，一次运行一条指令
@@ -134,6 +138,8 @@ public class CPU implements Runnable{
         //先处理程序结束中断
         if ((psw&CPU.EOP)!=0){//程序结束
             System.out.println("正在处理程序结束中断···");
+            MySceneController.intermediateResultSim.setValue("正在处理程序结束中断···");
+
             //输出X的最终结果
             Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("X="+AX));
             //调度
@@ -150,6 +156,7 @@ public class CPU implements Runnable{
             block(curPCB);
             //IO中断(请求设备)
             System.out.println("正在处理设备中断···");
+            MySceneController.intermediateResultSim.setValue("正在处理设备中断···");
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
             //请求分配设备
@@ -163,6 +170,7 @@ public class CPU implements Runnable{
         if ((psw&CPU.TSE)!=0){
 
             System.out.println("正在处理时间片结束中断···");
+            MySceneController.intermediateResultSim.setValue("正在处理时间片结束中断···");
 
             if (curPCB != null){
                 //保存X的值
@@ -211,6 +219,7 @@ public class CPU implements Runnable{
         int result = 0;
         //如果当前无进程，闲逛，啥也不做
         if (curPCB==null){
+            MySceneController.runningIRSim.setValue("闲逛进程啥都不做");
             IR = "当前无进程";
             System.out.println("我在闲逛");
         }
@@ -221,24 +230,29 @@ public class CPU implements Runnable{
             curPCB.setPC(curPCB.getPC()+1);
             //编译
             IR = Compile.decompile(ir);
+            MySceneController.runningIRSim.setValue(IR);
             System.out.println("正在执行指令:"+IR);
             //执行
             if(IR.contains("++")){
                 AX++;
                 System.out.println("X的值为:"+AX);
+                MySceneController.intermediateResultSim.setValue("X+1的值为:"+AX);
             }else if(IR.contains("--")){
                 AX--;
                 System.out.println("X的值为:"+AX);
+                MySceneController.intermediateResultSim.setValue("X-1的值为:"+AX);
             }else if(IR.contains("!")){
                 result = psw | CPU.IOI;
             }else if(IR.contains("=")){
                 AX = Integer.parseInt(IR.substring(2));
                 System.out.println("X赋值为"+AX);
+                MySceneController.intermediateResultSim.setValue("X赋值为"+AX);
             }
             else{
                 //进程运行结束，销毁进程
                 destroy(curPCB);
-                System.out.println("进程:"+curPCB.getProcessId()+"的执行结果为:X="+AX);
+                System.out.println("进程"+curPCB.getProcessId()+"执行结果为:X="+AX);
+                MySceneController.finalResultSim.setValue("进程:"+curPCB.getProcessId()+"的执行结果为:X="+AX);
                 result = psw | CPU.EOP;
             }
 

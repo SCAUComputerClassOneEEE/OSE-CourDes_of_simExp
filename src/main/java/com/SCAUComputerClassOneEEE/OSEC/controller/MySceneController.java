@@ -30,15 +30,28 @@ public class MySceneController implements Initializable {
 
     public static SimpleObjectProperty<Long> cpuTimeSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<Integer> timeSliceSim = new SimpleObjectProperty<>();
+    public static SimpleObjectProperty<String> runningPCBIDSim = new SimpleObjectProperty<>();
+    public static SimpleObjectProperty<String> runningIRSim = new SimpleObjectProperty<>();
+    public static SimpleObjectProperty<String> intermediateResultSim = new SimpleObjectProperty<>();
+    public static SimpleObjectProperty<String> finalResultSim = new SimpleObjectProperty<>();
 
     @FXML
-    private TextField timeSlice;
+    private TextField cpuTime;//系统时间
+    @FXML
+    private TextField timeSlice;//剩余时间片
+    @FXML
+    private TextField runningPCBID;//正在运行的进程ID
+    @FXML
+    private TextField runningIR;//正在运行的指令
+    @FXML
+    private TextField intermediateResult;//程序执行中间结果
+    @FXML
+    private TextField finalResult;//程序运行最终结果，即X的值
+
+
 
     @FXML
-    private TextField cpuTime;
-
-    @FXML
-    private Button button;
+    private Button beginORStop;
 
     @FXML
     private Tab fileSystem;
@@ -65,9 +78,13 @@ public class MySceneController implements Initializable {
 
 
     @FXML
-    public void test(){
-        setCPUTime(1);
-
+    public void beginORStop(){
+        if (beginORStop.getText().equals("开始")){
+            beginORStop.setText("暂停");
+        }
+        else {
+            beginORStop.setText("开始");
+        }
     }
 
 
@@ -79,6 +96,21 @@ public class MySceneController implements Initializable {
         timeSlice.setText(String.valueOf(time));
     }
 
+    private void setRunningPCBID(String ID){
+        runningPCBID.setText(ID);
+    }
+
+    private void setRunningIR(String IR){
+        runningIR.setText(IR);
+    }
+
+    private void setIntermediateResult(String result){
+        intermediateResult.setText(result);
+    }
+
+    private void setFinalResult(String result){
+        finalResult.setText(result);
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FileTree fileTree = Main.fileTree;
@@ -90,6 +122,7 @@ public class MySceneController implements Initializable {
         root.setCenter(Terminal.textArea);
         root.setBottom(OpenFileManager.openFileTableView);
 
+        beginORStop.setText("开始");
 
         initTime();
         initEquipmentTable();
@@ -98,14 +131,17 @@ public class MySceneController implements Initializable {
     }
 
     private void initTime(){
-        cpuTimeSim.addListener((observable, oldValue, newValue)->{
-            setCPUTime(newValue.longValue());
-        });
+        cpuTimeSim.addListener((observable, oldValue, newValue)-> setCPUTime(newValue.longValue()));
+        cpuTime.setText("0");
+        timeSliceSim.addListener((observable, oldValue, newValue)-> setTimeSlice(newValue.intValue()));
+        timeSlice.setText("6");
+        runningPCBIDSim.addListener((observable, oldValue, newValue)-> setRunningPCBID(newValue));
 
-        timeSliceSim.addListener((observable, oldValue, newValue)->{
-            setTimeSlice(newValue.intValue());
-        });
+        runningIRSim.addListener((observable, oldValue, newValue)-> setRunningIR(newValue));
 
+        intermediateResultSim.addListener((observable, oldValue, newValue)-> setIntermediateResult(newValue));
+
+        finalResultSim.addListener((observable, oldValue, newValue)-> setFinalResult(newValue));
     }
 
     private void initEquipmentTable(){
