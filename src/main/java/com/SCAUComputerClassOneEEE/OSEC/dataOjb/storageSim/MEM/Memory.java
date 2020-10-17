@@ -25,6 +25,7 @@ public class Memory {
     public static final int ERROR_RETURN_POINTER = -1;
     @Getter
     private final List<PCB> PCB_LIST;
+    @Getter
     private final MAT mat;
     @Getter
     private char[] userMemoryArea;
@@ -117,7 +118,7 @@ public class Memory {
      * 内存分配表
      */
     @Data
-    private static class MAT{
+    public static class MAT{
         /*
           Free List <pointer,length>
           pointer为起始地址，length为空闲块长度
@@ -129,7 +130,7 @@ public class Memory {
          */
         final List<ProcessBlock> MAT_OccupyCont = new ArrayList<>();
         @Data
-        private static class FreeBlock{
+        public static class FreeBlock{
             int pointer;
             int length;
             FreeBlock(int pointer,int length){
@@ -141,7 +142,7 @@ public class Memory {
             }
         }
         @Data
-        private static class ProcessBlock{
+        public static class ProcessBlock{
             int pointer;
             int length;
             ProcessBlock(int pointer,int length){

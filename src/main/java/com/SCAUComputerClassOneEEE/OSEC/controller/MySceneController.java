@@ -16,6 +16,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import javax.print.attribute.standard.NumberUp;
 import java.net.URL;
@@ -65,6 +68,11 @@ public class MySceneController implements Initializable {
     private TableView<PCB> blockTable;
     @FXML
     private TableColumn<PCB,Integer> blockID;
+
+    @FXML
+    private Pane memoryPane;
+
+
 
 
     @FXML
@@ -128,6 +136,9 @@ public class MySceneController implements Initializable {
         initEquipmentTable();
         initReadyTable();
         initBlockTable();
+        initMemoryPane();
+
+
     }
 
     private void initTime(){
@@ -161,6 +172,12 @@ public class MySceneController implements Initializable {
     private void initBlockTable(){
         blockTable.setItems(CPU.blockedQueue);
         blockID.setCellValueFactory(new PropertyValueFactory<>("processId"));
+    }
+
+    private void initMemoryPane(){
+        Button button = new Button("button");
+        Rectangle rect = new Rectangle(50, 50, Color.BLACK);
+        memoryPane.getChildren().add(rect);
     }
 
 

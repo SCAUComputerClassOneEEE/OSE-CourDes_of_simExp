@@ -53,4 +53,13 @@ public class Testtt {
         System.arraycopy(chars,5,chars,0,2);
         System.out.println(chars);
     }
+    @Test
+    public void tttt(){
+        Memory memory = Memory.getMemory();
+        memory.getMat().getMAT_OccupyCont().get(0).getLength();
+        int length = memory.getMat().getMAT_OccupyCont().size();
+        for (int i = 0; i < length; i++){
+
+        }
+    }
 }

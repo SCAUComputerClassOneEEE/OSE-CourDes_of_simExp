@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.VBox;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
@@ -320,6 +321,7 @@ public class CPU implements Runnable{
         blockedQueue.remove(awakePCB);
         readyQueue.add(awakePCB);
     }
+
 
     /**
      * 创建10个可执行文件

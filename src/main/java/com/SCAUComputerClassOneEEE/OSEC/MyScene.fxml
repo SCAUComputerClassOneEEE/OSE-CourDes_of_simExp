@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -61,7 +62,7 @@
                                     </StackPane>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                              <AnchorPane fx:id="memoryRectangle" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                                  <children>
                                     <StackPane layoutX="59.0" layoutY="20.0" prefHeight="282.0" prefWidth="729.0" style="-fx-border-color: #FF8C00;">
                                        <children>
@@ -109,7 +110,7 @@
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <Pane prefHeight="200.0" prefWidth="200.0" />
+                                                <Pane fx:id="memoryPane" prefHeight="200.0" prefWidth="200.0" />
                                              </children>
                                           </VBox>
                                        </children>
