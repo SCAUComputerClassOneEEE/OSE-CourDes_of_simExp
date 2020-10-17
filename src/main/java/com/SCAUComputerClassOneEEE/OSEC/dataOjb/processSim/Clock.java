@@ -61,7 +61,7 @@ public class Clock implements Runnable{
         int psw = CPU.CPUCycles();
         long end1 = System.currentTimeMillis();
         //补足1000ms时间
-        //Thread.sleep(999 - end1 + sTime);
+        Thread.sleep(999 - end1 + sTime);
         long end2 = System.currentTimeMillis();
 
         MySceneController.cpuTimeSim.set(cpuRanTime++);
