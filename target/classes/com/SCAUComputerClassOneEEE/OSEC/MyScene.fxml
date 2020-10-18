@@ -5,15 +5,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="822.0" prefWidth="1213.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
+<AnchorPane prefHeight="822.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
    <children>
-      <TabPane layoutY="-1.0" prefHeight="822.0" prefWidth="1217.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutY="-1.0" prefHeight="822.0" prefWidth="1400.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="操作系统">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <SplitPane dividerPositions="0.2972749793559042" prefHeight="792.0" prefWidth="1213.0">
+                        <SplitPane dividerPositions="0.2972749793559042" prefHeight="792.0" prefWidth="1350.0">
                            <items>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="108.0">
                                  <children>
@@ -59,7 +59,7 @@
                                     </StackPane>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="943.0">
                                  <children>
                                     <StackPane layoutX="59.0" layoutY="20.0" prefHeight="282.0" prefWidth="729.0" style="-fx-border-color: #FF8C00;">
                                        <children>

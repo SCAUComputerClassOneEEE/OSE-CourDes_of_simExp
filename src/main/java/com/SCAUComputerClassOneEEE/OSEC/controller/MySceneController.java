@@ -172,7 +172,7 @@ public class MySceneController implements Initializable {
         root.setCenter(centerPane.textArea);
         root.setBottom(bottom);
         bottom.setLeft(OpenFileManager.openFileTableView);
-        bottom.setRight(Main.diskPane.getRoot());
+        bottom.setCenter(Main.diskPane.getRoot());
         fileSystem.setContent(root);
     }
 
