@@ -1,5 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
 
+import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
+import javafx.application.Platform;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -55,6 +57,7 @@ public class Disk implements Serializable {
         int header;
         try{
             header = fat.getFreeBlockOrder();
+            Platform.runLater(()-> MySceneController.diskChange.setValue(header));
             return  header;
         }catch (Exception e){
             e.printStackTrace();

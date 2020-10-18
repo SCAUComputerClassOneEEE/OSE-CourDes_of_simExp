@@ -10,6 +10,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -33,7 +34,7 @@ import java.util.ResourceBundle;
  */
 
 public class MySceneController implements Initializable {
-
+    public static SimpleObjectProperty<Integer> diskChange = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<Long> cpuTimeSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<Integer> timeSliceSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<String> runningPCBIDSim = new SimpleObjectProperty<>();
@@ -147,9 +148,20 @@ public class MySceneController implements Initializable {
             Platform.runLater(this::updateMemoryPane);
 
         }));
+        diskChange.setValue(0);
+        diskChange.addListener(((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> updateDiakPane(newValue));
+        }));
+    }
+
+    private void updateDiakPane(int index) {
+        DiskPane.BlockPane[] blockPane = Main.diskPane.getBlockPanes();
+        System.out.println(blockPane[index]);
+        Main.diskPane.updateType(index);
     }
 
     private BorderPane root = new BorderPane();
+    private BorderPane bottom = new BorderPane();
     private FilePane rightPane = new FilePane();
     private VBox leftPane = Main.fileTree.getVBox();
     private Terminal centerPane = new Terminal(Main.fileTree);//初始化命令行
@@ -158,7 +170,9 @@ public class MySceneController implements Initializable {
         root.setLeft(Main.fileTree.getVBox());
         root.setRight(rightPane);
         root.setCenter(centerPane.textArea);
-        root.setBottom(OpenFileManager.openFileTableView);
+        root.setBottom(bottom);
+        bottom.setLeft(OpenFileManager.openFileTableView);
+        bottom.setRight(Main.diskPane.getRoot());
         fileSystem.setContent(root);
     }
 
