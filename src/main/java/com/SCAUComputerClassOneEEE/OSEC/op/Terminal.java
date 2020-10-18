@@ -30,7 +30,7 @@ public class Terminal {
 
     //模式串
     public Pattern pattern0 = Pattern.compile("([a-zA-Z]+)");
-    public Pattern pattern1 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w]*)");
+    public Pattern pattern1 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w,.]+)");
     public Pattern pattern2 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w]+)\\s([/,\\w]+)");
     public Pattern pattern3 = Pattern.compile("([a-zA-Z]+)\\s([/,\\w]+)\\s([/,\\w]+)\\s([/,\\w]+)");
 
@@ -62,6 +62,10 @@ public class Terminal {
             List<String> fileNameList = diskSimService.getFileNameList(filePath);
             String info;
             switch (action){
+                case "create"://新，ok
+                    info = diskSimService.createFile(filePath);
+                    formatOut(info);
+                    break;
                 case "close"://ok
                     info = diskSimService.close_file(diskSimService.getLastTreeItem(filePath))?"关闭成功":"关闭失败";
                     formatOut(info);
@@ -70,38 +74,32 @@ public class Terminal {
                     info = diskSimService.deleteFile(diskSimService.getLastTreeItem(filePath))?"删除成功":"删除失败";
                     formatOut(info);
                     break;
-                case "typeFile":
+                case "type":
                     info = diskSimService.typeFile(diskSimService.getLastTreeItem(filePath))?"显示成功":"显示失败";
                     formatOut(info);
                     break;
 
                     //下面的是目录功能
-                case "md":
-                    info = diskSimService.createFile(diskSimService.getFatherTreeItem(fileNameList, rootTree, 0),
-                            fileNameList.get(fileNameList.size() - 1), 8);
+                case "mkdir"://新,ok
+                    info = diskSimService.createFile(filePath);
                     formatOut(info);
                     break;
                 case "dir":
                     info = diskSimService.dirDirectory(diskSimService.getLastTreeItem(filePath))?"true":"false";
                     formatOut(info);
                     break;
-                case "rd":
+                case "deldir":
                     info = diskSimService.rdDirectory(diskSimService.getLastTreeItem(filePath))?"true":"false";
                     formatOut(info);
                     break;
 
                 //-------------新增功能-----------------------
                     //删除空目录
-                case "rmdir":
-                    info = "something that should be output";//info填要输出的内容
+                case "rmdir"://ok
+                    info = diskSimService.rmdir(filePath);//info填要输出的内容
                     formatOut(info);
                     break;
 
-                    //改变目录路径
-                case "chdir":
-                    info = "something that should be output";//info填要输出的内容
-                    formatOut(info);
-                    break;
                 //-----------------------------------------
             }
 
@@ -115,11 +113,6 @@ public class Terminal {
             List<String> fileNameList = diskSimService.getFileNameList(filePath);
             String info;
             switch (action){
-                case "create"://ok
-                    info = diskSimService.createFile(diskSimService.getFatherTreeItem(fileNameList, rootTree, 0),
-                            fileNameList.get(fileNameList.size() - 1), Integer.parseInt(value));
-                    formatOut(info);
-                    break;
                 case "open"://ok
                     info = diskSimService.open_file(diskSimService.getLastTreeItem(filePath),value)?"打开成功":"打开失败";
                     formatOut(info);
@@ -137,15 +130,19 @@ public class Terminal {
 
                 //拷贝文件
                 case "copy":
-                    info = "something that should be output";//info填要输出的内容
+                    info = diskSimService.copyFile(filePath, value);//info填要输出的内容
                     formatOut(info);
                     break;
                  //移动文件
-                case "move":
-                    info = "something that should be output";//info填要输出的内容
+                case "move"://ok
+                    info = diskSimService.move(filePath, value);//info填要输出的内容
                     formatOut(info);
                     break;
-
+                //改变目录路径
+                case "chdir"://ok
+                    info = diskSimService.chdir(filePath, value);//info填要输出的内容
+                    formatOut(info);
+                    break;
                 //----------------------------------------
                 case "inputBuffer":
                     info = diskSimService.inputBuffer(Integer.parseInt(filePath),value)?"写缓冲成功":"写缓冲失败";
@@ -162,8 +159,10 @@ public class Terminal {
 
             String info = diskSimService.write_file(diskSimService.getLastTreeItem(path), bufferNum, length)?"成功":"失败";
             formatOut(info);
-        }else if(matcher0.matches()){//无参数
+        }else if(matcher0.matches()){//无参数,ok
             //格式化操作
+            String info = diskSimService.format();
+            formatOut(info);
         }
     }
     private void formatOut(String info){
@@ -174,29 +173,18 @@ public class Terminal {
     private void init(){
 
         textArea.appendText("指令表:\n");
-        //textArea.appendText("创建文件 create /path（需要后缀名.ex或者.tx\n");//1参
-        //textArea.appendText("删除文件 delete /path\n");//1参
-        //textArea.appendText("显示文件内容 type /path\n");//1参
-        //textArea.appendText("拷贝文件 copy /path /path\n");//2参
-        //textArea.appendText("建立目录 mkdir /path\n");//1参
-        //textArea.appendText("删除空目录 rmdir /path\n");//1参
-        //textArea.appendText("改变目录路径 chdir /path /path\n");//1参
-        //textArea.appendText("改变文件属性 change /path newValue\n");//2参
-        //textArea.appendText("删除目录 deldir /path\n");//1参
-        //textArea.appendText("移动文件 move /path /path\n");//2参
-        //textArea.appendText("磁盘格式化 format\n");//无参
 
-        textArea.appendText("创建文件 create /path fileType\n");//2参
+        textArea.appendText("创建文件 create /path（需要后缀名.ex或者.tx\n");//1参
         textArea.appendText("打开文件 open /path openType(read/write)\n");//2参
         textArea.appendText("读文件  read /path readLength\n");//2参
         textArea.appendText("写文件  write /path bufferNum writLength\n");//3参
         textArea.appendText("关闭文件 close /path\n");//1参
         textArea.appendText("删除文件 delete /path\n");//1参
-        textArea.appendText("显示文件内容 typeFile /path\n");//1参
+        textArea.appendText("显示文件内容 type /path\n");//1参
         textArea.appendText("改变文件属性 change /path newValue\n");//2参
-        textArea.appendText("建立目录 md /path\n");//1参
+        textArea.appendText("建立目录 mkdir /path\n");//1参
         textArea.appendText("显示目录内容 dir /path\n");//1参
-        textArea.appendText("删除目录 rd /path\n");//1参
+        textArea.appendText("删除目录 deldir /path\n");//1参
         //新增
         textArea.appendText("删除空目录 rmdir /path\n");//1参
         textArea.appendText("拷贝文件 copy /path /path\n");//2参
