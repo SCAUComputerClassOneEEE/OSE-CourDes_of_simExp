@@ -159,6 +159,18 @@ public class Terminal {
     private void init(){
 
         textArea.appendText("指令表:\n");
+        //textArea.appendText("创建文件 create /path（需要后缀名.ex或者.tx\n");//1参
+        //textArea.appendText("删除文件 delete /path\n");//1参
+        //textArea.appendText("显示文件内容 type /path\n");//1参
+        //textArea.appendText("拷贝文件 copy /path /path\n");//2参
+        //textArea.appendText("建立目录 mkdir /path\n");//1参
+        //textArea.appendText("删除空目录 rmdir /path\n");//1参
+        //textArea.appendText("改变目录路径 chdir /path /path\n");//1参
+        //textArea.appendText("改变文件属性 change /path newValue\n");//2参
+        //textArea.appendText("删除目录 deldir /path\n");//1参
+        //textArea.appendText("移动文件 move /path /path\n");//2参
+        //textArea.appendText("磁盘格式化 format\n");//无参
+
         textArea.appendText("创建文件 create /path fileType\n");//2参
         textArea.appendText("打开文件 open /path openType(read/write)\n");//2参
         textArea.appendText("读文件  read /path readLength\n");//2参

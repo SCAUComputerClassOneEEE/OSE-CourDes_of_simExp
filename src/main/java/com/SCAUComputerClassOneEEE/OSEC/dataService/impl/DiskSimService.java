@@ -31,6 +31,8 @@ public class DiskSimService {
     public String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute){
         AFile root = myTreeItem.getValue();
         System.out.println("根盘号:"+(int)root.getDiskNum());
+        if(myTreeItem == null)
+            return "路径错误!";
         if (foundFile(root, fileName)){
             return "文件名重复，创建失败！";
         }else if(root.getAFiles().size() >= 8){
@@ -68,30 +70,142 @@ public class DiskSimService {
         }else if(root.getAFiles().size() >= 8){
             return null;
         }
-        //获取可用磁盘头
-        int header = disk.malloc_F_Header();
-        if(header == -1){
-            return null;
-        }else{
-            System.out.println("新磁盘号："+header);
-            char diskNum = (char)header;
-            char property = (char)attribute;
-            char length;
-            AFile newFile;
-            if(attribute == 8){
-                length = 0;
-                newFile = new AFile(fileName, "  ", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
-            }else if(attribute == 4){
-                length = 1;
-                newFile = new AFile(fileName, "tx", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
-            }else{
-                length = 1;
-                newFile = new AFile(fileName, "ex", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
-            }
-            String filePath = newFile.getAbsoluteLocation().substring(5);
+        try {
+            AFile newFile = new AFile(root.getAbsoluteLocation().substring(4), fileName, attribute);
+            String filePath = newFile.getAbsoluteLocation().substring(4);
             getString(getFatherTreeItem(getFileNameList(filePath), fileTree.getRootTree(), 0), root, newFile);
             return newFile;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+    }
+
+    public String createFile(String filePath){
+        String fatherPath = filePath.substring(0, filePath.lastIndexOf("/"));
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf("."));
+        String suffix = filePath.substring(fileName.lastIndexOf("." + 1));
+        int attribute = 0;
+        if("ex".equals(suffix))
+            attribute = 16;
+        else if("tx".equals(suffix))
+            attribute = 4;
+        return this.createFile(getLastTreeItem(fatherPath), fileName, attribute);
+    }
+
+    //拷贝文件
+    public String copyFile(String frontPath, String backPath){
+        TreeItem<AFile> frontItem = getLastTreeItem(frontPath);
+        AFile frontAFile = frontItem.getValue();
+        if(frontItem == null || frontAFile.isDirectory())
+            return "路径错误";
+        if(frontAFile.isExeFile())
+            return createFile(backPath+".ex");
+        else if(frontAFile.isFile())
+            return createFile(backPath + ".tx");
+        return "路径错误";
+    }
+
+    //删除空目录
+    public String rmdir(String filePath){
+        TreeItem<AFile> item = getLastTreeItem(filePath);
+        if(item == null)
+            return "路径错误";
+        else if (item.getChildren().size() != 0)
+            return "目录不为空";
+        if(!deleteFile(item))
+            return "删除失败";
+        else return "删除成功";
+    }
+
+    /**
+     * 改变目录路径
+     * @param frontPath 改变的目录文件的绝对路径
+     * @param backPath  改变后的父路径
+     * @return 提示
+     */
+    public String chdir(String frontPath, String backPath){
+        TreeItem<AFile> frontItem = getLastTreeItem(frontPath);
+        TreeItem<AFile> backItem = getLastTreeItem(backPath);
+        if(frontItem == null || backItem == null)
+            return "路径错误";
+        else if(!frontItem.getValue().isDirectory() || !backItem.getValue().isDirectory())
+            return "不是目录文件";
+        else if(backItem.getChildren().size() > 8)
+            return "该目录以满";
+        try {
+            AFile dirFile = frontItem.getValue();
+            //清理父节点的
+            AFile fatherFile = frontItem.getParent().getValue();
+            disk.writeFile(fatherFile.getDiskNum(),
+                    resetChip(fatherFile.getAFiles().indexOf(dirFile),
+                            fatherFile.getAFiles().size(), fatherFile.getDiskNum()));
+            fatherFile.getAFiles().remove(dirFile);
+            frontItem.getParent().getChildren().remove(frontItem);
+            FilePane.update(frontItem);
+            //加入新父节点的
+            backItem.getChildren().add(frontItem);
+            //修改本节点以及孩子文件中路径信息
+            alterPathNews(dirFile, "/root" + backPath);
+            //修改磁盘中目录文件中孩子信息
+            alterDiskNews(dirFile);
+            //修改父节点的目录内容
+            AFile newFatherFile = backItem.getValue();
+            String str = replaceBlock_cont(newFatherFile.getDiskNum(), newFatherFile.getAFiles().size(), dirFile.getALLData());
+            disk.writeFile(newFatherFile.getDiskNum(), str);
+            FilePane.update(backItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "成功";
+    }
+
+    /**
+     * 移动文件
+     * @param frontPath 改变的文件的绝对路径
+     * @param backPath  改变后的父路径
+     * @return 提示
+     */
+    public String move(String frontPath, String backPath) {
+        TreeItem<AFile> frontItem = getLastTreeItem(frontPath);
+        TreeItem<AFile> backItem = getLastTreeItem(backPath);
+        if (frontItem == null || backItem == null)
+            return "路径错误";
+        else if (frontItem.getValue().isDirectory())
+            return "该文件为目录文件";
+        else if (!backItem.getValue().isDirectory())
+            return "移动父路径非目录文件";
+        try {
+            AFile aFile = frontItem.getValue();
+            //清理父节点的
+            AFile fatherFile = frontItem.getParent().getValue();
+            disk.writeFile(fatherFile.getDiskNum(),
+                    resetChip(fatherFile.getAFiles().indexOf(aFile),
+                            fatherFile.getAFiles().size(), fatherFile.getDiskNum()));
+            fatherFile.getAFiles().remove(aFile);
+            frontItem.getParent().getChildren().remove(frontItem);
+            FilePane.update(frontItem);
+            //加入新父节点的
+            backItem.getChildren().add(frontItem);
+            //修改本节点以及孩子文件中路径信息
+            alterPathNews(aFile, "/root" + backPath);
+            //修改父节点的目录内容
+            AFile newFatherFile = backItem.getValue();
+            String str = replaceBlock_cont(newFatherFile.getDiskNum(), newFatherFile.getAFiles().size(), aFile.getALLData());
+            disk.writeFile(newFatherFile.getDiskNum(), str);
+            FilePane.update(backItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "成功";
+    }
+
+    //磁盘格式化
+    public String format(){
+        for (TreeItem<AFile> item : fileTree.getRootTree().getChildren())
+            if(!deleteFile(item))
+                return "失败";
+        return "成功";
     }
 
     //删除文件
@@ -123,6 +237,23 @@ public class DiskSimService {
             result = false;
         }
         return result;
+    }
+
+    private String getString(TreeItem<AFile> myTreeItem, AFile root, AFile newFile) {
+        //读出父目录中存放的所有子目录信息
+        String str = replaceBlock_cont(root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
+        try{
+            disk.writeFile(root.getDiskNum(), str);
+            MyTreeItem treeItem = new MyTreeItem(newFile);
+            myTreeItem.getChildren().add(treeItem);
+            myTreeItem.setExpanded(true);
+            root.getAFiles().add(newFile);
+            FilePane.update(myTreeItem);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        myTreeItem.setExpanded(true);
+        return "创建成功";
     }
 
     //用面板打开文件
@@ -174,7 +305,7 @@ public class DiskSimService {
         if((OpenFileManager.contain(myTreeItem.getValue()) || open_file(myTreeItem, "write")) &&
             myTreeItem.getValue().getProperty() == 4){
             try {
-                String buffer = "";
+                String buffer;
                 if(bufferNum == 1)
                     buffer = buffer1;
                 else if(bufferNum == 2)
@@ -188,7 +319,7 @@ public class DiskSimService {
                 buffer = buffer.substring(Math.min(write_length, buffer.length()));
                 if(bufferNum == 1){
                     buffer1 = buffer;
-                }else if(bufferNum == 2){
+                }else{
                     buffer2 = buffer;
                 }
 
@@ -204,31 +335,22 @@ public class DiskSimService {
     }
 
     //写可执行文件
-    /**
-     *  8个bit，前三位为操作码
-     *  000为自加(大写字母)，001为自加（小写字母），剩余从0开始编码
-     *  010为自减(大写字母)，011为自减（小写字母）
-     *  100为申请设备，00为A设备，01为B设备，10为C设备，后3位为使用时间
-     *  101为赋值，110
-     *  111为end，后面全为1
+    /*
+        8个bit，前三位为操作码
+        000自加，001自减，后面全为0
+        010为申请设备，00为A设备，01为B设备，10为C设备，后3位为使用时间
+        011为赋值,后面为赋值数据
+        100为end，后面全为0
      */
-    /**
-     *  8个bit，前三位为操作码
-     *  000自加，001自减，后面全为0
-     *  010为申请设备，00为A设备，01为B设备，10为C设备，后3位为使用时间
-     *  011为赋值,后面为赋值数据
-     *  100为end，后面全为0
-     */
-    public boolean write_exeFile(AFile aFile, String string) throws Exception {
+    public void write_exeFile(AFile aFile, String string) throws Exception {
         StringBuilder contents = new StringBuilder();
-        while (string != "" && string.indexOf(";") != -1){
+        while (!string.equals("") && string.contains(";")){
             String b = string.substring(0, string.indexOf(";"));
             string = string.substring(string.indexOf(";") + 1);
             contents.append(Compile.compile(b));
         }
         disk.writeFile(aFile.getDiskNum(), contents.toString());
         aFile.setLength((char)disk.getFileSize(aFile.getDiskNum()));
-        return false;
     }
 
     //关闭文件
@@ -294,7 +416,7 @@ public class DiskSimService {
         buffer = buffer+str;
         if(bufferNum==1){
             buffer1 = buffer;
-        }else if(bufferNum==2){
+        }else{
             buffer2 = buffer;
         }
         return true;
@@ -375,21 +497,24 @@ public class DiskSimService {
         }
     }
 
-    private String getString(TreeItem<AFile> myTreeItem, AFile root, AFile newFile) {
-        //读出父目录中存放的所有子目录信息
-        String str = replaceBlock_cont(root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
-        try{
-            disk.writeFile(root.getDiskNum(), str);
-            MyTreeItem treeItem = new MyTreeItem(newFile);
-            myTreeItem.getChildren().add(treeItem);
-            myTreeItem.setExpanded(true);
-            root.getAFiles().add(newFile);
-            FilePane.update(myTreeItem);
-        }catch (Exception e){
-            e.printStackTrace();
+    //修改文件的路径
+    private void alterPathNews(AFile dirFile, String backPath){
+        dirFile.setLocation(backPath);
+        dirFile.setAbsoluteLocation(dirFile.getLocation() + "/" + dirFile.getFileName());
+        if(dirFile.isDirectory())
+            for (AFile aFile : dirFile.getAFiles())
+                alterPathNews(aFile, dirFile.getAbsoluteLocation());
+    }
+    
+    //修改磁盘中文件的新消息
+    private void alterDiskNews(AFile dirFile) throws Exception {
+        StringBuilder diskContent = new StringBuilder();
+        for (AFile aFile : dirFile.getAFiles()){
+            if(aFile.isDirectory())
+                alterDiskNews(aFile);
+            diskContent.append(aFile.getALLData());
         }
-        myTreeItem.setExpanded(true);
-        return "创建成功";
+        disk.writeFile(dirFile.getDiskNum(), diskContent.toString());
     }
 
     private String modify(AFile fatherFile, AFile rootFile){
@@ -407,7 +532,7 @@ public class DiskSimService {
         //将字符串以 / 拆分成几个字符串，其中fileNames[0]是第一个 / 前面的字符，如果第一个字符是 / ，则fileNames[0]为空(可打印
         String[] fileNames = filePath.split("/");
         //将数组第一个空内容去掉,并转化成List类型
-        List<String> fileNameList = new ArrayList<String>(Arrays.asList(fileNames));
+        List<String> fileNameList = new ArrayList<>(Arrays.asList(fileNames));
         fileNameList.remove(0);
 //解开注释证明从下标 0 开始
 //            for(int i = 0; i < fileNameList.size(); i++){
@@ -420,9 +545,6 @@ public class DiskSimService {
 
     /**
      * 递归找到fileNameList对应的父节点
-     * @param fileNameList
-     * @param fatherTreeItem
-     * @return
      */
     public TreeItem<AFile> getFatherTreeItem(List<String> fileNameList, TreeItem<AFile> fatherTreeItem, int i){
 //        textArea.appendText(fatherTreeItem.toString());
@@ -458,24 +580,23 @@ public class DiskSimService {
     }
 
     public TreeItem<AFile> getLastTreeItem(String name){
-        int 起始 = 0;
+        int start = 0;
         int num = 2;
         int second = getCharacterPosition(name, num++);
         System.out.println("second:"+second);
         boolean flag = true;
-        String str = null;
+        String str;
         ObservableList<TreeItem<AFile>> treeItems = fileTree.getRootTree().getChildren();
         while (second != -1){
-            int i = 0;
-            str = name.substring(起始 + 1,second);
-            System.out.println("截取的:"+str);
+            int i;
+            str = name.substring(start + 1,second);
             for (i = 0; i < treeItems.size(); i++) {
                 if(str.equals(treeItems.get(i).getValue().getFileName()))
                     break;
             }
             System.out.println("i:"+i);
             if(i < treeItems.size()){
-                起始 = second;
+                start = second;
                 second = getCharacterPosition(name,num++);
                 treeItems = treeItems.get(i).getChildren();
             }else {
@@ -484,11 +605,10 @@ public class DiskSimService {
             }
         }
         if(flag){
-            str = name.substring(起始+1);
-            System.out.println("截取的:"+str);
-            for (int i = 0; i < treeItems.size(); i++)
-                if(str.equals(treeItems.get(i).getValue().getFileName()))
-                    return  treeItems.get(i);
+            str = name.substring(start+1);
+            for (TreeItem<AFile> treeItem : treeItems)
+                if (str.equals(treeItem.getValue().getFileName()))
+                    return treeItem;
         }
         return  null;
     }

@@ -54,6 +54,8 @@ public class FilePane extends BorderPane {
         ImageView iv2 = new ImageView(new Image("file:" + new File("src/main/resources/picture/folder.jpg"), 100, 100, true, true));
         ImageView iv3 = new ImageView(new Image("file:" + new File("src/main/resources/picture/file1.jpg"), 100, 100, true, true));
         ImageView iv4 = new ImageView(new Image("file:" + new File("src/main/resources/picture/folder1.jpg"), 100, 100, true, true));
+        ImageView iv5 = new ImageView(new Image("file:" + new File("src/main/resources/picture/exe.jpg"), 100, 100, true, true));
+        ImageView iv6 = new ImageView(new Image("file:" + new File("src/main/resources/picture/exe1.jpg"), 100, 100, true, true));
 
         Label label = new Label();
         label.setPickOnBounds(true);
@@ -65,29 +67,36 @@ public class FilePane extends BorderPane {
 
         if(aFile.isDirectory())
             label.setGraphic(iv2);
-        else
+        else if(aFile.isFile())
             label.setGraphic(iv1);
-        label.setText(aFile.getFileName());
+        else label.setGraphic(iv5);
+
+        label.setText(aFile.getFileName() +"." +aFile.getType());
         label.setOnMouseEntered(e -> {
             if(aFile.isDirectory())
                 label.setGraphic(iv4);
-            else label.setGraphic(iv3);
+            else if(aFile.isFile())
+                label.setGraphic(iv3);
+            else label.setGraphic(iv6);
         });
         label.setOnMouseExited(e -> {
             if(aFile.isDirectory())
                 label.setGraphic(iv2);
-            else label.setGraphic(iv1);
+            else if(aFile.isFile())
+                label.setGraphic(iv1);
+            else label.setGraphic(iv5);
         });
         label.setOnMouseClicked(e -> {
             if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2 && aFile.isFile()){
                 FileTextField fileTextField = new FileTextField(ti);
                 fileTextField.show();
-            } else if(e.getButton() == MouseButton.SECONDARY && ti.getValue().isFile()){
+            } else if(e.getButton() == MouseButton.SECONDARY && (ti.getValue().isFile() || ti.getValue().isExeFile())){
                 MenuPane menuPane = new MenuPane(ti);
+                menuPane.getCreateExeFileMenu().setDisable(true);
                 menuPane.getCreateDirectoryMenu().setDisable(true);
                 menuPane.getCreateFileMenu().setDisable(true);
                 label.setContextMenu(menuPane.getAddMenu());
-            } else{
+            } else if(e.getButton() == MouseButton.SECONDARY && ti.getValue().isDirectory()){
                 MenuPane menuPane = new MenuPane(ti);
                 menuPane.getOpenMenu().setDisable(true);
                 label.setContextMenu(menuPane.getAddMenu());

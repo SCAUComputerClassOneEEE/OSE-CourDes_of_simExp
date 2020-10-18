@@ -45,6 +45,56 @@ public class AFile{
         this.absoluteLocation = location+"/"+fileName;
     }
 
+    public AFile(String filePath, int property) throws Exception{
+        int header = Main.disk.malloc_F_Header();
+        if(header == -1){
+            throw new Exception("磁盘空间不足");
+        }else{
+            System.out.println("新磁盘号："+header);
+            this.diskNum = (char)header;
+            if(property == 8){
+                this.length = 0;
+                this.type = "  ";
+            }else if(property == 4){
+                length = 1;
+                this.type = "tx";
+            }else if(property == 16){
+                length = 1;
+                this.type = "ex";
+            }
+            this.location = "/root" + filePath.substring(0,filePath.lastIndexOf("/"));
+            this.fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+            this.property = (char) property;
+            this.diskNum = (char) header;
+            this.absoluteLocation = this.location + this.fileName;
+        }
+    }
+
+    public AFile(String fatherPath, String fileName, int property) throws Exception{
+        int header = Main.disk.malloc_F_Header();
+        if(header == -1){
+            throw new Exception("磁盘空间不足");
+        }else{
+            System.out.println("新磁盘号："+header);
+            this.diskNum = (char)header;
+            if(property == 8){
+                this.length = 0;
+                this.type = "  ";
+            }else if(property == 4){
+                length = 1;
+                this.type = "tx";
+            }else if(property == 16){
+                length = 1;
+                this.type = "ex";
+            }
+            this.location = "/root" + fatherPath;
+            this.fileName = fileName;
+            this.property = (char) property;
+            this.diskNum = (char) header;
+            this.absoluteLocation = this.location +"/"+ this.fileName;
+        }
+    }
+
     @Override
     public String toString(){
         return this.fileName;
