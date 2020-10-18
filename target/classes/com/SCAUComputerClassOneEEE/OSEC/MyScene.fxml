@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="822.0" prefWidth="1213.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
+<AnchorPane prefHeight="822.0" prefWidth="1213.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
    <children>
       <TabPane layoutY="-1.0" prefHeight="822.0" prefWidth="1217.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -109,7 +106,7 @@
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <Pane prefHeight="200.0" prefWidth="200.0" />
+                                                <Pane fx:id="memoryPane" prefHeight="200.0" prefWidth="200.0" />
                                              </children>
                                           </VBox>
                                        </children>
