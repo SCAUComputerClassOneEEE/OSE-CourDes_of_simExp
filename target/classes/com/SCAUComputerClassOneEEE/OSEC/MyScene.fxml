@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="822.0" prefWidth="1213.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
+<AnchorPane prefHeight="822.0" prefWidth="1213.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
    <children>
       <TabPane layoutY="-1.0" prefHeight="822.0" prefWidth="1217.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -90,7 +91,7 @@
                                                 <TableView fx:id="blockTable" prefHeight="284.0" prefWidth="266.0">
                                                    <columns>
                                                       <TableColumn fx:id="blockID" prefWidth="145.0" text="PID" />
-                                                      <TableColumn prefWidth="145.0" text="等待设备" />
+                                                      <TableColumn fx:id="waitEq" prefWidth="145.0" text="阻塞原因" />
                                                    </columns>
                                                 </TableView>
                                              </children>

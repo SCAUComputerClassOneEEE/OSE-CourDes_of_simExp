@@ -1,11 +1,9 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -17,7 +15,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.ls.LSOutput;
 
 import java.io.File;
 

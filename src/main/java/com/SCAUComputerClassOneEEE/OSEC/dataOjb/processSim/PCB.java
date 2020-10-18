@@ -26,6 +26,7 @@ public class PCB {
     private Date timeWhenProcessStart;//启动时间
     //资源（占用设备、内存大小）
 
+    private String waitEq;
     private int AX;//运行中x的值
     private int PC;//程序计数器
 
@@ -34,6 +35,7 @@ public class PCB {
         this.setPC(0);
         this.setPointerToMemory(-1);//一开始不可用，创建时需要赋值
         this.setProcessId(PCB.nextProcessID++);//分配唯一的进程id,编号从零开始一直递增
+        this.setWaitEq("无需等待设备");
     }
 
     public enum ProcessState{

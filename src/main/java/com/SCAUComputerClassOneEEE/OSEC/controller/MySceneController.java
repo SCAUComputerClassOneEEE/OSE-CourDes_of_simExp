@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -42,8 +43,8 @@ public class MySceneController implements Initializable {
     public static SimpleObjectProperty<Integer> memoryChange = new SimpleObjectProperty<>();
 
 
-    private static final Color[] colors = new Color[]{Color.DEEPSKYBLUE, Color.ALICEBLUE, Color.YELLOW, Color.TOMATO, Color.SILVER, Color.TURQUOISE, Color.TAN,
-            Color.CORAL, Color.SKYBLUE, Color.SNOW};
+    private static final Color[] colors = new Color[]{Color.DEEPSKYBLUE, Color.BROWN, Color.YELLOW, Color.TOMATO, Color.SILVER, Color.TURQUOISE, Color.TAN,
+            Color.CORAL, Color.SKYBLUE, Color.SNOW, Color.GREEN};
 
     @FXML
     private TextField cpuTime;//系统时间
@@ -75,6 +76,8 @@ public class MySceneController implements Initializable {
     private TableView<PCB> blockTable;
     @FXML
     private TableColumn<PCB,Integer> blockID;
+    @FXML
+    private TableColumn<PCB,String> waitEq;
 
     @FXML
     private Pane memoryPane;
@@ -105,6 +108,7 @@ public class MySceneController implements Initializable {
 
     private void setCPUTime(long time){
         cpuTime.setText(String.valueOf(time));
+        Platform.runLater(()->initFileSystem());
     }
 
     private void setTimeSlice(int time){
@@ -128,14 +132,6 @@ public class MySceneController implements Initializable {
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FileTree fileTree = Main.fileTree;
-        BorderPane root = new BorderPane();
-        Terminal terminal = new Terminal(fileTree);
-        root.setRight(new FilePane());
-        root.setLeft(fileTree.getVBox());
-        fileSystem.setContent(root);
-        root.setCenter(Terminal.textArea);
-        root.setBottom(OpenFileManager.openFileTableView);
 
         beginORStop.setText("开始");
 
@@ -143,15 +139,27 @@ public class MySceneController implements Initializable {
         initEquipmentTable();
         initReadyTable();
         initBlockTable();
-        initMemoryPane();
-
+        //initMemoryPane();
+        initFileSystem();
 
         memoryChange.setValue(0);
         memoryChange.addListener(((observable, oldValue, newValue) -> {
-            System.out.println("内存发生变化");
-            Platform.runLater(()-> updateMemoryPane());
+            Platform.runLater(this::updateMemoryPane);
 
         }));
+    }
+
+    private BorderPane root = new BorderPane();
+    private FilePane rightPane = new FilePane();
+    private VBox leftPane = Main.fileTree.getVBox();
+    private Terminal centerPane = new Terminal(Main.fileTree);//初始化命令行
+
+    private void initFileSystem(){
+        root.setLeft(Main.fileTree.getVBox());
+        root.setRight(rightPane);
+        root.setCenter(centerPane.textArea);
+        root.setBottom(OpenFileManager.openFileTableView);
+        fileSystem.setContent(root);
     }
 
     private void initTime(){
@@ -185,6 +193,7 @@ public class MySceneController implements Initializable {
     private void initBlockTable(){
         blockTable.setItems(CPU.blockedQueue);
         blockID.setCellValueFactory(new PropertyValueFactory<>("processId"));
+        waitEq.setCellValueFactory(new PropertyValueFactory<>("waitEq"));
     }
 
     private void initMemoryPane(){
@@ -193,28 +202,18 @@ public class MySceneController implements Initializable {
         memoryPane.getChildren().add(rect);
 
 
-
-//        System.out.println("Pane高度：" + 147 + ",Pane宽度" + 727);
-
-
-
     }
 
 
     private void updateMemoryPane(){
         //        memory.getMat().getMAT_OccupyCont().get(0).getLength();
-        memoryPane.getChildren().clear();
-        Rectangle rect = new Rectangle(50, 147);
-        memoryPane.getChildren().add(rect);
 
+        memoryPane.getChildren().clear();
         Memory memory = Memory.getMemory();
         int length = memory.getMat().getMAT_OccupyCont().size();
         for (int i = 0; i < length; i++){
-            double width = memory.getMat().getMAT_OccupyCont().get(i).getLength() / 512.0 * 727;
-            double x = 50 + memory.getMat().getMAT_OccupyCont().get(i).getPointer() / 512.0 * 727;
-
-            System.out.println(width);
-            System.out.println(x);
+            double width = memory.getMat().getMAT_OccupyCont().get(i).getLength() / 512.0 * 1500;
+            double x = memory.getMat().getMAT_OccupyCont().get(i).getPointer() / 512.0 * 1500;
             Rectangle rectangle = new Rectangle(width, 147, colors[i]);
             rectangle.setLayoutX(x);
             memoryPane.getChildren().add(rectangle);

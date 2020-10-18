@@ -23,7 +23,7 @@ public class Terminal {
     private MyTreeItem rootTree;
     private static  int[] currentCaretPos;
 
-    public static TextArea textArea = new TextArea();
+    public TextArea textArea = new TextArea();
 
     //数据服务层
     private DiskSimService diskSimService = new DiskSimService();

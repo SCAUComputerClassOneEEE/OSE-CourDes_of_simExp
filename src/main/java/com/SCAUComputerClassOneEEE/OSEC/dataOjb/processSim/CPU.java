@@ -6,13 +6,10 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
-import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
-import javafx.scene.layout.VBox;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
@@ -69,6 +66,12 @@ public class CPU implements Runnable{
     @SneakyThrows
     @Override
     public void run() {
+        char [] osCode = new char[30];
+        try {
+            Memory.getMemory().malloc(osCode);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         TaskThreadPools.execute(clock);
         cpu();
     }
@@ -141,8 +144,6 @@ public class CPU implements Runnable{
             System.out.println("正在处理程序结束中断···");
             MySceneController.intermediateResultSim.setValue("正在处理程序结束中断···");
 
-            //输出X的最终结果
-            Platform.runLater(()-> MainUI.mainUI.getFinalResult().setText("X="+AX));
             //调度
             curPCB = processScheduling();
             //去除程序结束中断与时间片结束中断
@@ -333,7 +334,7 @@ public class CPU implements Runnable{
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
                 try {
-                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;!A7;X++;X++;!B5;X++;!C3;X++;end;");
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X++;!A7;X++;!B5;X++;!C3;X++;end;");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

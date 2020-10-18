@@ -30,9 +30,11 @@ public class Equipment {
         EAT eat = new EAT(eqID,pcb,time);
         if ((eqID=='A'&&getNumOf('A') < 2) || (eqID == 'B' && getNumOf('B') < 3) || (eqID == 'C' && getNumOf('C') < 3)){
             runningLists.add(eat);
+            pcb.setWaitEq("使用设备"+eqID);
         }
         else {
             waitLists.add(eat);
+            pcb.setWaitEq("等待设备"+eqID);
         }
 
     }
@@ -44,14 +46,16 @@ public class Equipment {
         for(EAT each: runningLists){
             each.time.setValue(each.time.getValue() - 1);
             if (each.time.get()<=0){
-                //这两句可能有问题
+
                 CPU.awake(each.pcb);
 
                 deleted.add(each);
+                each.pcb.setWaitEq("无需等待设备");
 
                 EAT eat = canRun(each.eqID);//检查waitList里面有没有能够运行的，如果有么就返回EAT对象
                 if (eat != null){
                     needAdd.add(eat);
+                    eat.pcb.setWaitEq("使用设备"+each.eqID);
                 }
             }
         }

@@ -2,7 +2,6 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
-import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
 import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
@@ -38,6 +37,7 @@ public class Memory {
         Arrays.fill(userMemoryArea,'#');
         mat = new MAT();
         PCB_LIST = new ArrayList<>(PCB_SIZE);
+
     }
 
     public static Memory getMemory(){
@@ -68,8 +68,8 @@ public class Memory {
             //System.out.println("## copying into " + pointer + " length: " + (exeChars.length));
             System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
         }
-        Platform.runLater(()-> MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1));
 
+        Platform.runLater(()-> MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1));
         //
         return pointer;
     }
@@ -83,6 +83,7 @@ public class Memory {
         MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
         if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
         mat.recovery_MAT(pointer,thisProcessBlock.getLength());
+        Platform.runLater(()-> MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1));
     }
 
     /**
