@@ -11,6 +11,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -38,6 +39,8 @@ public class MySceneController implements Initializable {
     public static SimpleObjectProperty<String> runningIRSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<String> intermediateResultSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<String> finalResultSim = new SimpleObjectProperty<>();
+    public static SimpleObjectProperty<Integer> memoryChange = new SimpleObjectProperty<>();
+
 
     private static final Color[] colors = new Color[]{Color.DEEPSKYBLUE, Color.ALICEBLUE, Color.YELLOW, Color.TOMATO, Color.SILVER, Color.TURQUOISE, Color.TAN,
             Color.CORAL, Color.SKYBLUE, Color.SNOW};
@@ -143,6 +146,12 @@ public class MySceneController implements Initializable {
         initMemoryPane();
 
 
+        memoryChange.setValue(0);
+        memoryChange.addListener(((observable, oldValue, newValue) -> {
+            System.out.println("内存发生变化");
+            Platform.runLater(()-> updateMemoryPane());
+
+        }));
     }
 
     private void initTime(){
@@ -190,7 +199,9 @@ public class MySceneController implements Initializable {
 
 
     }
-    public  void updateMemoryPane(){
+
+
+    private void updateMemoryPane(){
         //        memory.getMat().getMAT_OccupyCont().get(0).getLength();
         memoryPane.getChildren().clear();
         Rectangle rect = new Rectangle(50, 147);
@@ -199,9 +210,13 @@ public class MySceneController implements Initializable {
         Memory memory = Memory.getMemory();
         int length = memory.getMat().getMAT_OccupyCont().size();
         for (int i = 0; i < length; i++){
-            double width = memory.getMat().getMAT_OccupyCont().get(i).getLength() / 512 * 727;
-            double x = memory.getMat().getMAT_OccupyCont().get(i).getPointer() / 512 * 727;
+            double width = memory.getMat().getMAT_OccupyCont().get(i).getLength() / 512.0 * 727;
+            double x = 50 + memory.getMat().getMAT_OccupyCont().get(i).getPointer() / 512.0 * 727;
+
+            System.out.println(width);
+            System.out.println(x);
             Rectangle rectangle = new Rectangle(width, 147, colors[i]);
+            rectangle.setLayoutX(x);
             memoryPane.getChildren().add(rectangle);
         }
     }

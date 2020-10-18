@@ -1,6 +1,9 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM;
 
+import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.utils.MainUI;
+import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
 
@@ -65,6 +68,9 @@ public class Memory {
             //System.out.println("## copying into " + pointer + " length: " + (exeChars.length));
             System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
         }
+        Platform.runLater(()-> MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1));
+
+        //
         return pointer;
     }
 
