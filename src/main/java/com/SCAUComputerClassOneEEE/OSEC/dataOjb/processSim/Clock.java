@@ -17,7 +17,7 @@ import java.util.concurrent.FutureTask;
 @Data
 public class Clock implements Runnable{
 
-    private static long cpuRanTime = 0;
+    private static int cpuRanTime = 0;
     private volatile static int timeSlice = 6;
     private static final Clock clock = new Clock();
 
@@ -61,12 +61,12 @@ public class Clock implements Runnable{
         MySceneController.cpuTimeSim.set(cpuRanTime++);
         MySceneController.timeSliceSim.setValue(timeSlice--);
         Equipment.decTime();
+        CPU.getCpu().timeAdd();
         //返回中断字
         int psw = CPU.CPUCycles();
         long end1 = System.currentTimeMillis();
         //补足1000ms时间
         Thread.sleep(999 - end1 + sTime);
-
 
         if (timeSlice == 0){
             //System.out.println("##时间片结束");

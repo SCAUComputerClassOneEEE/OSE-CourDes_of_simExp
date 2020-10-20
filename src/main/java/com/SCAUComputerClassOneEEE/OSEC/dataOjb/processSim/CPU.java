@@ -56,7 +56,7 @@ public class CPU implements Runnable{
     public void run() {
         char [] osCode = new char[50];
         try {
-            PCB os = new PCB(0,50,ProcessControlUtil.colors.get(0));
+            PCB os = new PCB(0,50,ProcessControlUtil.colors.get(0),0);
             ProcessControlUtil.colors.remove(0);
             allPCB.add(os);
             Memory.getMemory().malloc(osCode);
@@ -288,6 +288,13 @@ public class CPU implements Runnable{
         return nextProcess;
     }
 
+    public void timeAdd(){
+        for(int i = 1; i < allPCB.size(); i++){
+            PCB each = allPCB.get(i);
+            each.totalTimeProperty().setValue(each.getTotalTime()+1);
+
+        }
+    }
 /*
         private static void showReadyAndBlockQueue(){
         System.out.println("\n-------------队列展示--------------");

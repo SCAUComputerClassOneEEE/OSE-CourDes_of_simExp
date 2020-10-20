@@ -2,7 +2,6 @@ package com.SCAUComputerClassOneEEE.OSEC.controller;
 
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.EAT;
@@ -23,12 +22,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import javax.print.attribute.standard.NumberUp;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -38,7 +34,7 @@ import java.util.ResourceBundle;
 
 public class MySceneController implements Initializable {
     public static SimpleObjectProperty<Integer> diskChange = new SimpleObjectProperty<>();
-    public static SimpleObjectProperty<Long> cpuTimeSim = new SimpleObjectProperty<>();
+    public static SimpleObjectProperty<Integer> cpuTimeSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<Integer> timeSliceSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<String> runningPCBIDSim = new SimpleObjectProperty<>();
     public static SimpleObjectProperty<String> runningIRSim = new SimpleObjectProperty<>();
@@ -73,6 +69,10 @@ public class MySceneController implements Initializable {
     private TableView<PCB> readyTable;
     @FXML
     private TableColumn<PCB,Integer> readyID;
+    @FXML
+    private TableColumn<PCB,Integer> readyArriveTime;
+    @FXML
+    private TableColumn<PCB,Integer> readyTotalTime;
 
     @FXML
     private TableView<PCB> blockTable;
@@ -80,6 +80,10 @@ public class MySceneController implements Initializable {
     private TableColumn<PCB,Integer> blockID;
     @FXML
     private TableColumn<PCB,String> waitEq;
+    @FXML
+    private TableColumn<PCB,Integer> blockArriveTime;
+    @FXML
+    private TableColumn<PCB,Integer> blockTotalTime;
 
     @FXML
     private Pane memoryPane;
@@ -99,49 +103,26 @@ public class MySceneController implements Initializable {
 
     @FXML
     public void beginORStop(){
-        if (beginORStop.getText().equals("开始")){
+        if (beginORStop.getText().equals("开始运行")){
             TaskThreadPools.execute(Main.cpu);
             beginORStop.setText("暂停");
         }
         else {
-            beginORStop.setText("开始");
+            beginORStop.setText("开始运行");
         }
     }
 
 
-    private void setCPUTime(long time){
-        cpuTime.setText(String.valueOf(time));
-    }
 
-    private void setTimeSlice(int time){
-        timeSlice.setText(String.valueOf(time));
-    }
-
-    private void setRunningPCBID(String ID){
-        runningPCBID.setText(ID);
-    }
-
-    private void setRunningIR(String IR){
-        runningIR.setText(IR);
-    }
-
-    private void setIntermediateResult(String result){
-        intermediateResult.setText(result);
-    }
-
-    private void setFinalResult(String result){
-        finalResult.setText(result);
-    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        beginORStop.setText("开始");
+        beginORStop.setText("开始运行");
 
         initTime();
         initEquipmentTable();
         initReadyTable();
         initBlockTable();
-        //initMemoryPane();
         initFileSystem();
 
         memoryChange.setValue(0);
@@ -204,20 +185,16 @@ public class MySceneController implements Initializable {
     private void initReadyTable(){
         readyTable.setItems(CPU.readyQueue);
         readyID.setCellValueFactory(new PropertyValueFactory<>("processId"));
+        readyArriveTime.setCellValueFactory(new PropertyValueFactory<>("arriveTime"));
+        readyTotalTime.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
     }
 
     private void initBlockTable(){
         blockTable.setItems(CPU.blockedQueue);
         blockID.setCellValueFactory(new PropertyValueFactory<>("processId"));
         waitEq.setCellValueFactory(new PropertyValueFactory<>("waitEq"));
-    }
-
-    private void initMemoryPane(){
-
-        Rectangle rect = new Rectangle(50, 147);
-        memoryPane.getChildren().add(rect);
-
-
+        blockArriveTime.setCellValueFactory(new PropertyValueFactory<>("arriveTime"));
+        blockTotalTime.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
     }
 
 
@@ -228,21 +205,51 @@ public class MySceneController implements Initializable {
             double width = ((double)drawingPCB.getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
             double layoutX = ((double)drawingPCB.getPointerToMemory() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
 
+            Label label = new Label(String.valueOf(drawingPCB.getProcessId()));
+            if (i==0){
+                label.setText("OS");
+            }
+            else {
+                width*=3;
+                layoutX*=3;
+                layoutX-=2*((double)CPU.allPCB.get(0).getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
+            }
+
+
             StackPane stackPane = new StackPane();
             stackPane.setPrefSize(width,memoryPane.getHeight());
             stackPane.setLayoutX(layoutX);
 
             Rectangle rectangle = new Rectangle(width, memoryPane.getHeight(), drawingPCB.getColor());
-            Label label = new Label(String.valueOf(drawingPCB.getProcessId()));
-            if (i==0){
-                label.setText("OS");
-            }
+
             stackPane.getChildren().add(rectangle);
             stackPane.getChildren().add(label);
             memoryPane.getChildren().add(stackPane);
         }
     }
 
+    private void setCPUTime(long time){
+        cpuTime.setText(String.valueOf(time));
+    }
 
+    private void setTimeSlice(int time){
+        timeSlice.setText(String.valueOf(time));
+    }
+
+    private void setRunningPCBID(String ID){
+        runningPCBID.setText(ID);
+    }
+
+    private void setRunningIR(String IR){
+        runningIR.setText(IR);
+    }
+
+    private void setIntermediateResult(String result){
+        intermediateResult.setText(result);
+    }
+
+    private void setFinalResult(String result){
+        finalResult.setText(result);
+    }
 
 }

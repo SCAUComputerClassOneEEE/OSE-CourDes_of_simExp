@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,12 +22,9 @@ public class PCB {
 
 
     private int processId;//进程id
-    private String processState;
-    //private ProcessState processState;//进程状态
-    private int pointerToMemory;//内存指针 0 ~ 512
-    private Date timeWhenProcessStart;//启动时间
-    //资源（占用设备、内存大小）
-
+    private int pointerToMemory;//内存指针 0 ~ 511
+    private int arriveTime;
+    private SimpleObjectProperty<Integer> totalTime = new SimpleObjectProperty<>();
     private String waitEq;//正在等待的设备
     private int AX;//运行中x的值
     private int nextInstruction;//程序计数器
@@ -35,7 +33,7 @@ public class PCB {
 
     private Color color;
 
-    public PCB(int pointerToMemory,int totalSize,Color color){
+    public PCB(int pointerToMemory,int totalSize,Color color,int arriveTime){
         this.setAX(0);
         this.setNextInstruction(0);
         this.setPointerToMemory(pointerToMemory);//一开始不可用，创建时需要赋值
@@ -43,8 +41,18 @@ public class PCB {
         this.setWaitEq("无需等待设备");
         this.setTotalSize(totalSize);
         this.setColor(color);
+        this.setArriveTime(arriveTime);
+        this.totalTime.setValue(0);
     }
 
+
+    public int getTotalTime(){
+        return totalTime.get();
+    }
+
+    public SimpleObjectProperty<Integer> totalTimeProperty() {
+        return totalTime;
+    }
 
 
 }

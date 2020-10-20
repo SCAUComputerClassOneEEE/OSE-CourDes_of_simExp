@@ -8,10 +8,10 @@
 <AnchorPane prefHeight="822.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
    <children>
       <TabPane layoutY="-1.0" prefHeight="822.0" prefWidth="1394.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab text="操作系统">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="783.0" prefWidth="1339.0">
+         <tabs>
+            <Tab text="操作系统">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="783.0" prefWidth="1339.0">
                      <children>
                         <SplitPane dividerPositions="0.2972749793559042" prefHeight="792.0" prefWidth="1350.0">
                            <items>
@@ -74,6 +74,8 @@
                                                 <TableView fx:id="readyTable" prefHeight="298.0" prefWidth="727.0">
                                                    <columns>
                                                       <TableColumn fx:id="readyID" prefWidth="145.0" text="PID" />
+                                                      <TableColumn fx:id="readyArriveTime" prefWidth="146.0" text="到达时间" />
+                                                      <TableColumn fx:id="readyTotalTime" prefWidth="134.0" text="进程存在时间" />
                                                    </columns>
                                                 </TableView>
                                              </children>
@@ -93,6 +95,8 @@
                                                    <columns>
                                                       <TableColumn fx:id="blockID" prefWidth="145.0" text="PID" />
                                                       <TableColumn fx:id="waitEq" prefWidth="145.0" text="阻塞原因" />
+                                                      <TableColumn fx:id="blockArriveTime" prefWidth="93.0" text="到达时间" />
+                                                      <TableColumn fx:id="blockTotalTime" prefWidth="125.0" text="进程存在时间" />
                                                    </columns>
                                                 </TableView>
                                              </children>
@@ -119,10 +123,10 @@
                         </SplitPane>
                      </children>
                   </AnchorPane>
-            </content>
-          </Tab>
-          <Tab fx:id="fileSystem" text="文件系统" />
-        </tabs>
+               </content>
+            </Tab>
+            <Tab fx:id="fileSystem" text="文件系统" />
+         </tabs>
       </TabPane>
    </children>
 </AnchorPane>

@@ -13,9 +13,9 @@ import java.util.ArrayList;
  */
 public class ProcessControlUtil {
 
-    public static ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.BROWN);
+    public static ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.PURPLE);
         add(Color.YELLOW);add(Color.TOMATO);add(Color.SILVER);add(Color.TURQUOISE);add(Color.TAN);add(Color.CORAL);
-        add(Color.SKYBLUE);add(Color.SNOW);add(Color.GREEN);}};
+        add(Color.SKYBLUE);add(Color.PINK);add(Color.GREEN);}};
     /**进程控制原语
      * 进程申请
      * 参数为一个可执行文件对象
@@ -30,7 +30,7 @@ public class ProcessControlUtil {
             return;
         }
         //空白进程控制块
-        PCB newProcess = new PCB(pointer,totalSize,colors.get(0));
+        PCB newProcess = new PCB(pointer,totalSize,colors.get(0),(int)Clock.getClock().getCpuRanTime());
         colors.remove(0);
         //添加进就绪队列并显示结果
         CPU.readyQueue.add(newProcess);
