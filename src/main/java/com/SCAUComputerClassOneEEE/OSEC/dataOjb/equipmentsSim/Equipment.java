@@ -1,13 +1,9 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.ProcessControlUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.util.ArrayList;
-
 
 public class Equipment {
     private static Equipment equipment = new Equipment();
@@ -47,7 +43,7 @@ public class Equipment {
             each.time.setValue(each.time.getValue() - 1);
             if (each.time.get()<=0){
 
-                CPU.awake(each.pcb);
+                ProcessControlUtil.awake(each.pcb);
 
                 deleted.add(each);
                 each.pcb.setWaitEq("无需等待设备");
@@ -63,8 +59,8 @@ public class Equipment {
         waitLists.removeAll(needAdd);
         runningLists.removeAll(deleted);
 
-        if (runningLists.size()>0)
-            equipment.showEAT();
+        /*if (runningLists.size()>0)
+            equipment.showEAT();*/
 
     }
     private static int getNumOf(char eqID){

@@ -12,6 +12,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
+import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -99,6 +101,7 @@ public class MySceneController implements Initializable {
     @FXML
     public void beginORStop(){
         if (beginORStop.getText().equals("开始")){
+            TaskThreadPools.execute(Main.cpu);
             beginORStop.setText("暂停");
         }
         else {
@@ -109,7 +112,6 @@ public class MySceneController implements Initializable {
 
     private void setCPUTime(long time){
         cpuTime.setText(String.valueOf(time));
-        Platform.runLater(()->initFileSystem());
     }
 
     private void setTimeSlice(int time){
@@ -174,6 +176,7 @@ public class MySceneController implements Initializable {
         bottom.setLeft(OpenFileManager.openFileTableView);
         bottom.setCenter(Main.diskPane.getRoot());
         fileSystem.setContent(root);
+        Platform.runLater(this::initFileSystem);
     }
 
     private void initTime(){
@@ -220,17 +223,23 @@ public class MySceneController implements Initializable {
 
 
     private void updateMemoryPane(){
-        //        memory.getMat().getMAT_OccupyCont().get(0).getLength();
-
         memoryPane.getChildren().clear();
         Memory memory = Memory.getMemory();
         int length = memory.getMat().getMAT_OccupyCont().size();
         for (int i = 0; i < length; i++){
-            double width = memory.getMat().getMAT_OccupyCont().get(i).getLength() / 512.0 * 1500;
-            double x = memory.getMat().getMAT_OccupyCont().get(i).getPointer() / 512.0 * 1500;
+            double width = memory.getMat().getMAT_OccupyCont().get(i).getLength() / 512.0 * memoryPane.getWidth();
+            double layoutX = memory.getMat().getMAT_OccupyCont().get(i).getPointer() / 512.0 * memoryPane.getWidth();
+
+            StackPane stackPane = new StackPane();
+            stackPane.setPrefSize(width,147);
+            stackPane.setLayoutX(layoutX);
+
             Rectangle rectangle = new Rectangle(width, 147, colors[i]);
-            rectangle.setLayoutX(x);
-            memoryPane.getChildren().add(rectangle);
+            Label label = new Label("PID");
+
+            stackPane.getChildren().add(rectangle);
+            stackPane.getChildren().add(label);
+            memoryPane.getChildren().add(stackPane);
         }
     }
 

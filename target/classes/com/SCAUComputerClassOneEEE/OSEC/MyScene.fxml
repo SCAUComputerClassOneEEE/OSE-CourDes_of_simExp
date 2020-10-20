@@ -7,18 +7,18 @@
 
 <AnchorPane prefHeight="822.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
    <children>
-      <TabPane layoutY="-1.0" prefHeight="822.0" prefWidth="1400.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutY="-1.0" prefHeight="822.0" prefWidth="1394.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="操作系统">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="783.0" prefWidth="1339.0">
                      <children>
                         <SplitPane dividerPositions="0.2972749793559042" prefHeight="792.0" prefWidth="1350.0">
                            <items>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="108.0">
                                  <children>
                                     <Button fx:id="beginORStop" layoutX="126.0" layoutY="81.0" mnemonicParsing="false" onAction="#beginORStop" prefHeight="37.0" prefWidth="105.0" text="开始/暂停" />
-                                    <TableView fx:id="equipmentTable" layoutX="46.0" layoutY="437.0" prefHeight="286.0" prefWidth="282.0">
+                                    <TableView fx:id="equipmentTable" layoutX="58.0" layoutY="465.0" prefHeight="286.0" prefWidth="282.0">
                                        <columns>
                                           <TableColumn fx:id="equipmentID" prefWidth="85.0" text="设备" />
                                           <TableColumn fx:id="useEquipmentPCBID" prefWidth="106.0" text="进程ID" />
@@ -57,9 +57,10 @@
                                           </GridPane>
                                        </children>
                                     </StackPane>
+                                    <Label layoutX="21.0" layoutY="427.0" text="设备总量:A2,B3,C3,显示在下表中的即为已分配的设备" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="943.0">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="985.0">
                                  <children>
                                     <StackPane layoutX="59.0" layoutY="20.0" prefHeight="282.0" prefWidth="729.0" style="-fx-border-color: #FF8C00;">
                                        <children>

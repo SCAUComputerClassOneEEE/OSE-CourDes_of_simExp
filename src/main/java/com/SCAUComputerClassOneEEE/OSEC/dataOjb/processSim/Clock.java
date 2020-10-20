@@ -55,17 +55,19 @@ public class Clock implements Runnable{
         //System.out.println("========timeRotation=======");
         //System.out.println("一条代码开始执行");
         //时间片减一
-        System.out.println("剩余时间片：" + timeSlice);
+        //System.out.println("剩余时间片：" + timeSlice);
+
+        //
+        MySceneController.cpuTimeSim.set(cpuRanTime++);
+        MySceneController.timeSliceSim.setValue(timeSlice--);
         Equipment.decTime();
         //返回中断字
         int psw = CPU.CPUCycles();
         long end1 = System.currentTimeMillis();
         //补足1000ms时间
         Thread.sleep(999 - end1 + sTime);
-        long end2 = System.currentTimeMillis();
 
-        MySceneController.cpuTimeSim.set(cpuRanTime++);
-        MySceneController.timeSliceSim.setValue(timeSlice--);
+
         if (timeSlice == 0){
             //System.out.println("##时间片结束");
             timeSlice = 6;

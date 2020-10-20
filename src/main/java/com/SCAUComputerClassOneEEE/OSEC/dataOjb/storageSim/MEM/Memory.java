@@ -69,7 +69,7 @@ public class Memory {
             System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
         }
 
-        Platform.runLater(()-> MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1));
+        MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
         //
         return pointer;
     }
