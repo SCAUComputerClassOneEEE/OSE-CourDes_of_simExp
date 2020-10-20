@@ -87,15 +87,23 @@ public class FilePane extends BorderPane {
             if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2 && aFile.isFile()){
                 FileTextField fileTextField = new FileTextField(ti);
                 fileTextField.show();
-            } else if(e.getButton() == MouseButton.SECONDARY && (ti.getValue().isFile() || ti.getValue().isExeFile())){
+            } else if(e.getButton() == MouseButton.SECONDARY && ti.getValue().isFile()){
                 MenuPane menuPane = new MenuPane(ti);
                 menuPane.getCreateExeFileMenu().setDisable(true);
                 menuPane.getCreateDirectoryMenu().setDisable(true);
                 menuPane.getCreateFileMenu().setDisable(true);
+                menuPane.getCreateProcessMenu().setDisable(true);
                 label.setContextMenu(menuPane.getAddMenu());
             } else if(e.getButton() == MouseButton.SECONDARY && ti.getValue().isDirectory()){
                 MenuPane menuPane = new MenuPane(ti);
                 menuPane.getOpenMenu().setDisable(true);
+                menuPane.getCreateProcessMenu().setDisable(true);
+                label.setContextMenu(menuPane.getAddMenu());
+            } else if(e.getButton() == MouseButton.SECONDARY && ti.getValue().isExeFile()){
+                MenuPane menuPane = new MenuPane(ti);
+                menuPane.getCreateExeFileMenu().setDisable(true);
+                menuPane.getCreateDirectoryMenu().setDisable(true);
+                menuPane.getCreateFileMenu().setDisable(true);
                 label.setContextMenu(menuPane.getAddMenu());
             }
         });

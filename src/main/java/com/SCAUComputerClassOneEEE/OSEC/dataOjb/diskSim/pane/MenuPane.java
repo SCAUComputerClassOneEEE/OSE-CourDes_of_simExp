@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.ProcessControlUtil;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -19,11 +20,12 @@ public class MenuPane {
     private MenuItem createExeFileMenu = new MenuItem("创建可执行文件");
     private MenuItem createDirectoryMenu = new MenuItem("创建目录");
     private MenuItem deleteMenu = new MenuItem("删除");
+    private MenuItem createProcessMenu = new MenuItem("创建进程");
 
     private DiskSimService diskSimService = new DiskSimService();
 
     public MenuPane(TreeItem<AFile> treeItem){
-        addMenu.getItems().addAll(openMenu, createExeFileMenu, createFileMenu, createDirectoryMenu, deleteMenu);
+        addMenu.getItems().addAll(openMenu, createExeFileMenu, createFileMenu, createDirectoryMenu, createProcessMenu, deleteMenu);
 
         this.openMenu.setOnAction(actionEvent -> diskSimService.showFile(treeItem));
 
@@ -43,5 +45,7 @@ public class MenuPane {
         });
 
         this.deleteMenu.setOnAction(actionEvent -> diskSimService.deleteFile(treeItem));
+
+        this.deleteMenu.setOnAction(actionEvent -> ProcessControlUtil.create(treeItem.getValue()));
     }
 }

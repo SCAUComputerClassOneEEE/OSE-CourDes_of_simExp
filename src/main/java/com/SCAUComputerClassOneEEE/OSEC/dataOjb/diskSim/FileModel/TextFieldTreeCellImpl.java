@@ -32,21 +32,31 @@ final class TextFieldTreeCellImpl extends TreeCell<AFile> {
             if(!getTreeItem().isLeaf() && getTreeItem().getParent() != null){
                 menuPane = new MenuPane(getTreeItem());
                 menuPane.getOpenMenu().setDisable(true);
+                menuPane.getCreateProcessMenu().setDisable(true);
                 setContextMenu(menuPane.getAddMenu());
             }else if(!getTreeItem().isLeaf() && getTreeItem().getParent() == null){
                 //根目录,不能删除，打开
                 menuPane = new MenuPane(getTreeItem());
                 menuPane.getOpenMenu().setDisable(true);
                 menuPane.getDeleteMenu().setDisable(true);
+                menuPane.getCreateProcessMenu().setDisable(true);
                 setContextMenu(menuPane.getAddMenu());
-            }else if(getTreeItem().isLeaf()){
+            }else if(getTreeItem().isLeaf() && getTreeItem().getValue().isFile()){
                 //叶子（文本文件），不能创建孩子
                 menuPane = new MenuPane(getTreeItem());
                 menuPane.getCreateDirectoryMenu().setDisable(true);
                 menuPane.getCreateFileMenu().setDisable(true);
                 menuPane.getCreateExeFileMenu().setDisable(true);
+                menuPane.getCreateProcessMenu().setDisable(true);
                 setContextMenu(menuPane.getAddMenu());
-            }else{
+            }else if(getTreeItem().isLeaf() && getTreeItem().getValue().isExeFile()){
+                //叶子（可知悉文件），不能创建孩子，可以创建进程
+                menuPane = new MenuPane(getTreeItem());
+                menuPane.getCreateDirectoryMenu().setDisable(true);
+                menuPane.getCreateFileMenu().setDisable(true);
+                menuPane.getCreateExeFileMenu().setDisable(true);
+                setContextMenu(menuPane.getAddMenu());
+            } else{
                 //空白处
                 setMenuPane(null);
             }
