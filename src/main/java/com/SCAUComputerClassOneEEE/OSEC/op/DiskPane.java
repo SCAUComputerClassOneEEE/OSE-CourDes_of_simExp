@@ -31,7 +31,7 @@ public class DiskPane {
             for (int j = 0; j < colNum; j++) {
                 int index = i * colNum + j;
                 blockPanes[index] = new BlockPane(index);
-                if(index == 0 || index == 1) {
+                if(index == 0 || index == 1 || index == 2) {
                     blockPanes[index].getRectangle().setFill(Color.BLUE);
                     blockPanes[index].setType(1);
                 }
@@ -81,7 +81,7 @@ public class DiskPane {
             type = 1;
         }
         public void setFree(){
-            rectangle.setFill(Color.BLACK);
+            rectangle.setFill(Color.WHITE);
             type = 0;
         }
         public void Damage(){

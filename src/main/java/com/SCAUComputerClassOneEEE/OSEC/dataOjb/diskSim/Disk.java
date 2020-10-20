@@ -45,6 +45,7 @@ public class Disk implements Serializable {
     }
     
     public void recovery(int header){
+        MySceneController.diskChange.setValue(header);
         fat.recovery_FAT(header);
     }
 
@@ -57,7 +58,7 @@ public class Disk implements Serializable {
         int header;
         try{
             header = fat.getFreeBlockOrder();
-            Platform.runLater(()-> MySceneController.diskChange.setValue(header));
+            MySceneController.diskChange.setValue(header);
             return  header;
         }catch (Exception e){
             e.printStackTrace();

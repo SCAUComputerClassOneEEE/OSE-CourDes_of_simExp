@@ -73,8 +73,8 @@ public class DiskSimService {
             return null;
         }
         try {
-            AFile newFile = new AFile(root.getAbsoluteLocation().substring(4), fileName, attribute);
-            String filePath = newFile.getAbsoluteLocation().substring(4);
+            AFile newFile = new AFile(root.getAbsoluteLocation().substring(5), fileName, attribute);
+            String filePath = newFile.getAbsoluteLocation().substring(5);
             getString(getFatherTreeItem(getFileNameList(filePath), fileTree.getRootTree(), 0), root, newFile);
             return newFile;
         } catch (Exception e) {
