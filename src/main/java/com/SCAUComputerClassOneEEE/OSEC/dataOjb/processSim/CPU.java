@@ -33,7 +33,7 @@ public class CPU implements Runnable{
     @Getter
     private static int AX =0;
 
-    //public static final ArrayList<PCB> blankQueue = new ArrayList<>();//空白队列,不用用到
+    public static final ArrayList<PCB> allPCB = new ArrayList<>();
     public static final ObservableList<PCB> readyQueue = FXCollections.observableArrayList();//就绪队列
     public static final ObservableList<PCB> blockedQueue = FXCollections.observableArrayList();//阻塞队列
 
@@ -56,6 +56,9 @@ public class CPU implements Runnable{
     public void run() {
         char [] osCode = new char[50];
         try {
+            PCB os = new PCB(0,50,ProcessControlUtil.colors.get(0));
+            ProcessControlUtil.colors.remove(0);
+            allPCB.add(os);
             Memory.getMemory().malloc(osCode);
         }catch (Exception e){
             e.printStackTrace();
@@ -172,7 +175,7 @@ public class CPU implements Runnable{
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
                 try {
-                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X=0;!B7;X++;end;");
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X=0;!B7;X++;X++;X++;X++;X++;end;");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -189,8 +192,8 @@ public class CPU implements Runnable{
             return;
         }
 
-        if ((int)(Math.random())==0){
-            AFile executeFile = exeFiles.get((int)(10*Math.random()));
+        if ((int)(Math.random()*3)==2){
+            AFile executeFile = exeFiles.get((int)(exeFiles.size()*Math.random()));
             ProcessControlUtil.create(executeFile);//创建进程
             //System.out.println("随机生成了新进程");
         }else {

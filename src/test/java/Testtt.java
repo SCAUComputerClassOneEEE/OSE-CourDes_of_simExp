@@ -27,7 +27,7 @@ public class Testtt {
                 "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer");
     }
 
-    @Test
+   /* @Test
     public void memoryTest() throws Exception {
         Memory memoryTest = Memory.getMemory();
         System.out.println("return process pointer " + memoryTest.malloc("1234567890".toCharArray()));
@@ -40,7 +40,7 @@ public class Testtt {
         memoryTest.compress();
         System.out.println("return process pointer " + memoryTest.malloc( "abcuytegfd".toCharArray()));
         memoryTest.MAT_display();
-    }
+    }*/
     @Test
     public void tt(){
         char[] chars = new char[10];

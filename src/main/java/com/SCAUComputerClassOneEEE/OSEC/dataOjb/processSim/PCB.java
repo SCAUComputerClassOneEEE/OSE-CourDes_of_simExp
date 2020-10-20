@@ -1,8 +1,10 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
 
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.*;
 import java.util.Date;
 
 /**
@@ -29,12 +31,18 @@ public class PCB {
     private int AX;//运行中x的值
     private int nextInstruction;//程序计数器
 
-    public PCB(int pointerToMemory){
+    private int totalSize;
+
+    private Color color;
+
+    public PCB(int pointerToMemory,int totalSize,Color color){
         this.setAX(0);
         this.setNextInstruction(0);
         this.setPointerToMemory(pointerToMemory);//一开始不可用，创建时需要赋值
         this.setProcessId(PCB.nextProcessID++);//分配唯一的进程id,编号从零开始一直递增
         this.setWaitEq("无需等待设备");
+        this.setTotalSize(totalSize);
+        this.setColor(color);
     }
 
 

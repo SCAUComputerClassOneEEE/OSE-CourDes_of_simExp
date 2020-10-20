@@ -28,6 +28,7 @@ import javafx.scene.shape.Rectangle;
 
 import javax.print.attribute.standard.NumberUp;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -46,8 +47,6 @@ public class MySceneController implements Initializable {
     public static SimpleObjectProperty<Integer> memoryChange = new SimpleObjectProperty<>();
 
 
-    private static final Color[] colors = new Color[]{Color.DEEPSKYBLUE, Color.BROWN, Color.YELLOW, Color.TOMATO, Color.SILVER, Color.TURQUOISE, Color.TAN,
-            Color.CORAL, Color.SKYBLUE, Color.SNOW, Color.GREEN};
 
     @FXML
     private TextField cpuTime;//系统时间
@@ -224,24 +223,26 @@ public class MySceneController implements Initializable {
 
     private void updateMemoryPane(){
         memoryPane.getChildren().clear();
-        Memory memory = Memory.getMemory();
-        int length = memory.getMat().getMAT_OccupyCont().size();
-        for (int i = 0; i < length; i++){
-            double width = memory.getMat().getMAT_OccupyCont().get(i).getLength() / 512.0 * memoryPane.getWidth();
-            double layoutX = memory.getMat().getMAT_OccupyCont().get(i).getPointer() / 512.0 * memoryPane.getWidth();
+        for (int i = 0; i < CPU.allPCB.size() ; i++){
+            PCB drawingPCB = CPU.allPCB.get(i);
+            double width = ((double)drawingPCB.getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
+            double layoutX = ((double)drawingPCB.getPointerToMemory() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
 
             StackPane stackPane = new StackPane();
-            stackPane.setPrefSize(width,147);
+            stackPane.setPrefSize(width,memoryPane.getHeight());
             stackPane.setLayoutX(layoutX);
 
-            Rectangle rectangle = new Rectangle(width, 147, colors[i]);
-            Label label = new Label("PID");
-
+            Rectangle rectangle = new Rectangle(width, memoryPane.getHeight(), drawingPCB.getColor());
+            Label label = new Label(String.valueOf(drawingPCB.getProcessId()));
+            if (i==0){
+                label.setText("OS");
+            }
             stackPane.getChildren().add(rectangle);
             stackPane.getChildren().add(label);
             memoryPane.getChildren().add(stackPane);
         }
     }
+
 
 
 }
