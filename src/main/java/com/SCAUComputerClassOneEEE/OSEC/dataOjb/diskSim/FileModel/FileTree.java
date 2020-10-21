@@ -59,14 +59,6 @@ public class FileTree {
             // 单元设置，TreeView下的每个子控件都支持,包扩子子控件,所以添加菜单栏那里只对有儿子有父亲的进行设置
             treeView.setCellFactory((TreeView<AFile> p) -> new TextFieldTreeCellImpl(this.disk));
             vBox.getChildren().add(treeView);
-
-            /*//初始化一些数据
-            diskSimService.createFile(rootTree,"a",4);//这个4是属性
-            try {
-                disk.writeFile(3,"你他娘的还真是个天才");
-            }catch (Exception e){
-                e.printStackTrace();
-            }*/
         }
     }
 
@@ -77,7 +69,6 @@ public class FileTree {
             return;
         }
         for(AFile file:aFiles){
-//            System.out.println(file.getFileName());
             TreeItem<AFile> treeItem = new TreeItem<>(file);
             rootTreeItem.getChildren().add(treeItem);
             if(!treeItem.isLeaf()){

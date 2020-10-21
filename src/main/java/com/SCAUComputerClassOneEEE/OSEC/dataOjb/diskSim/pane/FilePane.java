@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.Compile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.ProcessControlUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -127,6 +128,20 @@ public class FilePane extends BorderPane {
                 Platform.runLater(()-> flowPane.getChildren().add(initPicture(ti)));
                 //flowPane.getChildren().add(initPicture(ti));
             }
+        } else {
+            TextArea textArea = new TextArea();
+//            textArea.setMaxSize();
+            textArea.setEditable(false);
+            if(newValue.getValue().isFile())
+                textArea.setText(newValue.getValue().getDiskContent());
+            else if(newValue.getValue().isExeFile()) {
+                StringBuilder contents = new StringBuilder();
+                char[] chars = newValue.getValue().getDiskContent().toCharArray();
+                for (char c:chars)
+                    contents.append(Compile.decompile(c) + (char)10);
+                textArea.setText(contents.toString());
+            }
+            Platform.runLater(()-> flowPane.getChildren().add(textArea));
         }
     }
 

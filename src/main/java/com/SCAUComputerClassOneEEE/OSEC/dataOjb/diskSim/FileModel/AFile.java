@@ -97,7 +97,8 @@ public class AFile{
 
     @Override
     public String toString(){
-        return this.fileName;
+        if(this.isDirectory()) return this.fileName;
+        else return this.fileName + "." + this.type;
     }
 
     //是文本文件为true
