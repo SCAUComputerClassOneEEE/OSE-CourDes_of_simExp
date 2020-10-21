@@ -171,8 +171,8 @@ public class CPU implements Runnable{
      * 创建10个可执行文件
      */
     public void initExeFile(){
-        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "e1", 8);
-        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "e2", 8);
+        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "ef1", 8);
+        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "ef2", 8);
         for (int i = 0; i < 2; i++)
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf("e"+j), 16));

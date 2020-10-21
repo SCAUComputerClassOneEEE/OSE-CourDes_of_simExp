@@ -1,6 +1,8 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.*;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -161,11 +163,10 @@ public class Terminal {
         }else if(matcher0.matches()){//无参数,ok
             //格式化操作
             String action = matcher0.group(1);
-            switch (action){
-                case "format":
-                    String info = diskSimService.format();
-                    formatOut(info);
-                    break;
+            if ("format".equals(action)) {
+                String info = diskSimService.format();
+                formatOut(info);
+                FilePane.update(Main.fileTree.getRootTree());
             }
         }
     }

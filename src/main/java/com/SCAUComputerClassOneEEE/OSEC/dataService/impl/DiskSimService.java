@@ -319,7 +319,10 @@ public class DiskSimService {
         if(myTreeItem == null)
             return "文件不存在";
         if(OpenFileManager.contain(myTreeItem.getValue())||open_file(myTreeItem, "read")){
-            String string = disk.readFile(myTreeItem.getValue().getDiskNum());
+//            String string = disk.readFile(myTreeItem.getValue().getDiskNum());
+            String string = myTreeItem.getValue().getDiskContent();
+            if(string.length() == 0)
+                return "空文件";
             AOpenFile aOpenFile = OpenFileManager.getOpenFile(myTreeItem.getValue());
             //修改文件指针，未完善
             aOpenFile.setRPointerLocation(aOpenFile.getRPointerLocation()+read_length);

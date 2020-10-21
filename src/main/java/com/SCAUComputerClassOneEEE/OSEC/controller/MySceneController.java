@@ -154,7 +154,6 @@ public class MySceneController implements Initializable {
 
     private void updateDiskPane(int index) {
         DiskPane.BlockPane[] blockPane = Main.diskPane.getBlockPanes();
-        System.out.println(blockPane[index]);
         Main.diskPane.updateType(index);
     }
 
