@@ -31,7 +31,7 @@ public class DiskSimService {
     //创建文件
     public String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute){
         AFile root = myTreeItem.getValue();
-        System.out.println("根盘号:"+(int)root.getDiskNum());
+        //System.out.println("根盘号:"+(int)root.getDiskNum());
         if(myTreeItem == null)
             return "路径错误!";
         if(!myTreeItem.getValue().isDirectory())
@@ -66,7 +66,7 @@ public class DiskSimService {
     }
 
     public AFile createFile(AFile root, String fileName, int attribute){
-        System.out.println("根盘号:"+(int)root.getDiskNum());
+        //System.out.println("根盘号:"+(int)root.getDiskNum());
         if (foundFile(root, fileName)){
             return null;
         }else if(root.getAFiles().size() >= 8){
@@ -324,8 +324,15 @@ public class DiskSimService {
             if(string.length() == 0)
                 return "空文件";
             AOpenFile aOpenFile = OpenFileManager.getOpenFile(myTreeItem.getValue());
-            //修改文件指针，未完善
-            aOpenFile.setRPointerLocation(aOpenFile.getRPointerLocation()+read_length);
+            //修改文件指针
+            assert aOpenFile != null;
+            int newSize = aOpenFile.getRPointerLocation()+Math.min(read_length, string.length());
+            int newPoint = newSize % 64;
+            aOpenFile.setRPointerLocation(newPoint);
+            if (newSize>=64){
+                //获得下一块文件块的地址
+                aOpenFile.setRPointerBlockNum(aOpenFile.getRPointerBlockNum()+1);
+            }
             return string.substring(0,Math.min(read_length, string.length()));
         }
         return "方式错误";
@@ -505,16 +512,16 @@ public class DiskSimService {
      */
     private String resetChip(int position, int length, int diskNum){
         int i;
-        System.out.println("盘块号:" + diskNum);
-        System.out.println("length:" + length);
-        System.out.println("磁盘内容:" + disk.readFile(diskNum));
+        //System.out.println("盘块号:" + diskNum);
+        //System.out.println("length:" + length);
+        //System.out.println("磁盘内容:" + disk.readFile(diskNum));
         char[] block_cont = String.valueOf(disk.readFile(diskNum)).toCharArray();
         for(i = position * 8; i < (length-1) * 8; i++) {
             block_cont[i] = block_cont[i + 8];
             System.out.println("i "+ i);
         }
         for(; i < length * 8; i++) block_cont[i] = '#';
-        System.out.print("block_cont:");
+        //System.out.print("block_cont:");
         System.out.println(block_cont);
         return String.valueOf(block_cont);
     }

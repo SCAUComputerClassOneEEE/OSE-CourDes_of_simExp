@@ -135,31 +135,31 @@ public class Disk implements Serializable {
          * @param header 回收的首块
          */
         void recovery_FAT(int header){
-            System.out.println("--------recovery_FAT--------");
+            //System.out.println("--------recovery_FAT--------");
             if (header == 0) {
-                System.out.println("return because header == 0 is true\n--------end--------");
+                //System.out.println("return because header == 0 is true\n--------end--------");
                 return;
             }
             if (header == 1) {
-                System.out.println("return because header == 1 is true\n--------end--------");
+                //System.out.println("return because header == 1 is true\n--------end--------");
                 return;
             }
             if (header == EOF) {
-                System.out.println("return because header == EOF is true\n--------end--------");
+                //System.out.println("return because header == EOF is true\n--------end--------");
                 return;
             }
-            System.out.println("    recovery the " + header + " now.");
+            //System.out.println("    recovery the " + header + " now.");
             if (header < frsFreePosition) {
-                System.out.println("    header < frsFreePosition is true");
+                //System.out.println("    header < frsFreePosition is true");
                 frsFreePosition = header;
             }
             recovery_FAT(FAT_cont[header]);
             FAT_cont[header] = 0;
-            System.out.println("    make the FAT_cont[header] = 0 yet");
+            //System.out.println("    make the FAT_cont[header] = 0 yet");
             /* 计算剩余空闲 */
             freeBlocks ++;
-            System.out.println("--------end--------");
-            System.out.println();
+            //System.out.println("--------end--------");
+            //System.out.println();
         }
 
         /**
@@ -186,24 +186,24 @@ public class Disk implements Serializable {
          * @param preBlockSize 请求划分的块数
          */
         void mallocForFile_FAT(int header,int preBlockSize) throws Exception {
-            System.out.println("---------mallocForFile_FAT--------");
+            //System.out.println("---------mallocForFile_FAT--------");
             if (preBlockSize < 0) return;
             if (preBlockSize > 0){
                 recovery_FAT(FAT_cont[header]);
             }
-            System.out.println("   preBlockSize = " + preBlockSize);
+            //System.out.println("   preBlockSize = " + preBlockSize);
             if (preBlockSize > freeBlocks)
                 throw new Exception("Not enough memory to be allocated.");
             for (int i = 0; i < preBlockSize; i ++){
                 int freeOrder = getFreeBlockOrder();
-                System.out.println("   get next free block order, " + freeOrder);
+                //System.out.println("   get next free block order, " + freeOrder);
                 FAT_cont[header] = freeOrder;
                 header = freeOrder;
             }
             FAT_cont[header] = EOF;
-            System.out.println("   FAT_cont[ " + header + " ] = EOF now");
-            System.out.println("-------end--------");
-            System.out.println();
+            //System.out.println("   FAT_cont[ " + header + " ] = EOF now");
+            //System.out.println("-------end--------");
+            //System.out.println();
         }
         /**
          * 损坏的磁盘块标记

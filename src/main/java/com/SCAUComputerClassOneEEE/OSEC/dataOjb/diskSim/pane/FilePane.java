@@ -162,7 +162,10 @@ public class FilePane extends BorderPane {
         Button closeButton = new Button("取消");
         Button createProcess = new Button(("确定"));
         closeButton.setOnAction(e ->stage.close());
-        createProcess.setOnAction(e -> ProcessControlUtil.create(ti.getValue()));
+        createProcess.setOnAction(e -> {
+            ProcessControlUtil.create(ti.getValue());
+            stage.close();
+        });
 
         HBox hBox = new HBox();
         hBox.getChildren().addAll(createProcess, closeButton);

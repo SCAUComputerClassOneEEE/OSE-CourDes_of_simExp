@@ -47,7 +47,7 @@ public class FileTree {
         if(header == -1){
             System.out.println("错误，磁盘已满");
         }else{
-            System.out.println("根目录对应的磁盘号：" + header);
+            //System.out.println("根目录对应的磁盘号：" + header);
             char diskNum = (char)header;
             char property = 8;
             char length = 0;
