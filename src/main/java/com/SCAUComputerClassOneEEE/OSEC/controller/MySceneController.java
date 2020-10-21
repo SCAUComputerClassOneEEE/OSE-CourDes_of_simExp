@@ -76,8 +76,8 @@ public class MySceneController implements Initializable {
     private TableColumn<PCB,Integer> readyTotalTime;
     @FXML
     private TableColumn<PCB,Integer> readyAX;
-    @FXML
-    private TableColumn<PCB,Integer> readyNextIR;
+/*    @FXML
+    private TableColumn<PCB,Integer> readyNextIR;*/
     @FXML
     private TableColumn<PCB,String> readyEXFileName;
     @FXML
@@ -97,6 +97,10 @@ public class MySceneController implements Initializable {
     private TableColumn<PCB,Integer> blockTotalTime;
     @FXML
     private TableColumn<PCB,String> blockEXFileName;
+    @FXML
+    private TableColumn<PCB,Integer> blockAX;
+    @FXML
+    private TableColumn<PCB,Double> blockProgressRate;
 
     @FXML
     private Pane memoryPane;
@@ -154,21 +158,27 @@ public class MySceneController implements Initializable {
         Main.diskPane.updateType(index);
     }
 
-    private BorderPane root = new BorderPane();
+/*    private BorderPane root = new BorderPane();
     private BorderPane bottom = new BorderPane();
     private FilePane rightPane = new FilePane();
     private VBox leftPane = Main.fileTree.getVBox();
-    private Terminal centerPane = new Terminal(Main.fileTree);//初始化命令行
+    private Terminal centerPane = new Terminal(Main.fileTree);//初始化命令行*/
 
     private void initFileSystem(){
+        BorderPane root = new BorderPane();
+        BorderPane bottom = new BorderPane();
+        FilePane centerPane = new FilePane();
+        VBox leftPane = Main.fileTree.getVBox();
+        Terminal rightPane = new Terminal(Main.fileTree);//初始化命令行
+
         root.setLeft(Main.fileTree.getVBox());
-        root.setRight(rightPane);
-        root.setCenter(centerPane.textArea);
+        root.setCenter(centerPane);
+        root.setRight(rightPane.textArea);
         root.setBottom(bottom);
         bottom.setLeft(OpenFileManager.openFileTableView);
         bottom.setCenter(Main.diskPane.getRoot());
         fileSystem.setContent(root);
-        Platform.runLater(this::initFileSystem);
+        //Platform.runLater(this::initFileSystem);
     }
 
     private void initTime(){
@@ -200,7 +210,7 @@ public class MySceneController implements Initializable {
         readyArriveTime.setCellValueFactory(new PropertyValueFactory<>("arriveTime"));
         readyTotalTime.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
         readyAX.setCellValueFactory(new PropertyValueFactory<>("AX"));
-        readyNextIR.setCellValueFactory(new PropertyValueFactory<>("nextInstruction"));
+        //readyNextIR.setCellValueFactory(new PropertyValueFactory<>("nextInstruction"));
         readyEXFileName.setCellValueFactory(new PropertyValueFactory<>("exFileName"));
         readyRemainInstructions.setCellValueFactory(new PropertyValueFactory<>("remainInstructions"));
         readyProgressRate.setCellValueFactory(new PropertyValueFactory<>("progressRate"));
@@ -210,25 +220,31 @@ public class MySceneController implements Initializable {
         readyArriveTime.setSortable(false);
         readyTotalTime.setSortable(false);
         readyAX.setSortable(false);
-        readyNextIR.setSortable(false);
+        //readyNextIR.setSortable(false);
         readyEXFileName.setSortable(false);
         readyRemainInstructions.setSortable(false);
         readyProgressRate.setSortable(false);
     }
 
     private void initBlockTable(){
+        blockProgressRate.setCellValueFactory(new PropertyValueFactory<>("progressRate"));
+        blockProgressRate.setCellFactory(ProgressBarTableCell.forTableColumn());
         blockTable.setItems(CPU.blockedQueue);
         blockID.setCellValueFactory(new PropertyValueFactory<>("processId"));
         waitEq.setCellValueFactory(new PropertyValueFactory<>("waitEq"));
         blockArriveTime.setCellValueFactory(new PropertyValueFactory<>("arriveTime"));
         blockTotalTime.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
         blockEXFileName.setCellValueFactory(new PropertyValueFactory<>("exFileName"));
+        blockAX.setCellValueFactory(new PropertyValueFactory<>("AX"));
+
 
         blockID.setSortable(false);
         waitEq.setSortable(false);
         blockArriveTime.setSortable(false);
         blockTotalTime.setSortable(false);
         blockEXFileName.setSortable(false);
+        blockAX.setSortable(false);
+        blockProgressRate.setSortable(false);
     }
 
 
@@ -244,9 +260,9 @@ public class MySceneController implements Initializable {
                 label.setText("OS");
             }
             else {
-                width*=3;
-                layoutX*=3;
-                layoutX-=2*((double)CPU.allPCB.get(0).getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
+                width*=2;
+                layoutX*=2;
+                layoutX-=((double)CPU.allPCB.get(0).getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
             }
 
 
