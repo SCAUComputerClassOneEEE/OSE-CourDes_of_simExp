@@ -161,9 +161,9 @@ public class MySceneController implements Initializable {
 
     private void initTime(){
         cpuTimeSim.addListener((observable, oldValue, newValue)-> setCPUTime(newValue.longValue()));
-        cpuTime.setText("0");
+
         timeSliceSim.addListener((observable, oldValue, newValue)-> setTimeSlice(newValue.intValue()));
-        timeSlice.setText("6");
+
         runningPCBIDSim.addListener((observable, oldValue, newValue)-> setRunningPCBID(newValue));
 
         runningIRSim.addListener((observable, oldValue, newValue)-> setRunningIR(newValue));
@@ -233,6 +233,10 @@ public class MySceneController implements Initializable {
     }
 
     private void setTimeSlice(int time){
+        if (CPU.curPCB==null){
+            timeSlice.setText("");
+            return;
+        }
         timeSlice.setText(String.valueOf(time));
     }
 

@@ -29,9 +29,10 @@ public class ProcessControlUtil {
         }catch (Exception e){
             return;
         }
+        Color newProcessColor = randomColor();
         //空白进程控制块
-        PCB newProcess = new PCB(pointer,totalSize,colors.get(0),(int)Clock.getClock().getCpuRanTime());
-        colors.remove(0);
+        PCB newProcess = new PCB(pointer,totalSize,newProcessColor,(int)Clock.getClock().getCpuRanTime());
+        colors.remove(newProcessColor);
         //添加进就绪队列并显示结果
         CPU.readyQueue.add(newProcess);
         CPU.allPCB.add(newProcess);
@@ -75,5 +76,9 @@ public class ProcessControlUtil {
         CPU.readyQueue.add(awakePCB);
     }
 
+    private static Color randomColor(){
+        int index = (int)(Math.random()*colors.size());
+        return colors.get(index);
+    }
 
 }

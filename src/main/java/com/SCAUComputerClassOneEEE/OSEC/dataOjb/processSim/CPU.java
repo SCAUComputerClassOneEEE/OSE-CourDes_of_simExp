@@ -43,7 +43,7 @@ public class CPU implements Runnable{
     //数据服务层
     private DiskSimService diskSimService = new DiskSimService();
 
-    private static PCB curPCB = null;//当前正在运行的进程的控制块
+    public static PCB curPCB = null;//当前正在运行的进程的控制块
 
     private final Clock clock = Clock.getClock();
 
@@ -79,10 +79,12 @@ public class CPU implements Runnable{
             //中断处理区
             interruptHandling();
 
+            //随机产生新进程
             randomPosses();
 
             //showReadyAndBlockQueue();
 
+            //判断是否需要调度
             if (curPCB==null){
                 if (readyQueue.size()>0){
                     curPCB = processScheduling();
@@ -205,7 +207,7 @@ public class CPU implements Runnable{
     /**
      * 中断处理
      */
-    private void interruptHandling(){
+    private void interruptHandling() throws InterruptedException {
         //System.out.println("\n----------处理中断-------------");
         //System.out.println("正在检测中断···");
         //System.out.println("程序状态字为:"+psw);
@@ -288,6 +290,9 @@ public class CPU implements Runnable{
         return nextProcess;
     }
 
+    /**
+     * 进程在内存的时间+1
+     */
     public void timeAdd(){
         for(int i = 1; i < allPCB.size(); i++){
             PCB each = allPCB.get(i);
