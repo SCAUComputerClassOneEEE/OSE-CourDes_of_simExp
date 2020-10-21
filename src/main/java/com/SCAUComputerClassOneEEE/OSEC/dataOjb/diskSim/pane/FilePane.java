@@ -1,18 +1,19 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.ProcessControlUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TreeItem;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -87,7 +88,12 @@ public class FilePane extends BorderPane {
             if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2 && aFile.isFile()){
                 FileTextField fileTextField = new FileTextField(ti);
                 fileTextField.show();
-            } else if(e.getButton() == MouseButton.SECONDARY && ti.getValue().isFile()){
+            } else if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2 && aFile.isDirectory()){
+                update(ti);
+            } else if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2 && aFile.isExeFile()){
+                tipBox(ti);
+            }
+            if(e.getButton() == MouseButton.SECONDARY && ti.getValue().isFile()){
                 MenuPane menuPane = new MenuPane(ti);
                 menuPane.getCreateExeFileMenu().setDisable(true);
                 menuPane.getCreateDirectoryMenu().setDisable(true);
@@ -126,5 +132,33 @@ public class FilePane extends BorderPane {
 
     public static void setTreeNode(TreeItem<AFile> newTreeItem) {
         treeNode.set(newTreeItem);
+    }
+
+    public static void tipBox(TreeItem<AFile> ti){
+        Stage stage = new Stage();
+
+        //锁定当前提示框
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        stage.setTitle("提示");
+        stage.setMinWidth(300);
+        stage.setMaxHeight(300);
+        Label tipLabel = new Label("是否创建进程");
+        Button closeButton = new Button("取消");
+        Button createProcess = new Button(("确定"));
+        closeButton.setOnAction(e ->stage.close());
+        createProcess.setOnAction(e -> ProcessControlUtil.create(ti.getValue()));
+
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(createProcess, closeButton);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(10);
+        VBox vBox = new VBox(10);
+        vBox.setStyle("-fx-background-color: White");
+        vBox.getChildren().addAll(tipLabel, hBox);
+        vBox.setAlignment(Pos.CENTER);
+        Scene scene = new Scene (vBox);
+        stage.setScene(scene);
+        stage.show();
     }
 }

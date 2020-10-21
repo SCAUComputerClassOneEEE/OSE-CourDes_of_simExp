@@ -152,7 +152,6 @@ public class Terminal {
 
         }else if (matcher3.matches()){//三个参数
             System.out.println(matcher3.group(0));
-            String action = matcher3.group(1);
             String path = matcher3.group(2);
             int bufferNum = Integer.parseInt(matcher3.group(3));
             int length = Integer.parseInt(matcher3.group(4));
@@ -161,8 +160,13 @@ public class Terminal {
             formatOut(info);
         }else if(matcher0.matches()){//无参数,ok
             //格式化操作
-            String info = diskSimService.format();
-            formatOut(info);
+            String action = matcher0.group(1);
+            switch (action){
+                case "format":
+                    String info = diskSimService.format();
+                    formatOut(info);
+                    break;
+            }
         }
     }
     private void formatOut(String info){

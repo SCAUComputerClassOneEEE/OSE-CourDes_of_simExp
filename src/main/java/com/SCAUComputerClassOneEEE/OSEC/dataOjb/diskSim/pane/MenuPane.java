@@ -46,6 +46,6 @@ public class MenuPane {
 
         this.deleteMenu.setOnAction(actionEvent -> diskSimService.deleteFile(treeItem));
 
-        this.deleteMenu.setOnAction(actionEvent -> ProcessControlUtil.create(treeItem.getValue()));
+        this.createProcessMenu.setOnAction(actionEvent -> FilePane.tipBox(treeItem));
     }
 }
