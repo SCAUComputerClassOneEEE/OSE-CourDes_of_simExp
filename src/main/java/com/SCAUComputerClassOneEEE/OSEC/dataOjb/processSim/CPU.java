@@ -56,7 +56,7 @@ public class CPU implements Runnable{
     public void run() {
         char [] osCode = new char[50];
         try {
-            PCB os = new PCB(0,50,ProcessControlUtil.colors.get(0),0);
+            PCB os = new PCB(0,50,ProcessControlUtil.colors.get(0),0,"os");
             ProcessControlUtil.colors.remove(0);
             allPCB.add(os);
             Memory.getMemory().malloc(osCode);
@@ -175,9 +175,9 @@ public class CPU implements Runnable{
         diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "e2", 8);
         for (int i = 0; i < 2; i++)
             for (int j = 0; j < 5; j++) {
-                exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf(j), 16));
+                exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), String.valueOf("e"+j), 16));
                 try {
-                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X=0;!B7;X++;X++;X++;X++;X++;end;");
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), "X=0;!A6;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -249,6 +249,9 @@ public class CPU implements Runnable{
             if (curPCB != null){
                 //保存X的值
                 curPCB.setAX(AX);
+                curPCB.setNextInstruction(CPU.PC-curPCB.getPointerToMemory());
+                curPCB.setRemainInstructions(curPCB.getTotalSize()-curPCB.getNextInstruction());
+                curPCB.setProgressRate(((double)curPCB.getTotalSize()-curPCB.getRemainInstructions())/curPCB.getTotalSize());
                 //添加回就绪队列
                 readyQueue.add(curPCB);
             }
@@ -265,7 +268,6 @@ public class CPU implements Runnable{
      * 进程调度
      */
     private PCB processScheduling(){
-
         //System.out.println("\n----------调度-------------");
         //System.out.println("正在执行调度算法···");
         //重置时间片

@@ -20,7 +20,7 @@ import java.util.Date;
 public class PCB {
     private static int nextProcessID = 0;
 
-
+    private String exFileName;
     private int processId;//进程id
     private int pointerToMemory;//内存指针 0 ~ 511
     private int arriveTime;
@@ -29,11 +29,14 @@ public class PCB {
     private int AX;//运行中x的值
     private int nextInstruction;//程序计数器
 
+    private int remainInstructions;
     private int totalSize;
+
+    private double progressRate;
 
     private Color color;
 
-    public PCB(int pointerToMemory,int totalSize,Color color,int arriveTime){
+    public PCB(int pointerToMemory,int totalSize,Color color,int arriveTime,String exFileName){
         this.setAX(0);
         this.setNextInstruction(0);
         this.setPointerToMemory(pointerToMemory);//一开始不可用，创建时需要赋值
@@ -42,7 +45,10 @@ public class PCB {
         this.setTotalSize(totalSize);
         this.setColor(color);
         this.setArriveTime(arriveTime);
-        this.totalTime.setValue(0);
+        this.totalTimeProperty().setValue(0);
+        this.setExFileName(exFileName);
+        this.setRemainInstructions(this.getTotalSize()-this.getNextInstruction());
+        this.setProgressRate(((double)this.getTotalSize()-this.getRemainInstructions())/this.getTotalSize());
     }
 
 

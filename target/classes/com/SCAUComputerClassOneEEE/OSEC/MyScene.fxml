@@ -62,20 +62,25 @@
                               </AnchorPane>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="985.0">
                                  <children>
-                                    <StackPane layoutX="59.0" layoutY="20.0" prefHeight="335.0" prefWidth="729.0" style="-fx-border-color: #FF8C00;">
+                                    <StackPane layoutX="59.0" layoutY="20.0" prefHeight="335.0" prefWidth="810.0" style="-fx-border-color: #FF8C00;">
                                        <children>
                                           <VBox prefHeight="314.0" prefWidth="727.0">
                                              <children>
-                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="727.0" style="-fx-background-color: #FF8C00; -fx-padding: 6px;" text="就绪队列">
+                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="810.0" style="-fx-background-color: #FF8C00; -fx-padding: 6px;" text="就绪队列">
                                                    <font>
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
                                                 <TableView fx:id="readyTable" prefHeight="298.0" prefWidth="727.0">
                                                    <columns>
-                                                      <TableColumn fx:id="readyID" prefWidth="145.0" text="PID" />
-                                                      <TableColumn fx:id="readyArriveTime" prefWidth="146.0" text="到达时间" />
-                                                      <TableColumn fx:id="readyTotalTime" prefWidth="134.0" text="进程存在时间" />
+                                                      <TableColumn fx:id="readyID" prefWidth="73.0" text="PID" />
+                                                      <TableColumn fx:id="readyEXFileName" prefWidth="111.0" text="exFileName" />
+                                                      <TableColumn fx:id="readyArriveTime" prefWidth="106.0" text="到达时间" />
+                                                      <TableColumn fx:id="readyTotalTime" prefWidth="107.0" text="进程存在时间" />
+                                                      <TableColumn fx:id="readyAX" prefWidth="73.0" text="X的值" />
+                                                      <TableColumn fx:id="readyNextIR" prefWidth="101.0" text="nextIRADR" />
+                                                      <TableColumn fx:id="readyRemainInstructions" prefWidth="92.0" text="剩余指令数" />
+                                                      <TableColumn fx:id="readyProgressRate" prefWidth="127.0" text="进度" />
                                                    </columns>
                                                 </TableView>
                                              </children>
@@ -94,7 +99,8 @@
                                                 <TableView fx:id="blockTable" prefHeight="284.0" prefWidth="266.0">
                                                    <columns>
                                                       <TableColumn fx:id="blockID" prefWidth="145.0" text="PID" />
-                                                      <TableColumn fx:id="waitEq" prefWidth="145.0" text="阻塞原因" />
+                                                      <TableColumn fx:id="blockEXFileName" prefWidth="98.0" text="exFileName" />
+                                                      <TableColumn fx:id="waitEq" prefWidth="122.0" text="阻塞原因" />
                                                       <TableColumn fx:id="blockArriveTime" prefWidth="93.0" text="到达时间" />
                                                       <TableColumn fx:id="blockTotalTime" prefWidth="125.0" text="进程存在时间" />
                                                    </columns>

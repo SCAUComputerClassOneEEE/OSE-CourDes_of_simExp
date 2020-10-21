@@ -13,16 +13,24 @@ import java.util.ArrayList;
  */
 public class ProcessControlUtil {
 
+    //颜色库，给PCB赋颜色值
     public static ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.PURPLE);
         add(Color.YELLOW);add(Color.TOMATO);add(Color.SILVER);add(Color.TURQUOISE);add(Color.TAN);add(Color.CORAL);
         add(Color.SKYBLUE);add(Color.PINK);add(Color.GREEN);}};
+
     /**进程控制原语
      * 进程申请
      * 参数为一个可执行文件对象
      */
     public static void create(AFile aFile){
         int pointer;//内存首空间
-        int totalSize = aFile.getDiskContent().toCharArray().length;
+        int totalSize;
+        try {
+            totalSize = aFile.getDiskContent().toCharArray().length;
+        }catch (Exception e){
+            //System.out.println("空指针");
+            return;
+        }
         //申请内存
         try {
             pointer = Memory.getMemory().malloc(aFile.getDiskContent().toCharArray());
@@ -31,7 +39,7 @@ public class ProcessControlUtil {
         }
         Color newProcessColor = randomColor();
         //空白进程控制块
-        PCB newProcess = new PCB(pointer,totalSize,newProcessColor,(int)Clock.getClock().getCpuRanTime());
+        PCB newProcess = new PCB(pointer,totalSize,newProcessColor,(int)Clock.getClock().getCpuRanTime(),aFile.getAbsoluteLocation().substring(5)+".ex");
         colors.remove(newProcessColor);
         //添加进就绪队列并显示结果
         CPU.readyQueue.add(newProcess);
@@ -62,10 +70,11 @@ public class ProcessControlUtil {
         //保存现场
         blockPCB.setNextInstruction(CPU.PC-blockPCB.getPointerToMemory());
         blockPCB.setAX(CPU.getAX());
+        blockPCB.setRemainInstructions(blockPCB.getTotalSize()-blockPCB.getNextInstruction());
+        blockPCB.setProgressRate(((double)blockPCB.getTotalSize()-blockPCB.getRemainInstructions())/blockPCB.getTotalSize());
         //将进程链入对应的阻塞队列
         CPU.blockedQueue.add(blockPCB);
     }
-
 
     /**进程控制原语
      * 进程唤醒
@@ -76,6 +85,10 @@ public class ProcessControlUtil {
         CPU.readyQueue.add(awakePCB);
     }
 
+    /**
+     * 随机返回还可用的颜色
+     * @return
+     */
     private static Color randomColor(){
         int index = (int)(Math.random()*colors.size());
         return colors.get(index);

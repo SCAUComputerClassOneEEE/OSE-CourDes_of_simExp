@@ -17,6 +17,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -73,6 +74,16 @@ public class MySceneController implements Initializable {
     private TableColumn<PCB,Integer> readyArriveTime;
     @FXML
     private TableColumn<PCB,Integer> readyTotalTime;
+    @FXML
+    private TableColumn<PCB,Integer> readyAX;
+    @FXML
+    private TableColumn<PCB,Integer> readyNextIR;
+    @FXML
+    private TableColumn<PCB,String> readyEXFileName;
+    @FXML
+    private TableColumn<PCB,Integer> readyRemainInstructions;
+    @FXML
+    private TableColumn<PCB,Double> readyProgressRate;
 
     @FXML
     private TableView<PCB> blockTable;
@@ -84,6 +95,8 @@ public class MySceneController implements Initializable {
     private TableColumn<PCB,Integer> blockArriveTime;
     @FXML
     private TableColumn<PCB,Integer> blockTotalTime;
+    @FXML
+    private TableColumn<PCB,String> blockEXFileName;
 
     @FXML
     private Pane memoryPane;
@@ -128,15 +141,14 @@ public class MySceneController implements Initializable {
         memoryChange.setValue(0);
         memoryChange.addListener(((observable, oldValue, newValue) -> {
             Platform.runLater(this::updateMemoryPane);
-
         }));
         diskChange.setValue(0);
         diskChange.addListener(((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> updateDiakPane(newValue));
+            Platform.runLater(() -> updateDiskPane(newValue));
         }));
     }
 
-    private void updateDiakPane(int index) {
+    private void updateDiskPane(int index) {
         DiskPane.BlockPane[] blockPane = Main.diskPane.getBlockPanes();
         System.out.println(blockPane[index]);
         Main.diskPane.updateType(index);
@@ -187,6 +199,21 @@ public class MySceneController implements Initializable {
         readyID.setCellValueFactory(new PropertyValueFactory<>("processId"));
         readyArriveTime.setCellValueFactory(new PropertyValueFactory<>("arriveTime"));
         readyTotalTime.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
+        readyAX.setCellValueFactory(new PropertyValueFactory<>("AX"));
+        readyNextIR.setCellValueFactory(new PropertyValueFactory<>("nextInstruction"));
+        readyEXFileName.setCellValueFactory(new PropertyValueFactory<>("exFileName"));
+        readyRemainInstructions.setCellValueFactory(new PropertyValueFactory<>("remainInstructions"));
+        readyProgressRate.setCellValueFactory(new PropertyValueFactory<>("progressRate"));
+        readyProgressRate.setCellFactory(ProgressBarTableCell.forTableColumn());
+
+        readyID.setSortable(false);
+        readyArriveTime.setSortable(false);
+        readyTotalTime.setSortable(false);
+        readyAX.setSortable(false);
+        readyNextIR.setSortable(false);
+        readyEXFileName.setSortable(false);
+        readyRemainInstructions.setSortable(false);
+        readyProgressRate.setSortable(false);
     }
 
     private void initBlockTable(){
@@ -195,6 +222,13 @@ public class MySceneController implements Initializable {
         waitEq.setCellValueFactory(new PropertyValueFactory<>("waitEq"));
         blockArriveTime.setCellValueFactory(new PropertyValueFactory<>("arriveTime"));
         blockTotalTime.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
+        blockEXFileName.setCellValueFactory(new PropertyValueFactory<>("exFileName"));
+
+        blockID.setSortable(false);
+        waitEq.setSortable(false);
+        blockArriveTime.setSortable(false);
+        blockTotalTime.setSortable(false);
+        blockEXFileName.setSortable(false);
     }
 
 
