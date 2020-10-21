@@ -5,6 +5,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.Compile;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -63,6 +64,7 @@ public class FileTextField {
                 }
                 AFile fatherFile = myTreeItem.getParent().getValue();
                 disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
+                FilePane.update(myTreeItem);
             } catch (Exception e) {
                 e.printStackTrace();
             }
