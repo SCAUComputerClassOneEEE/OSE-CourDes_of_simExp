@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
+import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.Compile;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.ProcessControlUtil;
@@ -29,6 +30,7 @@ public class FilePane extends BorderPane {
     public FilePane(){
         init();
         addListener();
+        flowPane.setStyle("-fx-background-color:WHITE");
     }
 
     private void addListener() {
@@ -130,7 +132,7 @@ public class FilePane extends BorderPane {
             }
         } else {
             TextArea textArea = new TextArea();
-//            textArea.setMaxSize();
+            textArea.setPrefSize(2*MySceneController.width/5,3*MySceneController.height/5);
             textArea.setEditable(false);
             if(newValue.getValue().isFile())
                 textArea.setText(newValue.getValue().getDiskContent());

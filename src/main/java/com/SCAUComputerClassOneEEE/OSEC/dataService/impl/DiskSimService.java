@@ -45,7 +45,7 @@ public class DiskSimService {
         if(header == -1){
             return "磁盘已满，创建失败！";
         }else{
-            System.out.println("新磁盘号："+header);
+            //System.out.println("新磁盘号："+header);
             char diskNum = (char)header;
             char property = (char)attribute;
             char length;

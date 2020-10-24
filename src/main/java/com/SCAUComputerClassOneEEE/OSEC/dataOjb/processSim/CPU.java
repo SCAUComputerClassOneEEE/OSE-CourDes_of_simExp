@@ -194,7 +194,7 @@ public class CPU implements Runnable{
             return;
         }
 
-        if ((int)(Math.random()*3)==8){
+        if ((int)(Math.random()*6)==5){
             AFile executeFile = exeFiles.get((int)(exeFiles.size()*Math.random()));
             ProcessControlUtil.create(executeFile);//创建进程
             //System.out.println("随机生成了新进程");

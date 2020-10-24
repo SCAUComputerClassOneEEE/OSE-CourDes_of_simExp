@@ -9,7 +9,7 @@
    <children>
       <TabPane layoutY="-1.0" prefHeight="900.0" prefWidth="1350.0" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="操作系统">
+            <Tab text="系统">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="783.0" prefWidth="1339.0">
                      <children>
@@ -17,15 +17,15 @@
                            <items>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="108.0">
                                  <children>
-                                    <Button fx:id="beginORStop" layoutX="126.0" layoutY="81.0" mnemonicParsing="false" onAction="#beginORStop" prefHeight="37.0" prefWidth="105.0" text="开始/暂停" />
-                                    <TableView fx:id="equipmentTable" layoutX="58.0" layoutY="519.0" prefHeight="286.0" prefWidth="282.0">
+                                    <Button fx:id="beginORStop" layoutX="77.0" layoutY="82.0" mnemonicParsing="false" onAction="#beginORStop" prefHeight="37.0" prefWidth="105.0" text="开始/暂停" />
+                                    <TableView fx:id="equipmentTable" layoutX="44.0" layoutY="523.0" prefHeight="312.0" prefWidth="311.0">
                                        <columns>
-                                          <TableColumn fx:id="equipmentID" prefWidth="85.0" text="设备" />
-                                          <TableColumn fx:id="useEquipmentPCBID" prefWidth="106.0" text="进程ID" />
-                                          <TableColumn fx:id="time" prefWidth="89.0" text="剩余时间" />
+                                          <TableColumn fx:id="equipmentID" prefWidth="92.0" text="设备" />
+                                          <TableColumn fx:id="useEquipmentPCBID" prefWidth="99.0" text="进程ID" />
+                                          <TableColumn fx:id="time" prefWidth="113.0" text="剩余时间" />
                                        </columns>
                                     </TableView>
-                                    <StackPane layoutX="49.0" layoutY="186.0" prefHeight="232.0" prefWidth="299.0">
+                                    <StackPane layoutX="33.0" layoutY="189.0" prefHeight="240.0" prefWidth="325.0">
                                        <children>
                                           <GridPane prefHeight="228.0" prefWidth="299.0">
                                              <children>
@@ -43,7 +43,7 @@
                                                 <TextField fx:id="finalResult" editable="false" opacity="0.6" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                              </children>
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="10.0" prefWidth="125.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="128.0" minWidth="10.0" prefWidth="125.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="204.0" minWidth="10.0" prefWidth="174.0" />
                                              </columnConstraints>
                                              <rowConstraints>
@@ -57,12 +57,13 @@
                                           </GridPane>
                                        </children>
                                     </StackPane>
-                                    <Label layoutX="21.0" layoutY="469.0" text="设备总量:A2,B3,C3,显示在下表中的即为已分配的设备" />
+                                    <Label layoutX="21.0" layoutY="478.0" text="设备总量:A2,B3,C3,显示在下表中的即为已分配的设备" />
+                                    <Button layoutX="245.0" layoutY="82.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="89.0" text="重置系统" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="985.0">
                                  <children>
-                                    <StackPane layoutX="59.0" layoutY="20.0" prefHeight="335.0" prefWidth="810.0" style="-fx-border-color: #FF8C00;">
+                                    <StackPane layoutX="59.0" layoutY="20.0" prefHeight="355.0" prefWidth="810.0" style="-fx-border-color: #FF8C00;">
                                        <children>
                                           <VBox prefHeight="314.0" prefWidth="727.0">
                                              <children>
@@ -71,39 +72,39 @@
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <TableView fx:id="readyTable" prefHeight="298.0" prefWidth="727.0">
+                                                <TableView fx:id="readyTable" prefHeight="362.0" prefWidth="808.0">
                                                    <columns>
-                                                      <TableColumn fx:id="readyID" prefWidth="73.0" text="PID" />
-                                                      <TableColumn fx:id="readyEXFileName" prefWidth="111.0" text="exFileName" />
-                                                      <TableColumn fx:id="readyArriveTime" prefWidth="106.0" text="到达时间" />
-                                                      <TableColumn fx:id="readyTotalTime" prefWidth="107.0" text="进程存在时间" />
-                                                      <TableColumn fx:id="readyAX" prefWidth="73.0" text="X的值" />
-                                                      <TableColumn fx:id="readyRemainInstructions" prefWidth="92.0" text="剩余指令数" />
-                                                      <TableColumn fx:id="readyProgressRate" prefWidth="127.0" text="进度" />
+                                                      <TableColumn fx:id="readyID" prefWidth="60.0" text="PID" />
+                                                      <TableColumn fx:id="readyEXFileName" prefWidth="106.0" text="exFileName" />
+                                                      <TableColumn fx:id="readyArriveTime" prefWidth="86.0" text="到达时间" />
+                                                      <TableColumn fx:id="readyTotalTime" prefWidth="120.0" text="进程存在时间" />
+                                                      <TableColumn fx:id="readyAX" prefWidth="84.0" text="X的值" />
+                                                      <TableColumn fx:id="readyRemainInstructions" prefWidth="116.0" text="剩余指令数" />
+                                                      <TableColumn fx:id="readyProgressRate" prefWidth="211.0" text="进度" />
                                                    </columns>
                                                 </TableView>
                                              </children>
                                           </VBox>
                                        </children>
                                     </StackPane>
-                                    <StackPane layoutX="59.0" layoutY="363.0" prefHeight="261.0" prefWidth="809.0" style="-fx-border-color: #FF8C00;">
+                                    <StackPane layoutX="59.0" layoutY="390.0" prefHeight="234.0" prefWidth="809.0" style="-fx-border-color: #FF8C00;">
                                        <children>
-                                          <VBox prefHeight="163.0" prefWidth="727.0">
+                                          <VBox prefHeight="198.0" prefWidth="807.0">
                                              <children>
-                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="812.0" style="-fx-background-color: #FF8C00; -fx-padding: 6px;" text="阻塞队列">
+                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="0.0" prefWidth="807.0" style="-fx-background-color: #FF8C00; -fx-padding: 6px;" text="阻塞队列">
                                                    <font>
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
                                                 <TableView fx:id="blockTable" prefHeight="284.0" prefWidth="266.0">
                                                    <columns>
-                                                      <TableColumn fx:id="blockID" prefWidth="145.0" text="PID" />
-                                                      <TableColumn fx:id="blockEXFileName" prefWidth="98.0" text="exFileName" />
-                                                      <TableColumn fx:id="waitEq" prefWidth="122.0" text="阻塞原因" />
-                                                      <TableColumn fx:id="blockArriveTime" prefWidth="93.0" text="到达时间" />
-                                                      <TableColumn fx:id="blockTotalTime" prefWidth="125.0" text="进程存在时间" />
-                                                      <TableColumn fx:id="blockAX" prefWidth="75.0" text="X的值" />
-                                                      <TableColumn fx:id="blockProgressRate" prefWidth="99.0" text="进度" />
+                                                      <TableColumn fx:id="blockID" prefWidth="59.0" text="PID" />
+                                                      <TableColumn fx:id="blockEXFileName" prefWidth="116.0" text="exFileName" />
+                                                      <TableColumn fx:id="waitEq" prefWidth="88.0" text="阻塞原因" />
+                                                      <TableColumn fx:id="blockArriveTime" prefWidth="91.0" text="到达时间" />
+                                                      <TableColumn fx:id="blockTotalTime" prefWidth="122.0" text="进程存在时间" />
+                                                      <TableColumn fx:id="blockAX" minWidth="2.0" prefWidth="98.0" text="X的值" />
+                                                      <TableColumn fx:id="blockProgressRate" prefWidth="210.0" text="进度" />
                                                    </columns>
                                                 </TableView>
                                              </children>
@@ -132,7 +133,14 @@
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab fx:id="fileSystem" text="文件系统" />
+            <Tab fx:id="fileSystem" text="文件">
+               <content>
+                  <BorderPane fx:id="bp1" prefHeight="783.0" prefWidth="1339.0">
+                     <bottom>
+                        <BorderPane fx:id="bp2" prefHeight="389.0" prefWidth="1350.0" BorderPane.alignment="CENTER" />
+                     </bottom>
+                  </BorderPane>
+               </content></Tab>
          </tabs>
       </TabPane>
    </children>

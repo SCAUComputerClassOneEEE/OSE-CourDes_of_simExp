@@ -98,6 +98,7 @@ public class OpenFileManager {
      * 初始化"已打开的文件"信息管理表格
      */
     private static void intiTableView(){
+        openFileTableView.setStyle("-fx-background-color: WHITE");
         openFileTableView.setItems(openFileList);
 
         TableColumn<AOpenFile,String> absoluteLocation = new TableColumn<>("文件路径");
@@ -107,6 +108,7 @@ public class OpenFileManager {
         property.setCellValueFactory(new PropertyValueFactory<>("property"));
 
         TableColumn<AOpenFile,Integer> diskNum = new TableColumn<>("起始盘块号");
+        diskNum.setPrefWidth(100);
         diskNum.setCellValueFactory(new PropertyValueFactory<>("diskNum"));
 
         TableColumn<AOpenFile,Integer> length = new TableColumn<>("文件长度");

@@ -3,6 +3,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import javafx.application.Platform;
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Disk implements Serializable {
     public static final int BLOCK_MAX_SIZE = 64;
 
     //文件分配表，占两字节，磁盘的 0、1 号
+    @Getter
     private final FAT fat;
     //模拟的磁盘数据区，（ 2 ~ 127 号）
     private final DiskBlock[] diskBlocks;

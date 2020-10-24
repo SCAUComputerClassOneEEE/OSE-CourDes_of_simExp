@@ -50,7 +50,7 @@ public class AFile{
         if(header == -1){
             throw new Exception("磁盘空间不足");
         }else{
-            System.out.println("新磁盘号："+header);
+            //System.out.println("新磁盘号："+header);
             this.diskNum = (char)header;
             if(property == 8){
                 this.length = 0;
@@ -75,7 +75,7 @@ public class AFile{
         if(header == -1){
             throw new Exception("磁盘空间不足");
         }else{
-            System.out.println("新磁盘号："+header);
+            //System.out.println("新磁盘号："+header);
             this.diskNum = (char)header;
             if(property == 8){
                 this.length = 0;

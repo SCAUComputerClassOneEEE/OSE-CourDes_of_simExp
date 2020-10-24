@@ -35,9 +35,10 @@ public class DiskPane {
                     blockPanes[index].getRectangle().setFill(Color.BLUE);
                     blockPanes[index].setType(1);
                 }
-                root.add(blockPanes[index], j, i, 1, 1);
+                root.add(blockPanes[index], j, i+3, 1, 1);
             }
         }
+        root.setStyle("-fx-background-color: WHITE");
     }
 
     public static DiskPane getDiskPane(){
@@ -73,7 +74,7 @@ public class DiskPane {
             this.index = index;
             this.type = 0;
             this.label = new Label(index + "");
-            this.getChildren().addAll(new Node[]{this.rectangle, this.label});
+            this.getChildren().addAll(this.rectangle, this.label);
         }
 
         public void setUse(){

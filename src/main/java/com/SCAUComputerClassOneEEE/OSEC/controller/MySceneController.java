@@ -44,6 +44,8 @@ public class MySceneController implements Initializable {
     public static SimpleObjectProperty<Integer> memoryChange = new SimpleObjectProperty<>();
 
 
+    public static double width = 1300;
+    public static double height = 830;
 
     @FXML
     private TextField cpuTime;//系统时间
@@ -106,7 +108,10 @@ public class MySceneController implements Initializable {
     private Pane memoryPane;
 
 
-
+    @FXML
+    private BorderPane bp1;
+    @FXML
+    private BorderPane bp2;
 
     @FXML
     private TableView<EAT> equipmentTable;
@@ -157,27 +162,32 @@ public class MySceneController implements Initializable {
         Main.diskPane.updateType(index);
     }
 
-/*    private BorderPane root = new BorderPane();
-    private BorderPane bottom = new BorderPane();
-    private FilePane rightPane = new FilePane();
-    private VBox leftPane = Main.fileTree.getVBox();
-    private Terminal centerPane = new Terminal(Main.fileTree);//初始化命令行*/
-
     private void initFileSystem(){
-        BorderPane root = new BorderPane();
-        BorderPane bottom = new BorderPane();
+
         FilePane centerPane = new FilePane();
         VBox leftPane = Main.fileTree.getVBox();
         Terminal rightPane = new Terminal(Main.fileTree);//初始化命令行
 
-        root.setLeft(Main.fileTree.getVBox());
-        root.setCenter(centerPane);
-        root.setRight(rightPane.textArea);
-        root.setBottom(bottom);
-        bottom.setLeft(OpenFileManager.openFileTableView);
-        bottom.setCenter(Main.diskPane.getRoot());
-        fileSystem.setContent(root);
-        //Platform.runLater(this::initFileSystem);
+        bp1.setLeft(leftPane);
+        bp1.setCenter(centerPane);
+        bp1.setRight(rightPane.textArea);
+
+        bp2.setLeft(OpenFileManager.openFileTableView);
+        bp2.setCenter(Main.diskPane.getRoot());
+
+        width = bp1.getPrefWidth();
+        height = bp1.getPrefHeight();
+        System.out.println(width);
+        System.out.println(height);
+
+        //leftPane.setPrefSize(width/5,3*height/5);
+        Main.fileTree.getTreeView().setPrefSize(width/5,3*height/5);
+        //leftPane.setSize(width/5,3*height/5);
+        centerPane.setPrefSize(2*width/5,3*height/5);
+        rightPane.textArea.setPrefSize(2*width/5,3*height/5);
+        OpenFileManager.openFileTableView.setPrefSize(4*width/7,2*height/5);
+        Main.diskPane.getRoot().setPrefSize(3*width/7,2*height/5);
+
     }
 
     private void initTime(){
