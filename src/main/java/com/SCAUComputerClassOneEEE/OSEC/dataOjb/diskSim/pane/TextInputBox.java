@@ -3,10 +3,6 @@ package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -27,7 +23,8 @@ public class TextInputBox {
     private Label tipLabel;
     private Label fileName;
     private Label warmLabel;
-    private Button button;
+    private Button confirmButton;
+    private Button cancelButton;
     private TextField fieldFileName;
     private MenuPane menuPane;
     private Stage primaryStage = new Stage();
@@ -65,7 +62,8 @@ public class TextInputBox {
         fileName = new Label("文件名");
         fieldFileName = new TextField();
         warmLabel = new Label();//警告
-        button = new Button("确认");
+        confirmButton = new Button("确认");
+        cancelButton = new Button("取消");
 
         GridPane.setHalignment(fileName, HPos.RIGHT);
         root.add(fileName, 0, 1);
@@ -78,8 +76,10 @@ public class TextInputBox {
         root.add(fieldFileName, 1, 1);
 
         // 按钮的水平对齐
-        GridPane.setHalignment(button, HPos.RIGHT);
-        root.add(button, 1, 3);
+        GridPane.setHalignment(confirmButton, HPos.LEFT);
+        root.add(confirmButton, 1, 3);
+        GridPane.setHalignment(cancelButton, HPos.RIGHT);
+        root.add(cancelButton, 1, 3);
 
         Scene scene = new Scene(root, 350, 200);
 
@@ -89,16 +89,16 @@ public class TextInputBox {
         fieldFileName.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.length() > 3){
                 warmLabel.setText("文件名长度要求小于等于3");
-                button.setDisable(true);
+                confirmButton.setDisable(true);
             }else if(judge(newValue)){
                 warmLabel.setText("文件不能包含“$”、 “.”、 “/”、“#”字符");
-                button.setDisable(true);
+                confirmButton.setDisable(true);
             }else{
                 warmLabel.setText("");
-                button.setDisable(false);
+                confirmButton.setDisable(false);
             }
         });
-        button.setOnAction(event -> {
+        confirmButton.setOnAction(event -> {
             primaryStage.close();
             //2为可执行文件，1为文本文件，0为目录
             if(type == 2) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 16);
