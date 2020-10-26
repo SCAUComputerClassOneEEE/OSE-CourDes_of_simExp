@@ -11,6 +11,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
+import com.SCAUComputerClassOneEEE.OSEC.utils.ButtonUtil;
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -125,12 +126,12 @@ public class MySceneController implements Initializable {
 
     @FXML
     public void beginORStop(){
-        if (beginORStop.getText().equals("开始运行")){
+        if (beginORStop.getText().equals("开始")){
             TaskThreadPools.execute(Main.cpu);
             beginORStop.setText("暂停");
         }
         else {
-            beginORStop.setText("开始运行");
+            beginORStop.setText("开始");
         }
     }
 
@@ -139,7 +140,9 @@ public class MySceneController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        beginORStop.setText("开始运行");
+        ButtonUtil.decorateButton(beginORStop,"开始");
+
+        beginORStop.setText("开始");
 
         initTime();
         initEquipmentTable();

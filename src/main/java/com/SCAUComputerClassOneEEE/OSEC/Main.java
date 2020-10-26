@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 
@@ -29,7 +30,10 @@ public class Main extends Application {
             Scene scene = new Scene(root);
             //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             stage.setScene(scene);
-            //stage.resizableProperty().setValue(Boolean.FALSE);
+            stage.getIcons().add(new Image("file:" +"src/main/resources/操作系统.png",20, 20,
+                    true, true));
+            stage.setTitle("myOS");
+            stage.resizableProperty().setValue(Boolean.FALSE);
             stage.show();
         } catch(Exception e) {
             e.printStackTrace();

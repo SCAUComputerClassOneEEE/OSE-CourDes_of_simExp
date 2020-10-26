@@ -23,6 +23,10 @@ public class ProcessControlUtil {
      * 参数为一个可执行文件对象
      */
     public static void create(AFile aFile){
+        if (CPU.readyQueue.size() + CPU.blockedQueue.size() + (CPU.curPCB == null ? 0 : 1) >= 10){
+            //System.out.println("系统最多存在10个进程");
+            return;
+        }
         int pointer;//内存首空间
         int totalSize;
         try {

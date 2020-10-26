@@ -189,11 +189,6 @@ public class CPU implements Runnable{
      */
     private void randomPosses(){
         //System.out.println("\n----------随机产生进程-------------");
-        if (readyQueue.size()+blockedQueue.size()+(curPCB==null?0:1)>=10){
-            //System.out.println("系统最多存在10个进程");
-            return;
-        }
-
         if ((int)(Math.random()*6)==5){
             AFile executeFile = exeFiles.get((int)(exeFiles.size()*Math.random()));
             ProcessControlUtil.create(executeFile);//创建进程
