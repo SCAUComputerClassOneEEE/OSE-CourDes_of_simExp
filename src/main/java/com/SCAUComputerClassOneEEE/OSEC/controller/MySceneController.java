@@ -65,7 +65,11 @@ public class MySceneController implements Initializable {
 
     @FXML
     private Button beginORStop;
+    @FXML
+    private Button reset;
 
+    @FXML
+    private TextArea help;
     @FXML
     private Tab fileSystem;
 
@@ -141,7 +145,7 @@ public class MySceneController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         ButtonUtil.decorateButton(beginORStop,"开始");
-
+        ButtonUtil.decorateButton(reset,"重置");
         beginORStop.setText("开始");
 
         initTime();
@@ -194,7 +198,7 @@ public class MySceneController implements Initializable {
     }
 
     private void initTime(){
-        cpuTimeSim.addListener((observable, oldValue, newValue)-> setCPUTime(newValue.longValue()));
+        cpuTimeSim.addListener((observable, oldValue, newValue)-> setCPUTime(newValue.intValue()));
 
         timeSliceSim.addListener((observable, oldValue, newValue)-> setTimeSlice(newValue.intValue()));
 
@@ -290,7 +294,7 @@ public class MySceneController implements Initializable {
         }
     }
 
-    private void setCPUTime(long time){
+    private void setCPUTime(int time){
         cpuTime.setText(String.valueOf(time));
     }
 
@@ -301,6 +305,7 @@ public class MySceneController implements Initializable {
         }
         timeSlice.setText(String.valueOf(time));
     }
+
 
     private void setRunningPCBID(String ID){
         runningPCBID.setText(ID);
