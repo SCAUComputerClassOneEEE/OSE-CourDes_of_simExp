@@ -105,5 +105,6 @@ public class TextInputBox {
             else if(type == 1) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 4);
             else if(type == 0) diskSimService.createFile(myTreeItem, fieldFileName.getText(), 8);
         });
+        cancelButton.setOnAction(event -> primaryStage.close());
     }
 }
