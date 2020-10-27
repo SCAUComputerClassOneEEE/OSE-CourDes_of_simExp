@@ -8,6 +8,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -20,6 +21,7 @@ public class FileTextField {
     private final MenuBar menuBar = new MenuBar();
     private final Menu menu = new Menu();
     private final MenuItem save = new MenuItem();
+    private final MenuItem selectAll = new MenuItem();
     private final Stage stage = new Stage();
     private final Disk disk = Main.disk;
     private final DiskSimService diskSimService = new DiskSimService();
@@ -30,7 +32,6 @@ public class FileTextField {
 
     private void init(TreeItem<AFile> myTreeItem){
         AFile aFile = myTreeItem.getValue();
-        int diskNum = aFile.getDiskNum();
         //读取块中内容并进行转化
         if(aFile.isFile())
             textArea.setText(aFile.getDiskContent());
@@ -47,27 +48,22 @@ public class FileTextField {
         if(myTreeItem.getValue().getProperty() == 3)
             textArea.setEditable(false);
 
-        save.setText("保存");
+        save.setText("保存");selectAll.setText("全选");
 
         menu.setText("文件菜单");
-        menu.getItems().add(save);
+        menu.getItems().addAll(save, selectAll);
 
-        menuBar.getMenus().add(menu);
+        menuBar.getMenus().addAll(menu);
 
-        save.setOnAction(event -> {
-            try {
-                if(aFile.isFile()){
-                    disk.writeFile(diskNum, textArea.getText());
-                    aFile.setLength((char)disk.getFileSize(diskNum));
-                }else if(aFile.isExeFile()){
-                    diskSimService.write_exeFile(aFile, textArea.getText());
-                }
-                AFile fatherFile = myTreeItem.getParent().getValue();
-                disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
-                FilePane.update(myTreeItem);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        save.setOnAction(event -> save(myTreeItem));
+        selectAll.setOnAction(event -> textArea.selectAll());
+        borderPane.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.S)
+//                保存
+                save(myTreeItem);
+            else if (event.getCode() == KeyCode.A)
+//                全选
+                textArea.selectAll();
         });
 
         borderPane.setTop(menuBar);
@@ -81,6 +77,24 @@ public class FileTextField {
 
     public void show(){
         stage.show();
+    }
+
+    public void save(TreeItem<AFile> myTreeItem){
+        try {
+            AFile aFile = myTreeItem.getValue();
+            int diskNum = aFile.getDiskNum();
+            if(aFile.isFile()){
+                disk.writeFile(diskNum, textArea.getText());
+                aFile.setLength((char)disk.getFileSize(diskNum));
+            }else if(aFile.isExeFile()){
+                diskSimService.write_exeFile(aFile, textArea.getText());
+            }
+            AFile fatherFile = myTreeItem.getParent().getValue();
+            disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
+            FilePane.update(myTreeItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     String modify(AFile fatherFile, AFile rootFile){
