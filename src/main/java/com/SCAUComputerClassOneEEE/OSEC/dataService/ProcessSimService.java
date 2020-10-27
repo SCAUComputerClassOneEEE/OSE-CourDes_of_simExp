@@ -1,28 +1,40 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
 /**
- * 进程控制工具类
+ * 进程控制服务类
  * @Author: Sky
  * @Date: 2020/10/20 11:29
  */
-public class ProcessControlUtil {
+public class ProcessSimService {
+    private static ProcessSimService processSimService = new ProcessSimService();
 
     //颜色库，给PCB赋颜色值
-    public static ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.PURPLE);
+    private static final ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.PURPLE);
         add(Color.YELLOW);add(Color.TOMATO);add(Color.SILVER);add(Color.TURQUOISE);add(Color.TAN);add(Color.CORAL);
         add(Color.SKYBLUE);add(Color.PINK);add(Color.GREEN);}};
+
+    public static ProcessSimService getProcessSimService(){
+        return ProcessSimService.processSimService;
+    }
+
+    public static ArrayList<Color> getColors(){
+        return ProcessSimService.colors;
+    }
 
     /**进程控制原语
      * 进程申请
      * 参数为一个可执行文件对象
      */
-    public static void create(AFile aFile){
+    public void create(AFile aFile){
         if (CPU.readyQueue.size() + CPU.blockedQueue.size() + (CPU.curPCB == null ? 0 : 1) >= 10){
             //System.out.println("系统最多存在10个进程");
             return;
@@ -43,7 +55,7 @@ public class ProcessControlUtil {
         }
         Color newProcessColor = randomColor();
         //空白进程控制块
-        PCB newProcess = new PCB(pointer,totalSize,newProcessColor,(int)Clock.getClock().getCpuRanTime(),aFile.getAbsoluteLocation().substring(5)+".ex");
+        PCB newProcess = new PCB(pointer,totalSize,newProcessColor,(int) Clock.getClock().getCpuRanTime(),aFile.getAbsoluteLocation().substring(5)+".ex");
         colors.remove(newProcessColor);
         //添加进就绪队列并显示结果
         CPU.readyQueue.add(newProcess);
@@ -53,7 +65,7 @@ public class ProcessControlUtil {
     /**进程控制原语
      * 进程销毁
      */
-    public static void destroy(PCB destroyProcess){
+    public void destroy(PCB destroyProcess){
         //回收内存空间
         try{
             Memory.getMemory().recovery(destroyProcess.getPointerToMemory());
@@ -70,7 +82,7 @@ public class ProcessControlUtil {
     /**进程控制原语
      * 进程阻塞
      */
-    public static void block(PCB blockPCB){
+    public void block(PCB blockPCB){
         //保存现场
         blockPCB.setNextInstruction(CPU.PC-blockPCB.getPointerToMemory());
         blockPCB.setAX(CPU.getAX());
@@ -83,7 +95,7 @@ public class ProcessControlUtil {
     /**进程控制原语
      * 进程唤醒
      */
-    public static void awake(PCB awakePCB){
+    public void awake(PCB awakePCB){
         //进程唤醒的主要工作是将进程由阻塞队列中摘下，修改进程状态为就绪，然后链入就绪队列
         CPU.blockedQueue.remove(awakePCB);
         CPU.readyQueue.add(awakePCB);
@@ -93,7 +105,7 @@ public class ProcessControlUtil {
      * 随机返回还可用的颜色
      * @return
      */
-    private static Color randomColor(){
+    private Color randomColor(){
         int index = (int)(Math.random()*colors.size());
         return colors.get(index);
     }

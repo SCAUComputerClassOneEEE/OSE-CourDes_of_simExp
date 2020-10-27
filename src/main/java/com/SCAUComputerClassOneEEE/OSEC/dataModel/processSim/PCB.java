@@ -1,12 +1,9 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.awt.*;
-import java.util.Date;
 
 /**
  *

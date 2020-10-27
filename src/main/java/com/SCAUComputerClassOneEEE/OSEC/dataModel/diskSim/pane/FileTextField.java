@@ -1,11 +1,10 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.Compile;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
-import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Compile;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;

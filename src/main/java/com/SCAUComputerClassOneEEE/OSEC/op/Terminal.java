@@ -1,18 +1,14 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.*;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
-import javafx.collections.ObservableList;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.*;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

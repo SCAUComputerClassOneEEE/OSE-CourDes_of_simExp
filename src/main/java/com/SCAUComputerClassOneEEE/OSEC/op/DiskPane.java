@@ -1,8 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;

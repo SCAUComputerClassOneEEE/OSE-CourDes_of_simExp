@@ -1,7 +1,7 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;

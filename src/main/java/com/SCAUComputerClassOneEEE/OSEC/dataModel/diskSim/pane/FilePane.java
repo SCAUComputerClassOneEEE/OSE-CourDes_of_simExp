@@ -1,9 +1,9 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.Compile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.ProcessControlUtil;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Compile;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -165,7 +165,7 @@ public class FilePane extends BorderPane {
         Button createProcess = new Button(("确定"));
         closeButton.setOnAction(e ->stage.close());
         createProcess.setOnAction(e -> {
-            ProcessControlUtil.create(ti.getValue());
+            ProcessSimService.getProcessSimService().create(ti.getValue());
             stage.close();
         });
 

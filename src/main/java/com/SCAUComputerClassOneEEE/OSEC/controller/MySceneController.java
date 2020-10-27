@@ -2,13 +2,13 @@ package com.SCAUComputerClassOneEEE.OSEC.controller;
 
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.EAT;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.PCB;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.OpenFileManager;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.equipmentsSim.EAT;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.equipmentsSim.device;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
 import com.SCAUComputerClassOneEEE.OSEC.utils.ButtonUtil;
@@ -213,7 +213,7 @@ public class MySceneController implements Initializable {
 
     private void initEquipmentTable(){
         //给表添加数据源
-        equipmentTable.setItems(Equipment.runningLists);
+        equipmentTable.setItems(device.getRunningLists());
         //设置列属性
         equipmentID.setCellValueFactory(new PropertyValueFactory<>("eqID"));
         useEquipmentPCBID.setCellValueFactory(new PropertyValueFactory<>("pcbID"));

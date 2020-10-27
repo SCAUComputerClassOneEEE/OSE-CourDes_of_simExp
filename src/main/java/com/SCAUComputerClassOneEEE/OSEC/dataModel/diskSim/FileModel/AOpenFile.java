@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel;
 
 import lombok.Getter;
 import lombok.Setter;

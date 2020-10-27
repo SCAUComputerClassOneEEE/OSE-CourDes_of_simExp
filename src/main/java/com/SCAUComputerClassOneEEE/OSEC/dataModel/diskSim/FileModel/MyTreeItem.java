@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;

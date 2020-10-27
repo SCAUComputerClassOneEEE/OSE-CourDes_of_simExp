@@ -1,5 +1,5 @@
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import org.junit.Test;
 
 import java.util.Arrays;

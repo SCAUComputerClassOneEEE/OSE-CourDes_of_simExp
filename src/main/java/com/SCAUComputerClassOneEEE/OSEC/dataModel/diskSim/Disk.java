@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import javafx.application.Platform;

@@ -1,10 +1,9 @@
 package com.SCAUComputerClassOneEEE.OSEC;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.FileTree;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.FileTree;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
-import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

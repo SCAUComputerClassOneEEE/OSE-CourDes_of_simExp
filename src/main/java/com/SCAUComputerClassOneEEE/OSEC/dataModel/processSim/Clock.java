@@ -1,14 +1,10 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.DeviceSimService;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 /**
  * @author hlf
@@ -60,7 +56,7 @@ public class Clock implements Runnable{
         //
         MySceneController.cpuTimeSim.set(cpuRanTime++);
         MySceneController.timeSliceSim.setValue(timeSlice--);
-        Equipment.decTime();
+        DeviceSimService.getDeviceSimService().decTime();
         CPU.getCpu().timeAdd();
         //返回中断字
         int psw = CPU.CPUCycles();

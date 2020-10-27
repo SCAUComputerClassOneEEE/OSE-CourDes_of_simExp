@@ -1,7 +1,7 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.OpenFileManager;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.OpenFileManager;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,13 +1,13 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.equipmentsSim.Equipment;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.storageSim.MEM.Memory;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.DeviceSimService;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
 import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
@@ -56,8 +56,8 @@ public class CPU implements Runnable{
     public void run() {
         char [] osCode = new char[50];
         try {
-            PCB os = new PCB(0,50,ProcessControlUtil.colors.get(0),0,"os");
-            ProcessControlUtil.colors.remove(0);
+            PCB os = new PCB(0,50, ProcessSimService.getColors().get(0),0,"os");
+             ProcessSimService.getColors().remove(0);
             allPCB.add(os);
             Memory.getMemory().malloc(osCode);
         }catch (Exception e){
@@ -156,7 +156,7 @@ public class CPU implements Runnable{
             }
             else{
                 //进程运行结束，销毁进程
-                ProcessControlUtil.destroy(curPCB);
+                 ProcessSimService.getProcessSimService().destroy(curPCB);
                 //System.out.println("进程"+curPCB.getProcessId()+"执行结果为:X="+AX);
                 MySceneController.finalResultSim.setValue("进程"+curPCB.getProcessId()+"执行结果为X="+AX);
                 result = psw | CPU.EOP;
@@ -191,7 +191,7 @@ public class CPU implements Runnable{
         //System.out.println("\n----------随机产生进程-------------");
         if ((int)(Math.random()*6)==5){
             AFile executeFile = exeFiles.get((int)(exeFiles.size()*Math.random()));
-            ProcessControlUtil.create(executeFile);//创建进程
+             ProcessSimService.getProcessSimService().create(executeFile);//创建进程
             //System.out.println("随机生成了新进程");
         }else {
             //System.out.println("没有产生新进程");
@@ -222,14 +222,14 @@ public class CPU implements Runnable{
 
         //轮到设备中断，防止时间片到期还未发出设备申请
         if((psw&CPU.IOI)!=0){
-            ProcessControlUtil.block(curPCB);
+             ProcessSimService.getProcessSimService().block(curPCB);
             //IO中断(请求设备)
             //System.out.println("正在处理设备中断···");
             MySceneController.intermediateResultSim.setValue("处理设备中断···");
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
             //请求分配设备
-            Equipment.getEquipment().distributeEQ(equip,curPCB,time);
+            DeviceSimService.getDeviceSimService().distributeDevice(equip,curPCB,time);
             //System.out.println("申请设备"+equip+":"+time+"秒");
             curPCB = processScheduling();
             psw = psw ^ CPU.IOI;

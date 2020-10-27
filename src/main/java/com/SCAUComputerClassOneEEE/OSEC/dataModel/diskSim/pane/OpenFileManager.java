@@ -1,7 +1,7 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel.AOpenFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AOpenFile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;

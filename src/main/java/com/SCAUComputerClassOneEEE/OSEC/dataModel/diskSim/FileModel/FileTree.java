@@ -1,9 +1,9 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.FileModel;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.Disk;
-import com.SCAUComputerClassOneEEE.OSEC.dataOjb.diskSim.pane.FilePane;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.impl.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import lombok.Getter;

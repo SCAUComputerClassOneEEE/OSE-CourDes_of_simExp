@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataOjb.processSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
