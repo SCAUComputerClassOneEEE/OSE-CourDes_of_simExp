@@ -127,15 +127,23 @@ public class MySceneController implements Initializable {
     @FXML
     private TableColumn<EAT, Number> time;
 
+    private boolean isFirstStart = true;
 
     @FXML
-    public void beginORStop(){
+    public void beginORStop() throws InterruptedException {
         if (beginORStop.getText().equals("开始")){
-            TaskThreadPools.execute(Main.cpu);
+            if (isFirstStart) {
+                TaskThreadPools.execute(Main.cpu);
+                isFirstStart = false;
+            }else {
+                Main.cpu.WAITING = false;
+                Main.cpu.notifyCPU();
+            }
             beginORStop.setText("暂停");
         }
         else {
             beginORStop.setText("开始");
+            Main.cpu.WAITING = true;
         }
     }
 

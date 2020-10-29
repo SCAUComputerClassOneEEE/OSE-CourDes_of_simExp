@@ -70,7 +70,7 @@ public class Memory {
                 System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
             }
 
-            MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
+            //MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
             //
             return pointer;
         }
@@ -86,7 +86,7 @@ public class Memory {
             MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
             if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
             mat.recovery_MAT(pointer,thisProcessBlock.getLength());
-            Platform.runLater(()-> MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1));
+            //MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
         }
     }
 
@@ -95,7 +95,6 @@ public class Memory {
      */
     public synchronized void compress(){
         synchronized (this) {
-            //System.out.println("-------------compression-----------");
             Iterator<MAT.ProcessBlock> processBlockIterator = mat.MAT_OccupyCont.iterator();
             int iProcessLength = 0;
             while(processBlockIterator.hasNext()){
@@ -118,13 +117,13 @@ public class Memory {
         System.out.println();
         System.out.println(mat.getMAT_FreeCont().size());
         for (MAT.FreeBlock f: mat.getMAT_FreeCont()) {
-            //System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
+            System.out.println("-Free p: " + f.getPointer() + ", l: " + f.getLength());
         }
-        System.out.println();
-        System.out.println(mat.getMAT_OccupyCont().size());
-        for (MAT.ProcessBlock p:mat.getMAT_OccupyCont()){
-            //System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
-        }
+//        System.out.println();
+//        System.out.println(mat.getMAT_OccupyCont().size());
+//        for (MAT.ProcessBlock p:mat.getMAT_OccupyCont()){
+//            //System.out.println("-Process p: " + p.getPointer() + ", l: " + p.getLength());
+//        }
     }
 
     /**
@@ -151,7 +150,7 @@ public class Memory {
                 this.pointer = pointer;
             }
             int endOfFreePointer(){
-                return pointer + length;
+                return pointer + length - 1;
             }
         }
         @Data
@@ -233,7 +232,7 @@ public class Memory {
                 FreeBlock currFreeBlock = MAT_FreeCont.get(i);
                 FreeBlock nextFreeBlock = MAT_FreeCont.get(i + 1);
                 //判断是否相邻
-                if (currFreeBlock.endOfFreePointer() == nextFreeBlock.getPointer()){
+                if (currFreeBlock.endOfFreePointer() + 1 == nextFreeBlock.getPointer()){
                     //System.out.println("    currFreeBlock.endOfFreePointer() == nextFreeBlock.getPointer() is true");
                     //把下一个相邻的空闲区合到当前空闲区
                     currFreeBlock.setLength(currFreeBlock.getLength() + nextFreeBlock.getLength());
@@ -254,7 +253,8 @@ public class Memory {
          */
         int allocate_MAT_FF(int size){
             int retPointer = -1;
-            for (FreeBlock iFreeBlock : MAT_FreeCont) {
+            for (int i = 0; i < MAT_FreeCont.size(); i++) {
+                FreeBlock iFreeBlock = MAT_FreeCont.get(i);
                 if (iFreeBlock.getLength() >= size) {
                     //找到第一个满足要求的空闲区
                     retPointer = iFreeBlock.getPointer();
@@ -262,9 +262,10 @@ public class Memory {
                         //其余部分作为一个新空闲区
                         FreeBlock newFreeBlock = new FreeBlock(retPointer + size,
                                 iFreeBlock.getLength() - size);
-                        MAT_FreeCont.add(MAT_FreeCont.indexOf(iFreeBlock),newFreeBlock);
+                        MAT_FreeCont.add (MAT_FreeCont.indexOf(iFreeBlock),newFreeBlock);
                     }
                     MAT_FreeCont.remove(iFreeBlock);
+                    break;
                 }
             }
             return retPointer;

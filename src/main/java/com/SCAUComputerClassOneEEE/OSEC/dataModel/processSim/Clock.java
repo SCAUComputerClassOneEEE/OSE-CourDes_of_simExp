@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 @Data
 public class Clock implements Runnable{
 
+    private static int TIME_UNIT = 999;
     private static int cpuRanTime = 0;
     private volatile static int timeSlice = 6;
     private static final Clock clock = new Clock();
@@ -62,7 +63,7 @@ public class Clock implements Runnable{
         int psw = CPU.CPUCycles();
         long end1 = System.currentTimeMillis();
         //补足1000ms时间
-        Thread.sleep(999 - end1 + sTime);
+        Thread.sleep(TIME_UNIT - end1 + sTime);
 
         if (timeSlice == 0){
             //System.out.println("##时间片结束");

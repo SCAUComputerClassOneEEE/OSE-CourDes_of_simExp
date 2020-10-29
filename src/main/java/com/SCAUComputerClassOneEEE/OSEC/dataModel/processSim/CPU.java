@@ -21,6 +21,7 @@ import java.util.ArrayList;
  */
 public class CPU implements Runnable{
 
+    public boolean WAITING = false;
     public static int EOP = 1;//程序结束
     public static int TSE = 1 << 1;//时间片结束
     public static int IOI = 1 << 2;//IO中断发生
@@ -74,38 +75,53 @@ public class CPU implements Runnable{
 
         curPCB = processScheduling();
         //以下为cpu正式循环运行
-        while (true){
-
-            //中断处理区
-            interruptHandling();
-
-            //随机产生新进程
-            randomPosses();
-
-            //showReadyAndBlockQueue();
-
-            //判断是否需要调度
-            if (curPCB==null){
-                if (readyQueue.size()>0){
-                    curPCB = processScheduling();
+        synchronized (this) {
+            while (true){
+                if (WAITING) {
+                    waitCPU();
                 }
-            }
-            if (curPCB!=null){
-                //System.out.println("进程:"+curPCB.getProcessId()+"正在运行");
-                MySceneController.runningPCBIDSim.setValue(String.valueOf(curPCB.getProcessId()));
-            }
-            else {
-                MySceneController.runningPCBIDSim.setValue("当前进程为闲逛进程");
-            }
 
-            //程序运行区，一次运行一条指令
-            //System.out.println("\n----------指令执行-------------");
-            psw = clock.timeRotation();
-            //System.out.println("----------指令执行-------------");
+                //中断处理区
+                interruptHandling();
 
+                //随机产生新进程
+                randomPosses();
+
+
+                //showReadyAndBlockQueue();
+
+                //判断是否需要调度
+                if (curPCB==null){
+                    if (readyQueue.size()>0){
+                        curPCB = processScheduling();
+                    }
+                }
+                if (curPCB!=null){
+                    //System.out.println("进程:"+curPCB.getProcessId()+"正在运行");
+                    MySceneController.runningPCBIDSim.setValue(String.valueOf(curPCB.getProcessId()));
+                }
+                else {
+                    MySceneController.runningPCBIDSim.setValue("当前进程为闲逛进程");
+                }
+
+                //程序运行区，一次运行一条指令
+                //System.out.println("\n----------指令执行-------------");
+                psw = clock.timeRotation();
+                //System.out.println("----------指令执行-------------");
+
+            }
         }
     }
 
+    public void waitCPU() throws InterruptedException {
+        this.wait();
+    }
+
+    public void notifyCPU() {
+        synchronized (this) {
+            this.notify();
+        }
+    }
 
 
     /**
@@ -192,6 +208,7 @@ public class CPU implements Runnable{
         if ((int)(Math.random()*6)==5){
             AFile executeFile = exeFiles.get((int)(exeFiles.size()*Math.random()));
              ProcessSimService.getProcessSimService().create(executeFile);//创建进程
+            Memory.getMemory().MAT_display();
             //System.out.println("随机生成了新进程");
         }else {
             //System.out.println("没有产生新进程");
