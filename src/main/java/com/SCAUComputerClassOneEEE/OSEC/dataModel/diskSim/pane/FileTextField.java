@@ -36,7 +36,7 @@ public class FileTextField {
 
         save.setText("保存");
         selectAll.setText("全选");
-        menu.setText("文件菜单");
+        menu.setText("菜单");
         menu.getItems().addAll(save, selectAll);
         menuBar.getMenus().addAll(menu);
 
@@ -70,6 +70,7 @@ public class FileTextField {
             disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
             FilePane.update(myTreeItem);
             text = textArea.getText();
+            stage.setTitle(aFile.getFileName() + "." + aFile.getType());
         } catch (Exception e) {
             e.printStackTrace();
         }
