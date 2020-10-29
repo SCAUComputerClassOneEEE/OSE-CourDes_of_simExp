@@ -351,7 +351,7 @@ public class DiskSimService {
                     buffer = buffer2;
                 else return false;
                 AFile root = myTreeItem.getValue();
-                String file_cont = FileTextField.deleteCharString0(disk.readFile(root.getDiskNum()), '#');
+                String file_cont = deleteCharString0(disk.readFile(root.getDiskNum()), '#');
                 String buffer_cont = buffer.substring(0, Math.min(write_length, buffer.length()));
 
                 //数据写入文件后，删去对应的数据
@@ -665,5 +665,16 @@ public class DiskSimService {
         }
         if(mIdx < num) return  -1;
         return slashMatcher.start();
+    }
+
+    //删除磁盘块中的'#'
+    String deleteCharString0(String sourceString, char chElemData) {
+        StringBuilder deleteString = new StringBuilder();
+        for (int i = 0; i < sourceString.length(); i++) {
+            if (sourceString.charAt(i) != chElemData) {
+                deleteString.append(sourceString.charAt(i));
+            }
+        }
+        return deleteString.toString();
     }
 }

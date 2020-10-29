@@ -25,60 +25,38 @@ public class FileTextField {
     private final Disk disk = Main.disk;
     private final DiskSimService diskSimService = new DiskSimService();
 
-    public FileTextField(TreeItem<AFile> myTreeItem){
+    private String text;
+
+    public FileTextField(TreeItem<AFile> myTreeItem) {
         init(myTreeItem);
     }
 
-    private void init(TreeItem<AFile> myTreeItem){
+    private void init(TreeItem<AFile> myTreeItem) {
         AFile aFile = myTreeItem.getValue();
-        //读取块中内容并进行转化
-        if(aFile.isFile())
-            textArea.setText(aFile.getDiskContent());
-        else if(aFile.isExeFile()) {
-            StringBuilder contents = new StringBuilder();
-            char[] chars = aFile.getDiskContent().toCharArray();
-            for (char c:chars)
-               contents.append(Compile.decompile(c) + (char)10);
-            textArea.setText(contents.toString());
-        }
-        else
-            textArea.setText(null);
 
-        if(myTreeItem.getValue().getProperty() == 3)
-            textArea.setEditable(false);
-
-        save.setText("保存");selectAll.setText("全选");
-
+        save.setText("保存");
+        selectAll.setText("全选");
         menu.setText("文件菜单");
         menu.getItems().addAll(save, selectAll);
-
         menuBar.getMenus().addAll(menu);
-
-        save.setOnAction(event -> save(myTreeItem));
-        selectAll.setOnAction(event -> textArea.selectAll());
-        borderPane.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.S)
-//                保存
-                save(myTreeItem);
-            else if (event.getCode() == KeyCode.A)
-//                全选
-                textArea.selectAll();
-        });
 
         borderPane.setTop(menuBar);
         borderPane.setCenter(textArea);
 
         Scene scene = new Scene(borderPane);
         stage.setScene(scene);
+        stage.setTitle(aFile.getFileName() + "." + aFile.getType());
 
-        stage.setOnCloseRequest(event -> OpenFileManager.closeAFile(aFile));
+        fileContentDisplay(aFile);
+        setWindowProperty(myTreeItem);
+        addListener(myTreeItem);
     }
 
     public void show(){
         stage.show();
     }
 
-    public void save(TreeItem<AFile> myTreeItem){
+    public void save(TreeItem<AFile> myTreeItem) {
         try {
             AFile aFile = myTreeItem.getValue();
             int diskNum = aFile.getDiskNum();
@@ -91,12 +69,57 @@ public class FileTextField {
             AFile fatherFile = myTreeItem.getParent().getValue();
             disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
             FilePane.update(myTreeItem);
+            text = textArea.getText();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    String modify(AFile fatherFile, AFile rootFile){
+    /**
+     * 读取块中内容并进行转化
+     * @param aFile 文件
+     */
+    void fileContentDisplay(AFile aFile) {
+        String textFile;
+        if(aFile.isFile())
+            textFile = aFile.getDiskContent();
+        else if(aFile.isExeFile()) {
+            StringBuilder contents = new StringBuilder();
+            char[] chars = aFile.getDiskContent().toCharArray();
+            for (char c:chars)
+                contents.append(Compile.decompile(c)).append((char) 10);
+            textFile = contents.toString();
+        }
+        else
+            textFile = "";
+        textArea.setText(textFile);
+        text = textFile;
+    }
+
+    /**
+     * 系统功能设置
+     * @param myTreeItem 相应文件项
+     */
+    void setWindowProperty(TreeItem<AFile> myTreeItem) {
+        AFile aFile = myTreeItem.getValue();
+        //只读文件设置不可修改
+        if(myTreeItem.getValue().getProperty() == 3)
+            textArea.setEditable(false);
+        save.setOnAction(event -> {
+            save(myTreeItem);
+            stage.setTitle(aFile.getFileName() + "." + aFile.getType());
+        });
+        selectAll.setOnAction(event -> textArea.selectAll());
+        borderPane.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.S)
+                save(myTreeItem);
+            else if (event.getCode() == KeyCode.A)
+                textArea.selectAll();
+        });
+        stage.setOnCloseRequest(event -> OpenFileManager.closeAFile(myTreeItem.getValue()));
+    }
+
+    String modify(AFile fatherFile, AFile rootFile) {
         char[] block_cont = String.valueOf(disk.readFile(fatherFile.getDiskNum())).toCharArray();
         char[] root_cont = rootFile.getALLData();
         int in = fatherFile.getAFiles().indexOf(rootFile);
@@ -104,14 +127,14 @@ public class FileTextField {
         return String.valueOf(block_cont);
     }
 
-    //删除磁盘块中的'#'
-    public static String deleteCharString0(String sourceString, char chElemData) {
-        StringBuilder deleteString = new StringBuilder();
-        for (int i = 0; i < sourceString.length(); i++) {
-            if (sourceString.charAt(i) != chElemData) {
-                deleteString.append(sourceString.charAt(i));
-            }
-        }
-        return deleteString.toString();
+    void addListener(TreeItem<AFile> myTreeItem) {
+        AFile aFile = myTreeItem.getValue();
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("newValue:" + newValue);
+            System.out.println("text:" + text);
+            if(!newValue.equals(text)) {
+                stage.setTitle("*" + aFile.getFileName() + "." + aFile.getType());
+            } else stage.setTitle(aFile.getFileName() + "." + aFile.getType());
+        });
     }
 }
