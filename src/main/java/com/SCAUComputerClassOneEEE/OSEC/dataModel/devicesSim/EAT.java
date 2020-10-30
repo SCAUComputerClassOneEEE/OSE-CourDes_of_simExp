@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.equipmentsSim;
+package com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import javafx.beans.property.SimpleObjectProperty;
@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleObjectProperty;
  * @Author: Sky
  * @Date: 2020/10/16 12:21
  */
-
 public class EAT{
     public char deviceID;//设备ID
     public int pcbID;//申请设备的进程ID

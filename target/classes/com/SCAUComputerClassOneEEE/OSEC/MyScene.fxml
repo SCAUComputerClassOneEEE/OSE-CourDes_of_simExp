@@ -58,7 +58,7 @@
                                        </children>
                                     </StackPane>
                                     <Label layoutX="21.0" layoutY="478.0" text="设备总量:A2,B3,C3,显示在下表中的即为已分配的设备" />
-                                    <Button fx:id="reset" layoutX="245.0" layoutY="82.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="89.0" text="重置" />
+                                    <Button fx:id="reset" onAction="#reset" layoutX="245.0" layoutY="82.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="89.0" text="重置" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="985.0" style="-fx-background-color: WHITE;">

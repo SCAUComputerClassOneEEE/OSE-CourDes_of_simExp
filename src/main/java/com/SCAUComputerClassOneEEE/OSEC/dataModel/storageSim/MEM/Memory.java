@@ -37,7 +37,6 @@ public class Memory {
         Arrays.fill(userMemoryArea,'#');
         mat = new MAT();
         PCB_LIST = new ArrayList<>(PCB_SIZE);
-
     }
 
     public static Memory getMemory(){
@@ -70,8 +69,8 @@ public class Memory {
                 System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
             }
 
-            //MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
-            //
+            MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
+
             return pointer;
         }
     }
@@ -86,7 +85,7 @@ public class Memory {
             MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
             if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
             mat.recovery_MAT(pointer,thisProcessBlock.getLength());
-            //MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
+            MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
         }
     }
 

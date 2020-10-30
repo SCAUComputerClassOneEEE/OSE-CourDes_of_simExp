@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
@@ -15,12 +16,12 @@ import java.util.ArrayList;
  * @Date: 2020/10/20 11:29
  */
 public class ProcessSimService {
-    private static ProcessSimService processSimService = new ProcessSimService();
+    private static final ProcessSimService processSimService = new ProcessSimService();
 
     //颜色库，给PCB赋颜色值
-    private static final ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.PURPLE);
+    private static final ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.YELLOWGREEN);
         add(Color.YELLOW);add(Color.TOMATO);add(Color.SILVER);add(Color.TURQUOISE);add(Color.TAN);add(Color.CORAL);
-        add(Color.SKYBLUE);add(Color.PINK);add(Color.GREEN);}};
+        add(Color.SKYBLUE);add(Color.PINK);add(Color.LIGHTSTEELBLUE);}};
 
     public static ProcessSimService getProcessSimService(){
         return ProcessSimService.processSimService;
@@ -29,6 +30,7 @@ public class ProcessSimService {
     public static ArrayList<Color> getColors(){
         return ProcessSimService.colors;
     }
+
 
     /**进程控制原语
      * 进程申请
@@ -85,7 +87,7 @@ public class ProcessSimService {
     public void block(PCB blockPCB){
         //保存现场
         blockPCB.setNextInstruction(CPU.PC-blockPCB.getPointerToMemory());
-        blockPCB.setAX(CPU.getAX());
+        blockPCB.setAX(CPU.AX);
         blockPCB.setRemainInstructions(blockPCB.getTotalSize()-blockPCB.getNextInstruction());
         blockPCB.setProgressRate(((double)blockPCB.getTotalSize()-blockPCB.getRemainInstructions())/blockPCB.getTotalSize());
         //将进程链入对应的阻塞队列

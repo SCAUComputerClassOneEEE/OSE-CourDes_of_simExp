@@ -60,7 +60,7 @@ public class Clock implements Runnable{
         DeviceSimService.getDeviceSimService().decTime();
         CPU.getCpu().timeAdd();
         //返回中断字
-        int psw = CPU.CPUCycles();
+        int psw = CPU.instructionCycle();
         long end1 = System.currentTimeMillis();
         //补足1000ms时间
         Thread.sleep(TIME_UNIT - end1 + sTime);

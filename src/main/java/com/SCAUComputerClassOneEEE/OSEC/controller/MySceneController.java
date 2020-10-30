@@ -4,8 +4,8 @@ package com.SCAUComputerClassOneEEE.OSEC.controller;
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.OpenFileManager;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.equipmentsSim.EAT;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.equipmentsSim.device;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.EAT;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.device;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
@@ -20,6 +20,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -69,8 +71,6 @@ public class MySceneController implements Initializable {
     private Button reset;
 
     @FXML
-    private TextArea help;
-    @FXML
     private Tab fileSystem;
 
     @FXML
@@ -83,8 +83,7 @@ public class MySceneController implements Initializable {
     private TableColumn<PCB,Integer> readyTotalTime;
     @FXML
     private TableColumn<PCB,Integer> readyAX;
-/*    @FXML
-    private TableColumn<PCB,Integer> readyNextIR;*/
+
     @FXML
     private TableColumn<PCB,String> readyEXFileName;
     @FXML
@@ -130,7 +129,7 @@ public class MySceneController implements Initializable {
     private boolean isFirstStart = true;
 
     @FXML
-    public void beginORStop() throws InterruptedException {
+    public void beginORStop() {
         if (beginORStop.getText().equals("开始")){
             if (isFirstStart) {
                 TaskThreadPools.execute(Main.cpu);
@@ -140,9 +139,15 @@ public class MySceneController implements Initializable {
                 Main.cpu.notifyCPU();
             }
             beginORStop.setText("暂停");
+            beginORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+"暂停"+".png",
+                    30, 30,
+                    true, true)));
         }
         else {
             beginORStop.setText("开始");
+            beginORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+"开始"+".png",
+                    30, 30,
+                    true, true)));
             Main.cpu.WAITING = true;
         }
     }
@@ -223,9 +228,9 @@ public class MySceneController implements Initializable {
         //给表添加数据源
         equipmentTable.setItems(device.getRunningLists());
         //设置列属性
-        equipmentID.setCellValueFactory(new PropertyValueFactory<>("eqID"));
+        equipmentID.setCellValueFactory(new PropertyValueFactory<>("deviceID"));
         useEquipmentPCBID.setCellValueFactory(new PropertyValueFactory<>("pcbID"));
-        time.setCellValueFactory(new PropertyValueFactory<>("time"));
+        time.setCellValueFactory(new PropertyValueFactory<>("remainingTime"));
     }
 
     private void initReadyTable(){
@@ -331,4 +336,9 @@ public class MySceneController implements Initializable {
         finalResult.setText(result);
     }
 
+    @FXML
+    private void reset(){
+        isFirstStart = true;
+        CPU.getCpu().reset();
+    }
 }

@@ -21,7 +21,7 @@ public class ButtonUtil {
         button.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+buttonName+".png",
                 30, 30,
                 true, true)));
-        button.setTooltip(new Tooltip(buttonName));
+        //button.setTooltip(new Tooltip(buttonName));
         button.setOnMouseEntered(event -> {
             button.setStyle("-fx-background-color:#e6e6e6;");
         });
