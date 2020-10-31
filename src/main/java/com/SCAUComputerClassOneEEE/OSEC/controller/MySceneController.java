@@ -193,11 +193,13 @@ public class MySceneController implements Initializable {
         }));
         diskChange.setValue(0);
         diskChange.addListener(((observable, oldValue, newValue) -> {
-            Platform.runLater(this::updateMemoryPane);
+            System.out.println(newValue);
+            Platform.runLater(() -> updateDiskPane(newValue));
         }));
     }
 
     private void updateDiskPane(int index) {
+        DiskPane.BlockPane[] blockPane = OS.diskPane.getBlockPanes();
         OS.diskPane.updateType(index);
     }
 

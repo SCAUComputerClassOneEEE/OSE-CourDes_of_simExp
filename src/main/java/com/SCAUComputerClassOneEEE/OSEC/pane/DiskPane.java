@@ -8,19 +8,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 public class DiskPane {
 
     private volatile static DiskPane diskPane = new DiskPane();
 
-    private BlockPane[] blockPanes;
+    private BlockPane[] blockPanes = new BlockPane[128];
     private GridPane diskBlockSet;
     private static int rowNum = 8;
     private static int colNum = 16;
 
     private DiskPane(){
-        blockPanes = new BlockPane[128];
         diskBlockSet = new GridPane();
         diskBlockSet.setPadding(new Insets(5));
         diskBlockSet.setHgap(rowNum);
@@ -53,9 +54,9 @@ public class DiskPane {
             blockPanes[index].setFree();
     }
 
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    public static class BlockPane extends StackPane {
+    @Getter
+    @Setter
+    public class BlockPane extends StackPane {
         private Rectangle rectangle;
         private Label label;
         private int index;
