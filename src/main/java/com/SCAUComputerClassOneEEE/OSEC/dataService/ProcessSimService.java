@@ -1,7 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
-import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
@@ -73,7 +72,7 @@ public class ProcessSimService {
             Memory.getMemory().recovery(destroyProcess.getPointerToMemory());
         }
         catch (Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         //回收PCB,运行时会把pcb从就绪队列中拿出来
         colors.add(destroyProcess.getColor());

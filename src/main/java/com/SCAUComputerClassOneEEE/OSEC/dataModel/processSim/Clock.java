@@ -59,7 +59,12 @@ public class Clock{
         int psw = CPU.instructionCycle();
         long end1 = System.currentTimeMillis();
         //补足1000ms时间
-        Thread.sleep(TIME_UNIT - end1 + sTime);
+        try {
+            Thread.sleep(TIME_UNIT - end1 + sTime);
+        }
+        catch (Exception ignored){
+
+        }
 
         if (timeSlice == 0){
             //System.out.println("##时间片结束");

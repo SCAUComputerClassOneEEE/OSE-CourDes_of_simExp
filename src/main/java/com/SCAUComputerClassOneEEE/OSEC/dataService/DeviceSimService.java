@@ -24,11 +24,11 @@ public class DeviceSimService {
         //判断申请的设备是否可用
         if ((deviceID=='A'&&getNumOf('A') < 2) || (deviceID == 'B' && getNumOf('B') < 3) || (deviceID == 'C' && getNumOf('C') < 3)){
             Device.getRunningLists().add(eat);
-            pcb.setWaitEq("使用设备"+deviceID);
+            pcb.setWaitingForDevice("使用设备"+deviceID);
         }
         else {
             Device.getWaitLists().add(eat);
-            pcb.setWaitEq("等待设备"+deviceID);
+            pcb.setWaitingForDevice("等待设备"+deviceID);
         }
 
     }
@@ -42,12 +42,12 @@ public class DeviceSimService {
                 ProcessSimService.getProcessSimService().awake(each.pcb);
 
                 needDelete.add(each);
-                each.pcb.setWaitEq("无需等待设备");
+                each.pcb.setWaitingForDevice("无需等待设备");
 
                 EAT eat = canRun(each.deviceID);//检查waitList里面有没有能够运行的，如果有么就返回EAT对象
                 if (eat != null){
                     needAdd.add(eat);
-                    eat.pcb.setWaitEq("使用设备"+each.deviceID);
+                    eat.pcb.setWaitingForDevice("使用设备"+each.deviceID);
                 }
             }
         }

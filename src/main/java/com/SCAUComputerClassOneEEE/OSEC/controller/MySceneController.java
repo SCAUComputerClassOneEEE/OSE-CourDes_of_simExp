@@ -1,20 +1,15 @@
 package com.SCAUComputerClassOneEEE.OSEC.controller;
 
 
-import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.OS;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.OpenFileManager;
+import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
+import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
+import com.SCAUComputerClassOneEEE.OSEC.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.EAT;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.Device;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
-import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
-import com.SCAUComputerClassOneEEE.OSEC.op.Terminal;
-import com.SCAUComputerClassOneEEE.OSEC.utils.ButtonUtil;
-import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
+import com.SCAUComputerClassOneEEE.OSEC.pane.DiskPane;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -148,9 +143,10 @@ public class MySceneController implements Initializable {
         beginORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+"开始"+".png",
                 30, 30,
                 true, true)));
-        CPU.getCpu().reset();
-        Clock.getClock().reset();
-        Device.getDevice().reset();
+        OS.cpu.reset();
+        OS.clock.reset();
+        OS.device.reset();
+        //OS.memory.reset();
         updateMemoryPane();
     }
 
@@ -183,9 +179,6 @@ public class MySceneController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        //ButtonUtil.decorateButton(beginORStop,"开始");
-        //ButtonUtil.decorateButton(reset,"重置");
         beginORStop.setText("开始");
 
         initTime();
@@ -200,40 +193,37 @@ public class MySceneController implements Initializable {
         }));
         diskChange.setValue(0);
         diskChange.addListener(((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> updateDiskPane(newValue));
+            Platform.runLater(this::updateMemoryPane);
         }));
     }
 
     private void updateDiskPane(int index) {
-        DiskPane.BlockPane[] blockPane = OS.diskPane.getBlockPanes();
         OS.diskPane.updateType(index);
     }
 
     private void initFileSystem(){
 
         FilePane centerPane = new FilePane();
-        VBox leftPane = OS.fileTree.getVBox();
-        Terminal rightPane = new Terminal(OS.fileTree);//初始化命令行
+        VBox leftPane = OS.fileTree.getFileTreePane();
+        TextArea rightPane = OS.terminal.getTextArea();//初始化命令行
 
         bp1.setLeft(leftPane);
         bp1.setCenter(centerPane);
-        bp1.setRight(rightPane.textArea);
+        bp1.setRight(rightPane);
 
         bp2.setLeft(OpenFileManager.openFileTableView);
-        bp2.setCenter(OS.diskPane.getRoot());
+        bp2.setCenter(OS.diskPane.getDiskBlockSet());
 
         width = bp1.getPrefWidth();
         height = bp1.getPrefHeight();
-        System.out.println(width);
-        System.out.println(height);
 
         //leftPane.setPrefSize(width/5,3*height/5);
         OS.fileTree.getTreeView().setPrefSize(width/5,3*height/5);
         //leftPane.setSize(width/5,3*height/5);
         centerPane.setPrefSize(2*width/5,3*height/5);
-        rightPane.textArea.setPrefSize(2*width/5,3*height/5);
+        rightPane.setPrefSize(2*width/5,3*height/5);
         OpenFileManager.openFileTableView.setPrefSize(4*width/7,2*height/5);
-        OS.diskPane.getRoot().setPrefSize(3*width/7,2*height/5);
+        OS.diskPane.getDiskBlockSet().setPrefSize(3*width/7,2*height/5);
 
     }
 
@@ -287,7 +277,7 @@ public class MySceneController implements Initializable {
         blockProgressRate.setCellFactory(ProgressBarTableCell.forTableColumn());
         blockTable.setItems(CPU.blockedQueue);
         blockID.setCellValueFactory(new PropertyValueFactory<>("processId"));
-        waitEq.setCellValueFactory(new PropertyValueFactory<>("waitEq"));
+        waitEq.setCellValueFactory(new PropertyValueFactory<>("waitingForDevice"));
         blockArriveTime.setCellValueFactory(new PropertyValueFactory<>("arriveTime"));
         blockTotalTime.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
         blockEXFileName.setCellValueFactory(new PropertyValueFactory<>("exFileName"));

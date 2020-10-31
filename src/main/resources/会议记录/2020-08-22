@@ -5,6 +5,6 @@
 	at com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk$FAT.getFileSize(Disk.java:174)
 	at com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk$FAT.getFileSize(Disk.java:176)
 	at com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk.getFileSize(Disk.java:86)
-	at com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FileTextField.lambda$init$0(FileTextField.java:48)
+	at com.SCAUComputerClassOneEEE.OSEC.pane.FileTextField.lambda$init$0(FileTextField.java:48)
 
 	yx，jh，lf接着做之前的内容，hl做文件略缩展示，ky做细节的完善

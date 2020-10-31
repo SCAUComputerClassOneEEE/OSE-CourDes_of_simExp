@@ -1,12 +1,10 @@
 package com.SCAUComputerClassOneEEE.OSEC;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
-import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import com.SCAUComputerClassOneEEE.OSEC.ui.MainUI;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -28,12 +26,8 @@ import java.net.URL;
 
 
 public class Main extends Application {
-/*    public static DiskPane diskPane = DiskPane.getDiskPane();
-    public static Disk disk = Disk.getDisk();
-    public static FileTree fileTree = FileTree.getFileTree();
-    public static CPU cpu = CPU.getCpu();*/
 
-    Stage stage = new Stage();
+    private final Stage stage = new Stage();
     private boolean allReady = false;
     private static Label infoLb;
 
@@ -80,7 +74,7 @@ public class Main extends Application {
             //stage.initStyle(StageStyle.DECORATED);
             stage.getIcons().add(new Image("file:" +"src/main/resources/操作系统.png",20, 20,
                     true, true));
-            stage.setTitle("myOS");
+            stage.setTitle("模拟操作系统实现");
             stage.show();
             bootOS();
             stage.setOnCloseRequest(e -> Disk.getDisk().writeDiskToFile());
@@ -95,7 +89,7 @@ public class Main extends Application {
      * @throws MalformedURLException
      */
     public void bootStage() throws URISyntaxException, MalformedURLException {
-        URL url = MainUI.class.getClassLoader().getResource("1.png").toURI().toURL();
+        URL url = MainUI.class.getClassLoader().getResource("加载界面.png").toURI().toURL();
         Image image = new Image(url.toString());
         ImageView view = new ImageView(image);
 
@@ -111,7 +105,8 @@ public class Main extends Application {
         stage.setWidth(image.getWidth());
         stage.setHeight(image.getHeight());
         stage.initStyle(StageStyle.UNDECORATED);
-
+        stage.getIcons().add(new Image("file:" +"src/main/resources/操作系统.png",20, 20,
+                true, true));
         Thread t = new Thread(this::initSystem);
         t.start();
         stage.show();

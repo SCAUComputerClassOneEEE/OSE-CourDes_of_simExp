@@ -1,6 +1,5 @@
 package com.SCAUComputerClassOneEEE.OSEC.ui;
 
-import com.SCAUComputerClassOneEEE.OSEC.Main;
 import lombok.Data;
 
 

@@ -6,11 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- *
- *
- * pcb模拟
- * @author best lu
- * @since 2020/08/15
+ * @author sky
+ * @since 2020/9/15
  */
 @Getter
 @Setter
@@ -22,7 +19,7 @@ public class PCB {
     private int pointerToMemory;//内存指针 0 ~ 511
     private int arriveTime;
     private SimpleObjectProperty<Integer> totalTime = new SimpleObjectProperty<>();
-    private String waitEq;//正在等待的设备
+    private String waitingForDevice;//正在等待的设备
     private int AX;//运行中x的值
     private int nextInstruction;//程序计数器
 
@@ -38,7 +35,7 @@ public class PCB {
         this.setNextInstruction(0);
         this.setPointerToMemory(pointerToMemory);//一开始不可用，创建时需要赋值
         this.setProcessId(PCB.nextProcessID++);//分配唯一的进程id,编号从零开始一直递增
-        this.setWaitEq("无需等待设备");
+        this.setWaitingForDevice("无需等待设备");
         this.setTotalSize(totalSize);
         this.setColor(color);
         this.setArriveTime(arriveTime);
@@ -47,7 +44,6 @@ public class PCB {
         this.setRemainInstructions(this.getTotalSize()-this.getNextInstruction());
         this.setProgressRate(((double)this.getTotalSize()-this.getRemainInstructions())/this.getTotalSize());
     }
-
 
     public int getTotalTime(){
         return totalTime.get();

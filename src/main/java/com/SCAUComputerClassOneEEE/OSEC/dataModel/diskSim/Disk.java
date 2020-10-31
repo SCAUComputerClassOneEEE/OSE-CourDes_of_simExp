@@ -62,9 +62,10 @@ public class Disk implements Serializable{
         int header;
         try{
             header = fat.getFreeBlockOrder();
-            if(header != 2 && MySceneController.diskChange.getValue() == header)
-                Platform.runLater(()->MySceneController.diskChange.setValue(-1));
-            Platform.runLater(()->MySceneController.diskChange.setValue(header));
+            if(header != 2 && MySceneController.diskChange.getValue() == header){
+                MySceneController.diskChange.setValue(-1);
+            }
+            MySceneController.diskChange.setValue(header);
             return  header;
         }catch (Exception e){
             e.printStackTrace();

@@ -1,16 +1,12 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
-import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.OS;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AOpenFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.FileTree;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.MyTreeItem;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FileTextField;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.OpenFileManager;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Compile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileTree;
+import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
+import com.SCAUComputerClassOneEEE.OSEC.pane.FileTextField;
+import com.SCAUComputerClassOneEEE.OSEC.pane.OpenFileManager;
+import com.SCAUComputerClassOneEEE.OSEC.utils.CompileUtil;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import lombok.Setter;
@@ -23,8 +19,13 @@ import java.util.regex.Pattern;
 
 @Setter
 public class DiskSimService {
-    public String buffer1 = "";
-    public String buffer2 = "";
+    private static DiskSimService diskSimService = new DiskSimService();
+
+    public static DiskSimService getDiskSimService(){
+        return diskSimService;
+    }
+    public static String buffer1 = "";
+    public static String buffer2 = "";
 
     //创建文件
     public String createFile(TreeItem<AFile> myTreeItem, String fileName, int attribute){
@@ -272,7 +273,7 @@ public class DiskSimService {
         String str = replaceBlock_cont(root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
         try{
             OS.disk.writeFile(root.getDiskNum(), str);
-            MyTreeItem treeItem = new MyTreeItem(newFile);
+            FileTree.MyTreeItem treeItem = new FileTree.MyTreeItem(newFile);
             myTreeItem.getChildren().add(treeItem);
             myTreeItem.setExpanded(true);
             root.getAFiles().add(newFile);
@@ -321,7 +322,7 @@ public class DiskSimService {
             String string = myTreeItem.getValue().getDiskContent();
             if(string.length() == 0)
                 return "空文件";
-            AOpenFile aOpenFile = OpenFileManager.getOpenFile(myTreeItem.getValue());
+            AFile.AOpenFile aOpenFile = OpenFileManager.getOpenFile(myTreeItem.getValue());
             //修改文件指针
             assert aOpenFile != null;
             int newSize = aOpenFile.getRPointerLocation()+Math.min(read_length, string.length());
@@ -385,7 +386,7 @@ public class DiskSimService {
         while (!string.equals("") && string.contains(";")){
             String b = string.substring(0, string.indexOf(";"));
             string = string.substring(string.indexOf(";") + 1);
-            contents.append(Compile.compile(b));
+            contents.append(CompileUtil.compile(b));
         }
         OS.disk.writeFile(aFile.getDiskNum(), contents.toString());
         aFile.setLength((char)OS.disk.getFileSize(aFile.getDiskNum()));

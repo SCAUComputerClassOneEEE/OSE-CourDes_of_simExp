@@ -1,14 +1,13 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.Main;
-import com.SCAUComputerClassOneEEE.OSEC.OS;
+import com.SCAUComputerClassOneEEE.OSEC.utils.CompileUtil;
+import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DeviceSimService;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
-import com.SCAUComputerClassOneEEE.OSEC.utils.TaskThreadPools;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.SneakyThrows;
@@ -36,8 +35,8 @@ public class CPU implements Runnable{
     public static int TSE = 1 << 1;// 时间片结束
     public static int IOI = 1 << 2;// IO中断发生
 
-    // 磁盘数据服务层
-    private static final DiskSimService diskSimService = new DiskSimService();
+/*    // 磁盘数据服务层
+    private static final DiskSimService diskSimService = new DiskSimService();*/
 
     // 预先设置的10个可运行文件，形式仅仅是文件
     public static final ArrayList<AFile> exeFiles = new ArrayList<>();
@@ -58,7 +57,9 @@ public class CPU implements Runnable{
      */
     private void executeCPU() throws Exception {
         //创建可执行文件
-        //initExeFile();
+        if (exeFiles.size() == 0) {
+            initExeFile();
+        }
         cpu();
     }
 
@@ -75,7 +76,7 @@ public class CPU implements Runnable{
                 // 中断处理
                 interruptHandling();
                 // 随机产生新进程
-                //randomPosses();
+                randomPosses();
                 // 判断是否需要调度
                 if (curPCB == null) {
                     // 当前为闲逛进程 检查就绪队列有无新进程加入
@@ -112,7 +113,7 @@ public class CPU implements Runnable{
             // 取出指令，PC指向下一条指令在内存中的地址下标
             char nextInstructionCode = Memory.getMemory().getUserMemoryArea()[PC++];
             // 将取出的指令编码进行反编译，得出指令的文本表达
-            IR = Compile.decompile(nextInstructionCode);
+            IR = CompileUtil.decompile(nextInstructionCode);
             // 更新界面
             MySceneController.runningIRSim.setValue(IR);
             MySceneController.intermediateResultSim.setValue("");
@@ -153,19 +154,20 @@ public class CPU implements Runnable{
      * 随机产生进程申请
      */
     private void randomPosses(){
-        if ((int)(Math.random() * 6) == 5) {
+        if (exeFiles.size() == 0) return;
+        if ((int)(Math.random()) == 0) {
             AFile executeFile = exeFiles.get((int)(exeFiles.size() * Math.random()));
             // 创建进程
-            ProcessSimService.getProcessSimService().create(executeFile);
+            OS.processSimService.create(executeFile);
         }
     }
-/*
-    *//**
+
+    /**
      * 创建10个可执行文件
-     *//*
+     */
     public void initExeFile(){
-        diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef1", 8);
-        diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef2", 8);
+        OS.diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef1", 8);
+        OS.diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef2", 8);
 
         String[] exeFileContents = {
                 "X=0;!A6;X++;X++;!C3;X++;X--;end;",
@@ -173,17 +175,18 @@ public class CPU implements Runnable{
                 "X=2;X--;!A5;X--;!C2;X++;!B3;X++;X++;X++;X++;X++;X++;end;",
                 "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;end;",
                 "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end"};
+
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
-                exeFiles.add(diskSimService.createFile(OS.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
+                exeFiles.add(OS.diskSimService.createFile(OS.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
                 try {
-                    diskSimService.write_exeFile(exeFiles.get(i*5+j), exeFileContents[(int)(Math.random() * 4)]);
+                    OS.diskSimService.write_exeFile(exeFiles.get(i*5+j), exeFileContents[(int)(Math.random() * 4)]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-    }*/
+    }
 
     /**
      * 中断处理
