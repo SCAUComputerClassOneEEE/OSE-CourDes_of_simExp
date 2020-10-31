@@ -31,6 +31,7 @@ public class Main extends Application {
     public static FileTree fileTree = FileTree.getFileTree();
     public static CPU cpu = CPU.getCpu();
 
+    Stage stage =new Stage();
     private boolean allReady = false;
     private static Label infoLb;
 
@@ -41,7 +42,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            bootStage(stage);
+            bootStage();
             new Thread(()->{
                 while (true) {
                     try {
@@ -77,6 +78,7 @@ public class Main extends Application {
             stage.getIcons().add(new Image("file:" +"src/main/resources/操作系统.png",20, 20,
                     true, true));
             stage.setTitle("myOS");
+            stage.show();
             //stage.resizableProperty().setValue(Boolean.FALSE);
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,11 +87,10 @@ public class Main extends Application {
 
     /**
      * 启动界面
-     * @param stage 是
      * @throws URISyntaxException
      * @throws MalformedURLException
      */
-    public void bootStage(Stage stage) throws URISyntaxException, MalformedURLException {
+    public void bootStage() throws URISyntaxException, MalformedURLException {
         URL url = MainUI.class.getClassLoader().getResource("1.png").toURI().toURL();
         Image image = new Image(url.toString());
         ImageView view = new ImageView(image);
@@ -105,7 +106,7 @@ public class Main extends Application {
         stage.setScene(new Scene(page));
         stage.setWidth(image.getWidth());
         stage.setHeight(image.getHeight());
-        //stage.initStyle(StageStyle.UNDECORATED);
+        stage.initStyle(StageStyle.UNDECORATED);
 
         Thread t = new Thread(this::initSystem);
         t.start();
@@ -122,9 +123,10 @@ public class Main extends Application {
             Thread.sleep(1500);
             showInfo("初始化系统配置...");
             Thread.sleep(1500);
+            allReady = true;
             showInfo("版本检测...");
             Thread.sleep(1500);
-            allReady = true;
+            Platform.runLater(stage::close);
         } catch (Throwable e) {
             e.printStackTrace();
         }
