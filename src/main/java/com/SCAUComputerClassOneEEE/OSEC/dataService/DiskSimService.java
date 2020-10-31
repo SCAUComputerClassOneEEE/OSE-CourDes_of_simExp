@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileTree;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AOpenFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.MyTreeItem;
 import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
@@ -273,7 +274,7 @@ public class DiskSimService {
         String str = replaceBlock_cont(root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
         try{
             OS.disk.writeFile(root.getDiskNum(), str);
-            FileTree.MyTreeItem treeItem = new FileTree.MyTreeItem(newFile);
+            MyTreeItem treeItem = new MyTreeItem(newFile);
             myTreeItem.getChildren().add(treeItem);
             myTreeItem.setExpanded(true);
             root.getAFiles().add(newFile);
@@ -322,7 +323,7 @@ public class DiskSimService {
             String string = myTreeItem.getValue().getDiskContent();
             if(string.length() == 0)
                 return "空文件";
-            AFile.AOpenFile aOpenFile = OpenFileManager.getOpenFile(myTreeItem.getValue());
+            AOpenFile aOpenFile = OpenFileManager.getOpenFile(myTreeItem.getValue());
             //修改文件指针
             assert aOpenFile != null;
             int newSize = aOpenFile.getRPointerLocation()+Math.min(read_length, string.length());
