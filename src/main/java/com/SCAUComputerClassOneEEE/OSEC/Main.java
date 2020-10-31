@@ -64,7 +64,7 @@ public class Main extends Application {
     public void secondStage(Stage stage){
         Parent root;
         try {
-            root = FXMLLoader.load(getClass().getResource("MyScene.fxml"));
+            root = FXMLLoader.load(getClass().getResource("MainScene.fxml"));
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("background.css").toExternalForm());
             //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

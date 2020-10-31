@@ -1,6 +1,6 @@
 .label {
-    -fx-text-fill: #FFFFFF;
-    /*-fx-background-image: url("1.png");*/
+    /*-fx-text-fill: #ffffff;*/
+    -fx-text-fill: #000000;
 }
 .split-pane {
     -fx-background-image: url("界面背景图.png");

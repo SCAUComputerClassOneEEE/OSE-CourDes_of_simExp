@@ -39,7 +39,7 @@ public class DiskPane {
                 diskBlockSet.add(blockPanes[index], j, i+3, 1, 1);
             }
         }
-        //diskBlockSet.setStyle("-fx-background-color: WHITE");
+        diskBlockSet.setStyle("-fx-background-color: #c4ecf3");
     }
 
     public static DiskPane getDiskPane(){

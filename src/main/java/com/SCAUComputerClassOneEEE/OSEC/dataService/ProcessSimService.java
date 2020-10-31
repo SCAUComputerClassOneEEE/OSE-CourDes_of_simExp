@@ -5,6 +5,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class ProcessSimService {
         }
         //申请内存
         try {
-            pointer = Memory.getMemory().malloc(aFile.getDiskContent().toCharArray());
+            pointer = OS.memory.malloc(aFile.getDiskContent().toCharArray());
         }catch (Exception e){
             return;
         }
@@ -69,7 +70,7 @@ public class ProcessSimService {
     public void destroy(PCB destroyProcess){
         //回收内存空间
         try{
-            Memory.getMemory().recovery(destroyProcess.getPointerToMemory());
+            OS.memory.getMemory().recovery(destroyProcess.getPointerToMemory());
         }
         catch (Exception e){
             //e.printStackTrace();

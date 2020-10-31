@@ -1,6 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
+import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
 import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
@@ -47,9 +47,9 @@ public class Disk implements Serializable{
     }
     
     public void recovery(int header){
-        if(MySceneController.diskChange.getValue() == header)
-            Platform.runLater(()->MySceneController.diskChange.setValue(-1));
-        Platform.runLater(()->MySceneController.diskChange.setValue(header));
+        if(MainSceneController.diskChange.getValue() == header)
+            Platform.runLater(()-> MainSceneController.diskChange.setValue(-1));
+        Platform.runLater(()-> MainSceneController.diskChange.setValue(header));
         fat.recovery_FAT(header);
     }
 
@@ -62,10 +62,10 @@ public class Disk implements Serializable{
         int header;
         try{
             header = fat.getFreeBlockOrder();
-            if(header != 2 && MySceneController.diskChange.getValue() == header){
-                MySceneController.diskChange.setValue(-1);
+            if(header != 2 && MainSceneController.diskChange.getValue() == header){
+                MainSceneController.diskChange.setValue(-1);
             }
-            MySceneController.diskChange.setValue(header);
+            MainSceneController.diskChange.setValue(header);
             return  header;
         }catch (Exception e){
             e.printStackTrace();
