@@ -41,7 +41,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            boot(stage);
+            bootStage(stage);
             new Thread(()->{
                 while (true) {
                     try {
@@ -89,7 +89,7 @@ public class Main extends Application {
      * @throws URISyntaxException
      * @throws MalformedURLException
      */
-    public void boot(Stage stage) throws URISyntaxException, MalformedURLException {
+    public void bootStage(Stage stage) throws URISyntaxException, MalformedURLException {
         URL url = MainUI.class.getClassLoader().getResource("1.png").toURI().toURL();
         Image image = new Image(url.toString());
         ImageView view = new ImageView(image);
