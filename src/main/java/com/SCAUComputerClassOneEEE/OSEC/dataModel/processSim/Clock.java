@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
  * @date 25/8/2020
  */
 @Data
-public class Clock implements Runnable{
+public class Clock{
 
     private static int TIME_UNIT = 999;
     private static int cpuRanTime = 0;
@@ -34,10 +34,6 @@ public class Clock implements Runnable{
         return clock;
     }
 
-    @Override
-    public void run() {
-
-    }
 
     /**
      * 时间片轮转。

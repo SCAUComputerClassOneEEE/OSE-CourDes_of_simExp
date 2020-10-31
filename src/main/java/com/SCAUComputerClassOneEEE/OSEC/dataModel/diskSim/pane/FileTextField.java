@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.OS;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Compile;
@@ -22,7 +23,6 @@ public class FileTextField {
     private final MenuItem save = new MenuItem();
     private final MenuItem selectAll = new MenuItem();
     private final Stage stage = new Stage();
-    private final Disk disk = Main.disk;
     private final DiskSimService diskSimService = new DiskSimService();
 
     private String text;
@@ -61,13 +61,13 @@ public class FileTextField {
             AFile aFile = myTreeItem.getValue();
             int diskNum = aFile.getDiskNum();
             if(aFile.isFile()){
-                disk.writeFile(diskNum, textArea.getText());
-                aFile.setLength((char)disk.getFileSize(diskNum));
+                OS.disk.writeFile(diskNum, textArea.getText());
+                aFile.setLength((char)OS.disk.getFileSize(diskNum));
             }else if(aFile.isExeFile()){
                 diskSimService.write_exeFile(aFile, textArea.getText());
             }
             AFile fatherFile = myTreeItem.getParent().getValue();
-            disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
+            OS.disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
             FilePane.update(myTreeItem);
             text = textArea.getText();
             stage.setTitle(aFile.getFileName() + "." + aFile.getType());
@@ -121,7 +121,7 @@ public class FileTextField {
     }
 
     String modify(AFile fatherFile, AFile rootFile) {
-        char[] block_cont = String.valueOf(disk.readFile(fatherFile.getDiskNum())).toCharArray();
+        char[] block_cont = String.valueOf(OS.disk.readFile(fatherFile.getDiskNum())).toCharArray();
         char[] root_cont = rootFile.getALLData();
         int in = fatherFile.getAFiles().indexOf(rootFile);
         System.arraycopy(root_cont, 0, block_cont, in * 8, 8);

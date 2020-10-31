@@ -2,6 +2,7 @@ package com.SCAUComputerClassOneEEE.OSEC.controller;
 
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.OS;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.EAT;
@@ -128,11 +129,12 @@ public class MySceneController implements Initializable {
     private TableColumn<EAT, Number> time;
 
     private boolean isFirstStart = true;
-
+    private Thread coreThread;
 
     @FXML
     private void reset(){
         //把cpu进程关掉
+        coreThread.interrupt();
 
         runningIR.setText("");
         runningPCBID.setText("");
@@ -150,18 +152,18 @@ public class MySceneController implements Initializable {
         Clock.getClock().reset();
         Device.getDevice().reset();
         updateMemoryPane();
-
     }
 
     @FXML
     public void beginORStop() {
         if (beginORStop.getText().equals("开始")){
             if (isFirstStart) {
-                TaskThreadPools.execute(Main.cpu);
+                coreThread = new Thread(OS.cpu);
+                coreThread.start();
                 isFirstStart = false;
             }else {
-                Main.cpu.WAITING = false;
-                Main.cpu.notifyCpu();
+                OS.cpu.WAITING = false;
+                OS.cpu.notifyCpu();
             }
             beginORStop.setText("暂停");
             beginORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+"暂停"+".png",
@@ -173,7 +175,7 @@ public class MySceneController implements Initializable {
             beginORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+"开始"+".png",
                     30, 30,
                     true, true)));
-            Main.cpu.WAITING = true;
+            OS.cpu.WAITING = true;
         }
     }
 
@@ -203,22 +205,22 @@ public class MySceneController implements Initializable {
     }
 
     private void updateDiskPane(int index) {
-        DiskPane.BlockPane[] blockPane = Main.diskPane.getBlockPanes();
-        Main.diskPane.updateType(index);
+        DiskPane.BlockPane[] blockPane = OS.diskPane.getBlockPanes();
+        OS.diskPane.updateType(index);
     }
 
     private void initFileSystem(){
 
         FilePane centerPane = new FilePane();
-        VBox leftPane = Main.fileTree.getVBox();
-        Terminal rightPane = new Terminal(Main.fileTree);//初始化命令行
+        VBox leftPane = OS.fileTree.getVBox();
+        Terminal rightPane = new Terminal(OS.fileTree);//初始化命令行
 
         bp1.setLeft(leftPane);
         bp1.setCenter(centerPane);
         bp1.setRight(rightPane.textArea);
 
         bp2.setLeft(OpenFileManager.openFileTableView);
-        bp2.setCenter(Main.diskPane.getRoot());
+        bp2.setCenter(OS.diskPane.getRoot());
 
         width = bp1.getPrefWidth();
         height = bp1.getPrefHeight();
@@ -226,12 +228,12 @@ public class MySceneController implements Initializable {
         System.out.println(height);
 
         //leftPane.setPrefSize(width/5,3*height/5);
-        Main.fileTree.getTreeView().setPrefSize(width/5,3*height/5);
+        OS.fileTree.getTreeView().setPrefSize(width/5,3*height/5);
         //leftPane.setSize(width/5,3*height/5);
         centerPane.setPrefSize(2*width/5,3*height/5);
         rightPane.textArea.setPrefSize(2*width/5,3*height/5);
         OpenFileManager.openFileTableView.setPrefSize(4*width/7,2*height/5);
-        Main.diskPane.getRoot().setPrefSize(3*width/7,2*height/5);
+        OS.diskPane.getRoot().setPrefSize(3*width/7,2*height/5);
 
     }
 

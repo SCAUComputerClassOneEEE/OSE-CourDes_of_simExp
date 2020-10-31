@@ -60,9 +60,6 @@ public class Testtt {
     }
     @Test
     public void tttt(){
-        Thread cpu = new Thread(new CPU());
-        cpu.start();
-        cpu.interrupt();
-        cpu.start();
+
     }
 }

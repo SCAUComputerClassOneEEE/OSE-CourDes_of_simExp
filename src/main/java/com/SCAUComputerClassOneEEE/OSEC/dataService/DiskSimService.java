@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.OS;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AOpenFile;
@@ -22,8 +23,6 @@ import java.util.regex.Pattern;
 
 @Setter
 public class DiskSimService {
-    private FileTree fileTree = Main.fileTree;
-    private Disk disk = Main.disk;
     public String buffer1 = "";
     public String buffer2 = "";
 
@@ -40,7 +39,7 @@ public class DiskSimService {
         if(root.getAFiles().size() >= 8)
             return "该目录已满，创建失败！";
         //获取可用磁盘头
-        int header = disk.malloc_F_Header();
+        int header = OS.disk.malloc_F_Header();
         if(header == -1){
             return "磁盘已满，创建失败！";
         }else{
@@ -74,7 +73,7 @@ public class DiskSimService {
         try {
             AFile newFile = new AFile(root.getAbsoluteLocation().substring(5), fileName, attribute);
             String filePath = newFile.getAbsoluteLocation().substring(5);
-            getString(getFatherTreeItem(getFileNameList(filePath), fileTree.getRootTree(), 0), root, newFile);
+            getString(getFatherTreeItem(getFileNameList(filePath), OS.fileTree.getRootTree(), 0), root, newFile);
             return newFile;
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,7 +117,7 @@ public class DiskSimService {
         AFile newAFile = createFile(backAFile, frontAFile.getFileName(), att);
         if (newAFile != null){
             try {
-                disk.writeFile(newAFile.getDiskNum(), disk.readFile(frontAFile.getDiskNum()));
+                OS.disk.writeFile(newAFile.getDiskNum(), OS.disk.readFile(frontAFile.getDiskNum()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -160,7 +159,7 @@ public class DiskSimService {
             //清理父节点的
             AFile fatherFile = frontItem.getParent().getValue();
             System.out.println("父节点:"+fatherFile.getAbsoluteLocation());
-            disk.writeFile(fatherFile.getDiskNum(),
+            OS.disk.writeFile(fatherFile.getDiskNum(),
                     resetChip(fatherFile.getAFiles().indexOf(dirFile),
                             fatherFile.getAFiles().size(), fatherFile.getDiskNum()));
             fatherFile.getAFiles().remove(dirFile);
@@ -176,7 +175,7 @@ public class DiskSimService {
             AFile newFatherFile = backItem.getValue();
             newFatherFile.getAFiles().add(dirFile);
             String str = replaceBlock_cont(newFatherFile.getDiskNum(), newFatherFile.getAFiles().size(), dirFile.getALLData());
-            disk.writeFile(newFatherFile.getDiskNum(), str);
+            OS.disk.writeFile(newFatherFile.getDiskNum(), str);
             FilePane.update(backItem);
         } catch (Exception e) {
             e.printStackTrace();
@@ -204,7 +203,7 @@ public class DiskSimService {
             //清理父节点的
             AFile fatherFile = frontItem.getParent().getValue();
             System.out.println("父节点:" + fatherFile.getAbsoluteLocation());
-            disk.writeFile(fatherFile.getDiskNum(),
+            OS.disk.writeFile(fatherFile.getDiskNum(),
                     resetChip(fatherFile.getAFiles().indexOf(aFile),
                             fatherFile.getAFiles().size(), fatherFile.getDiskNum()));
             fatherFile.getAFiles().remove(aFile);
@@ -218,7 +217,7 @@ public class DiskSimService {
             AFile newFatherFile = backItem.getValue();
             newFatherFile.getAFiles().add(aFile);
             String str = replaceBlock_cont(newFatherFile.getDiskNum(), newFatherFile.getAFiles().size(), aFile.getALLData());
-            disk.writeFile(newFatherFile.getDiskNum(), str);
+            OS.disk.writeFile(newFatherFile.getDiskNum(), str);
             FilePane.update(backItem);
         } catch (Exception e) {
             e.printStackTrace();
@@ -231,9 +230,9 @@ public class DiskSimService {
 //        Iterator<TreeItem<AFile>> iterable = fileTree.getRootTree().getChildren().iterator();
 //        for (TreeItem<AFile> item : fileTree.getRootTree().getChildren())
 //            System.out.println(1);
-        int num = fileTree.getRootTree().getChildren().size();
+        int num = OS.fileTree.getRootTree().getChildren().size();
         for (int i = 0; i < num; i++)
-            deleteFile(fileTree.getRootTree().getChildren().get(0));
+            deleteFile(OS.fileTree.getRootTree().getChildren().get(0));
         return "成功";
     }
 
@@ -248,15 +247,15 @@ public class DiskSimService {
         Arrays.fill(chars, '#');
         String str = String.valueOf(chars);
         //清理自己的
-        disk.recovery(root.getDiskNum());
+        OS.disk.recovery(root.getDiskNum());
         try {
             //清理自己的
-            disk.writeFile(root.getDiskNum(), str);
+            OS.disk.writeFile(root.getDiskNum(), str);
             //清理孩子
             recoveryDisk(root, str);
             //清理父亲的
             AFile aFile = myTreeItem.getParent().getValue();
-            disk.writeFile(aFile.getDiskNum(), resetChip(aFile.getAFiles().indexOf(root), aFile.getAFiles().size(), aFile.getDiskNum()));
+            OS.disk.writeFile(aFile.getDiskNum(), resetChip(aFile.getAFiles().indexOf(root), aFile.getAFiles().size(), aFile.getDiskNum()));
             aFile.getAFiles().remove(root);
             myTreeItem.getParent().getChildren().remove(myTreeItem);
             FilePane.update(myTreeItem);
@@ -272,7 +271,7 @@ public class DiskSimService {
         //读出父目录中存放的所有子目录信息
         String str = replaceBlock_cont(root.getDiskNum(), root.getAFiles().size(), newFile.getALLData());
         try{
-            disk.writeFile(root.getDiskNum(), str);
+            OS.disk.writeFile(root.getDiskNum(), str);
             MyTreeItem treeItem = new MyTreeItem(newFile);
             myTreeItem.getChildren().add(treeItem);
             myTreeItem.setExpanded(true);
@@ -351,7 +350,7 @@ public class DiskSimService {
                     buffer = buffer2;
                 else return false;
                 AFile root = myTreeItem.getValue();
-                String file_cont = deleteCharString0(disk.readFile(root.getDiskNum()), '#');
+                String file_cont = deleteCharString0(OS.disk.readFile(root.getDiskNum()), '#');
                 String buffer_cont = buffer.substring(0, Math.min(write_length, buffer.length()));
 
                 //数据写入文件后，删去对应的数据
@@ -362,10 +361,10 @@ public class DiskSimService {
                     buffer2 = buffer;
                 }
 
-                disk.writeFile(root.getDiskNum(), file_cont+buffer_cont);
-                root.setLength((char)disk.getFileSize(root.getDiskNum()));
+                OS.disk.writeFile(root.getDiskNum(), file_cont+buffer_cont);
+                root.setLength((char)OS.disk.getFileSize(root.getDiskNum()));
                 AFile fatherFile = myTreeItem.getParent().getValue();
-                disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, root));
+                OS.disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, root));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -388,8 +387,8 @@ public class DiskSimService {
             string = string.substring(string.indexOf(";") + 1);
             contents.append(Compile.compile(b));
         }
-        disk.writeFile(aFile.getDiskNum(), contents.toString());
-        aFile.setLength((char)disk.getFileSize(aFile.getDiskNum()));
+        OS.disk.writeFile(aFile.getDiskNum(), contents.toString());
+        aFile.setLength((char)OS.disk.getFileSize(aFile.getDiskNum()));
     }
 
     //关闭文件
@@ -402,7 +401,7 @@ public class DiskSimService {
     //按块打印文件
     public boolean typeFile(TreeItem<AFile> myTreeItem){
         if(myTreeItem==null)return false;
-        String fileStr = disk.readFile(myTreeItem.getValue().getDiskNum());
+        String fileStr = OS.disk.readFile(myTreeItem.getValue().getDiskNum());
         ArrayList<String> fileTexts = new ArrayList<>();
         int index1 = 0;
         while (index1<fileStr.length() && fileStr.charAt(index1)!='#'){
@@ -438,7 +437,7 @@ public class DiskSimService {
             root.setProperty((char)property);
             //修改父亲的
             AFile fatherFile = myTreeItem.getParent().getValue();
-            disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, root));
+            OS.disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, root));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -493,7 +492,7 @@ public class DiskSimService {
      * @return 将要写入父目录对应的磁盘块的字符串
      */
     private String replaceBlock_cont(int diskNum, int num, char[] block_cont){
-        String str = disk.readFile(diskNum);
+        String str = OS.disk.readFile(diskNum);
         char[] chars = str.toCharArray();
         int i = num * 8;
         for(char c : block_cont) {
@@ -514,7 +513,7 @@ public class DiskSimService {
         //System.out.println("盘块号:" + diskNum);
         //System.out.println("length:" + length);
         //System.out.println("磁盘内容:" + disk.readFile(diskNum));
-        char[] block_cont = String.valueOf(disk.readFile(diskNum)).toCharArray();
+        char[] block_cont = String.valueOf(OS.disk.readFile(diskNum)).toCharArray();
         for(i = position * 8; i < (length-1) * 8; i++) {
             block_cont[i] = block_cont[i + 8];
             System.out.println("i "+ i);
@@ -534,8 +533,8 @@ public class DiskSimService {
         for(AFile aFile : root.getAFiles()){
             if(aFile.isDirectory())
                 recoveryDisk(aFile, str);
-            disk.recovery(aFile.getDiskNum());
-            disk.writeFile(aFile.getDiskNum(), str);
+            OS.disk.recovery(aFile.getDiskNum());
+            OS.disk.writeFile(aFile.getDiskNum(), str);
         }
     }
 
@@ -556,11 +555,11 @@ public class DiskSimService {
                 alterDiskNews(aFile);
             diskContent.append(aFile.getALLData());
         }
-        disk.writeFile(dirFile.getDiskNum(), diskContent.toString());
+        OS.disk.writeFile(dirFile.getDiskNum(), diskContent.toString());
     }
 
     private String modify(AFile fatherFile, AFile rootFile){
-        char[] block_cont = String.valueOf(disk.readFile(fatherFile.getDiskNum())).toCharArray();
+        char[] block_cont = String.valueOf(OS.disk.readFile(fatherFile.getDiskNum())).toCharArray();
         char[] root_cont = rootFile.getALLData();
         int in = fatherFile.getAFiles().indexOf(rootFile);
         for (int i = 0; i < 8; i++) {
@@ -593,7 +592,7 @@ public class DiskSimService {
         // i从0开始,务必让 i 初值为0
         //假如只有长度1，则直接返回根目录作为子目录
         if(fileNameList.size() == 1){
-            return fileTree.getRootTree();
+            return OS.fileTree.getRootTree();
         }else{
 
             //长度不为1，是多级目录
@@ -622,13 +621,13 @@ public class DiskSimService {
     }
 
     public TreeItem<AFile> getLastTreeItem(String name){
-        if("".equals(name)) return fileTree.getRootTree();
+        if("".equals(name)) return OS.fileTree.getRootTree();
         int start = 0;
         int num = 2;
         int second = getCharacterPosition(name, num++);
         boolean flag = true;
         String str;
-        ObservableList<TreeItem<AFile>> treeItems = fileTree.getRootTree().getChildren();
+        ObservableList<TreeItem<AFile>> treeItems = OS.fileTree.getRootTree().getChildren();
         while (second != -1){
             int i;
             str = name.substring(start + 1,second);

@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.op;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.OS;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.*;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
@@ -162,7 +163,7 @@ public class Terminal {
             if ("format".equals(action)) {
                 String info = diskSimService.format();
                 formatOut(info);
-                FilePane.update(Main.fileTree.getRootTree());
+                FilePane.update(OS.fileTree.getRootTree());
             }
         }
     }

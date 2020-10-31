@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.OS;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
@@ -41,7 +42,7 @@ public class FileTree {
     }
 
     private void init(VBox vBox){
-        this.disk = Main.disk;
+        this.disk = OS.disk;
         this.vBox = vBox;
         int header = disk.malloc_F_Header();
         if(header == -1){

@@ -59,7 +59,6 @@ public class CPU implements Runnable{
     private void executeCPU() throws Exception {
         //创建可执行文件
         //initExeFile();
-        TaskThreadPools.execute(OS.clock);
         cpu();
     }
 
@@ -76,7 +75,7 @@ public class CPU implements Runnable{
                 // 中断处理
                 interruptHandling();
                 // 随机产生新进程
-                randomPosses();
+                //randomPosses();
                 // 判断是否需要调度
                 if (curPCB == null) {
                     // 当前为闲逛进程 检查就绪队列有无新进程加入
@@ -234,7 +233,6 @@ public class CPU implements Runnable{
             // 去除时间片中断
             psw = psw ^ TSE;
         }
-        Thread.sleep(300);
         MySceneController.intermediateResultSim.setValue("");
     }
 
