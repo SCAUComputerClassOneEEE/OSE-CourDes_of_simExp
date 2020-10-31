@@ -1,7 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.EAT;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.device;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.Device;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 
 import java.util.ArrayList;
@@ -23,11 +23,11 @@ public class DeviceSimService {
         EAT eat = new EAT(deviceID,pcb,requestTime);
         //判断申请的设备是否可用
         if ((deviceID=='A'&&getNumOf('A') < 2) || (deviceID == 'B' && getNumOf('B') < 3) || (deviceID == 'C' && getNumOf('C') < 3)){
-            device.getRunningLists().add(eat);
+            Device.getRunningLists().add(eat);
             pcb.setWaitEq("使用设备"+deviceID);
         }
         else {
-            device.getWaitLists().add(eat);
+            Device.getWaitLists().add(eat);
             pcb.setWaitEq("等待设备"+deviceID);
         }
 
@@ -35,7 +35,7 @@ public class DeviceSimService {
 
     //对设备使用时间的更新
     public void decTime(){
-        for(EAT each: device.getRunningLists()){
+        for(EAT each: Device.getRunningLists()){
             each.remainingTime.setValue(each.remainingTime.getValue() - 1);
             if (each.remainingTime.get()<=0){
 
@@ -51,15 +51,15 @@ public class DeviceSimService {
                 }
             }
         }
-        device.getRunningLists().addAll(needAdd);
-        device.getWaitLists().removeAll(needAdd);
-        device.getRunningLists().removeAll(needDelete);
+        Device.getRunningLists().addAll(needAdd);
+        Device.getWaitLists().removeAll(needAdd);
+        Device.getRunningLists().removeAll(needDelete);
     }
 
     //获取某一编号设备的总使用数
     private int getNumOf(char eqID){
         int count = 0;
-        for(EAT each: device.getRunningLists()){
+        for(EAT each: Device.getRunningLists()){
             if (each.deviceID ==eqID)
                 count++;
         }
@@ -68,7 +68,7 @@ public class DeviceSimService {
 
     //从等待队列中找到能够得到设备的进程
     private EAT canRun(char eqID){
-        for (EAT eat: device.getWaitLists()){
+        for (EAT eat: Device.getWaitLists()){
             if (eat.deviceID ==eqID){
                 return eat;
             }

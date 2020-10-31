@@ -74,4 +74,8 @@ public class Clock implements Runnable{
         //System.out.println("一条代码结束执行，用时： " + (end2-sTime));
         return psw;
     }
+
+    public void reset() {
+        cpuRanTime = 0;
+    }
 }

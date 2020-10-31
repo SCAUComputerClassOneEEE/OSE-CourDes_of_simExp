@@ -5,8 +5,9 @@ import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.pane.OpenFileManager;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.EAT;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.device;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.Device;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
@@ -128,6 +129,30 @@ public class MySceneController implements Initializable {
 
     private boolean isFirstStart = true;
 
+
+    @FXML
+    private void reset(){
+        //把cpu进程关掉
+
+        runningIR.setText("");
+        runningPCBID.setText("");
+        cpuTime.setText("");
+        timeSlice.setText("");
+        intermediateResult.setText("");
+        finalResult.setText("");
+
+        isFirstStart = true;
+        beginORStop.setText("开始");
+        beginORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+"开始"+".png",
+                30, 30,
+                true, true)));
+        CPU.getCpu().reset();
+        Clock.getClock().reset();
+        Device.getDevice().reset();
+        updateMemoryPane();
+
+    }
+
     @FXML
     public void beginORStop() {
         if (beginORStop.getText().equals("开始")){
@@ -136,7 +161,7 @@ public class MySceneController implements Initializable {
                 isFirstStart = false;
             }else {
                 Main.cpu.WAITING = false;
-                Main.cpu.notifyCPU();
+                Main.cpu.notifyCpu();
             }
             beginORStop.setText("暂停");
             beginORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/"+"暂停"+".png",
@@ -226,7 +251,7 @@ public class MySceneController implements Initializable {
 
     private void initEquipmentTable(){
         //给表添加数据源
-        equipmentTable.setItems(device.getRunningLists());
+        equipmentTable.setItems(Device.getRunningLists());
         //设置列属性
         equipmentID.setCellValueFactory(new PropertyValueFactory<>("deviceID"));
         useEquipmentPCBID.setCellValueFactory(new PropertyValueFactory<>("pcbID"));
@@ -336,9 +361,5 @@ public class MySceneController implements Initializable {
         finalResult.setText(result);
     }
 
-    @FXML
-    private void reset(){
-        isFirstStart = true;
-        CPU.getCpu().reset();
-    }
+
 }

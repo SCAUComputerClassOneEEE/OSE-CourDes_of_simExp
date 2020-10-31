@@ -3,6 +3,7 @@ package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DeviceSimService;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
@@ -12,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.SneakyThrows;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -20,7 +22,7 @@ import java.util.ArrayList;
  */
 public class CPU implements Runnable{
 
-    private static final CPU cpu = new CPU();// cpu单例
+    private static final CPU CPU = new CPU();// cpu单例
 
     public boolean WAITING = false;// cpu进程暂停状态
 
@@ -56,26 +58,13 @@ public class CPU implements Runnable{
      * @throws Exception
      */
     private void executeCPU() throws Exception {
-        boot();
+        //创建可执行文件
         initExeFile();
         TaskThreadPools.execute(clock);
         cpu();
     }
 
-    /**
-     * 模拟往内存中装在操作系统代码
-     */
-    private void boot() {
-        char[] osCode = new char[50];
-        try {
-            PCB os = new PCB(0,50, ProcessSimService.getColors().get(0),0,"os");
-            ProcessSimService.getColors().remove(0);
-            allPCB.add(os);
-            Memory.getMemory().malloc(osCode);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
     /**
      * cpu
      */
@@ -84,13 +73,14 @@ public class CPU implements Runnable{
         synchronized (this) {
             while (true) {
                 // 暂停按键是否被按下
-                if (WAITING) { waitCPU(); }
+                if (WAITING) { waitCpu(); }
                 // 中断处理
                 interruptHandling();
                 // 随机产生新进程
                 randomPosses();
                 // 判断是否需要调度
-                if (curPCB == null) {// 当前为闲逛进程 检查就绪队列有无新进程加入
+                if (curPCB == null) {
+                    // 当前为闲逛进程 检查就绪队列有无新进程加入
                     if (readyQueue.size() > 0) {
                         curPCB = processScheduling();
                     }
@@ -128,28 +118,33 @@ public class CPU implements Runnable{
             // 更新界面
             MySceneController.runningIRSim.setValue(IR);
             MySceneController.intermediateResultSim.setValue("");
-            Thread.sleep(300);// 模拟停顿效果
+            // 模拟停顿效果
+            Thread.sleep(300);
 
             // 执行
-            if(IR.contains("++")) {// 自增
+            if(IR.contains("++")) {
+                // 自增
                 AX++;
                 MySceneController.intermediateResultSim.setValue("X+1的值为:" + AX);
-            }else if(IR.contains("--")) {// 自减
+            }else if(IR.contains("--")) {
+                // 自减
                 AX--;
                 MySceneController.intermediateResultSim.setValue("X-1的值为:" + AX);
-            }else if(IR.contains("!")) {// 申请设备
+            }else if(IR.contains("!")) {
+                // 申请设备
                 char equip = IR.charAt(1);
                 int time = Integer.parseInt(IR.substring(2));
                 MySceneController.intermediateResultSim.setValue("申请设备" + equip + ":" + time + "秒");
-                result = psw | CPU.IOI;
-            }else if(IR.contains("=")) {// 赋值
+                result = psw | IOI;
+            }else if(IR.contains("=")) {
+                // 赋值
                 AX = Integer.parseInt(IR.substring(2));
                 MySceneController.intermediateResultSim.setValue("X赋值为" + AX);
             }
             else {// 结束
                 ProcessSimService.getProcessSimService().destroy(curPCB);
                 MySceneController.finalResultSim.setValue("进程" + curPCB.getProcessId() + "执行结果为X=" + AX);
-                result = psw | CPU.EOP;
+                result = psw | EOP;
             }
 
         }
@@ -162,7 +157,8 @@ public class CPU implements Runnable{
     private void randomPosses(){
         if ((int)(Math.random() * 6) == 5) {
             AFile executeFile = exeFiles.get((int)(exeFiles.size() * Math.random()));
-            ProcessSimService.getProcessSimService().create(executeFile);// 创建进程
+            // 创建进程
+            ProcessSimService.getProcessSimService().create(executeFile);
         }
     }
 
@@ -177,16 +173,18 @@ public class CPU implements Runnable{
                 "X=0;!A6;X++;X++;!C3;X++;X--;end;",
                 "X=4;!B5;X++;X++;!A4;X++;X++;X++;X++;X++;X++;end;",
                 "X=2;X--;!A5;X--;!C2;X++;!B3;X++;X++;X++;X++;X++;X++;end;",
-                "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;end;" };
-        for (int i = 0; i < 2; i++)
+                "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;end;",
+                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end"};
+        for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
-                CPU.exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
+                exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
                 try {
-                    diskSimService.write_exeFile(CPU.exeFiles.get(i*5+j), exeFileContents[(int)(Math.random() * 4)]);
+                    diskSimService.write_exeFile(exeFiles.get(i*5+j), exeFileContents[(int)(Math.random() * 4)]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+        }
     }
 
     /**
@@ -194,18 +192,20 @@ public class CPU implements Runnable{
      */
     private void interruptHandling() throws InterruptedException {
         // 处理程序结束中断
-        if ((psw&CPU.EOP) != 0) {// 程序结束
+        if ((psw& EOP) != 0) {
             MySceneController.intermediateResultSim.setValue("处理程序结束中断···");
-            curPCB = processScheduling();// 调度
-            psw = psw ^ CPU.EOP;// 去除程序结束中断
+            // 调度
+            curPCB = processScheduling();
+            // 去除程序结束中断
+            psw = psw ^ EOP;
             // 程序已经结束，如果此时也有时间片中断，则去除时间片结束中断
-            if ((psw & CPU.TSE) != 0) {
-                psw = psw ^ CPU.TSE;
+            if ((psw & TSE) != 0) {
+                psw = psw ^ TSE;
             }
         }
 
         // 设备中断，防止时间片到期还未发出设备申请
-        if((psw&CPU.IOI) != 0) {
+        if((psw & IOI) != 0) {
             ProcessSimService.getProcessSimService().block(curPCB);
             MySceneController.intermediateResultSim.setValue("处理设备中断···");
             // 获取指令中的申请信息
@@ -213,23 +213,27 @@ public class CPU implements Runnable{
             int time = Integer.parseInt(IR.substring(2));
             // 请求分配设备
             DeviceSimService.getDeviceSimService().distributeDevice(equip,curPCB,time);
-            curPCB = processScheduling();// 调度
-            psw = psw ^ CPU.IOI;// 去除设备中断
+            // 调度
+            curPCB = processScheduling();
+            // 去除设备中断
+            psw = psw ^ IOI;
         }
         // 时间片结束中断
-        if ((psw&CPU.TSE) != 0) {
+        if ((psw & TSE) != 0) {
             if (curPCB != null) {
                 MySceneController.intermediateResultSim.setValue("处理时间片结束中断···");
                 // 保存X的值
                 curPCB.setAX(AX);
-                curPCB.setNextInstruction(CPU.PC - curPCB.getPointerToMemory());
+                curPCB.setNextInstruction(PC - curPCB.getPointerToMemory());
                 curPCB.setRemainInstructions(curPCB.getTotalSize() - curPCB.getNextInstruction());
                 curPCB.setProgressRate(((double)curPCB.getTotalSize() - curPCB.getRemainInstructions()) / curPCB.getTotalSize());
                 // 添加回就绪队列
                 readyQueue.add(curPCB);
             }
-            curPCB = processScheduling();// 调度
-            psw = psw ^ CPU.TSE;// 去除时间片中断
+            // 调度
+            curPCB = processScheduling();
+            // 去除时间片中断
+            psw = psw ^ TSE;
         }
         Thread.sleep(300);
         MySceneController.intermediateResultSim.setValue("");
@@ -268,33 +272,36 @@ public class CPU implements Runnable{
      * 阻塞cpu线程
      * @throws InterruptedException
      */
-    public void waitCPU() throws InterruptedException {
+    public void waitCpu() throws InterruptedException {
         this.wait();
     }
 
     /**
      * 唤醒cpu线程
      */
-    public void notifyCPU() {
+    public void notifyCpu() {
         synchronized (this) {
             this.notify();
         }
     }
 
     public static CPU getCpu(){
-        return cpu;
+        return CPU;
     }
 
     public void reset() {
         WAITING = false;
-        String IR = "闲逛进程";
+        IR = "闲逛进程";
         PC = 0;
         psw = 0;
         AX =0;
-        PCB curPCB = null;
-        allPCB.clear();
+        curPCB = null;
         readyQueue.clear();
         blockedQueue.clear();
+        int size = allPCB.size();
+        for(int i = 1; i < size; i++) {
+            allPCB.remove(1);
+        }
     }
 }
 

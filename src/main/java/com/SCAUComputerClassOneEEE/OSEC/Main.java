@@ -3,6 +3,9 @@ package com.SCAUComputerClassOneEEE.OSEC;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
 import com.SCAUComputerClassOneEEE.OSEC.ui.MainUI;
 import javafx.application.Application;
@@ -22,7 +25,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 
 public class Main extends Application {
@@ -73,13 +75,14 @@ public class Main extends Application {
             //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             stage.setScene(scene);
             stage.setWidth(1350);
-            stage.setHeight(900);
+            stage.setHeight(950);
             //stage.initStyle(StageStyle.DECORATED);
             stage.getIcons().add(new Image("file:" +"src/main/resources/操作系统.png",20, 20,
                     true, true));
             stage.setTitle("myOS");
             stage.show();
-            //stage.resizableProperty().setValue(Boolean.FALSE);
+            bootOS();
+            stage.setOnCloseRequest(e -> Disk.getDisk().writeDiskToFile());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,6 +131,21 @@ public class Main extends Application {
             Thread.sleep(1500);
             Platform.runLater(stage::close);
         } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 模拟往内存中装在操作系统代码
+     */
+    private void bootOS() {
+        char[] osCode = new char[50];
+        try {
+            PCB os = new PCB(0,50, ProcessSimService.getColors().get(0),0,"os");
+            ProcessSimService.getColors().remove(0);
+            CPU.allPCB.add(os);
+            Memory.getMemory().malloc(osCode);
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }

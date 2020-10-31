@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataService;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.Device;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
@@ -21,7 +22,7 @@ public class ProcessSimService {
     //颜色库，给PCB赋颜色值
     private static final ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.YELLOWGREEN);
         add(Color.YELLOW);add(Color.TOMATO);add(Color.SILVER);add(Color.TURQUOISE);add(Color.TAN);add(Color.CORAL);
-        add(Color.SKYBLUE);add(Color.PINK);add(Color.LIGHTSTEELBLUE);}};
+        add(Color.SKYBLUE);add(Color.PINK);add(Color.LIGHTSTEELBLUE);add(Color.CYAN);}};
 
     public static ProcessSimService getProcessSimService(){
         return ProcessSimService.processSimService;
@@ -108,8 +109,8 @@ public class ProcessSimService {
      * @return
      */
     private Color randomColor(){
-        int index = (int)(Math.random()*colors.size());
-        return colors.get(index);
+            int index = (int)(Math.random()*colors.size());
+            return colors.get(index);
     }
 
 }

@@ -5,7 +5,7 @@ import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author best lu
  * @since 2020/7/18 14:00
  */
-public class Disk implements Serializable {
+public class Disk implements Serializable{
 
     private volatile static Disk disk;
 
@@ -118,7 +118,7 @@ public class Disk implements Serializable {
     public void markDamage(int position){ fat.mark_FAT(position); }
 
     @Data
-    private static class FAT{
+    private static class FAT implements Serializable {
 
         static final int EOF = 255;
         int freeBlocks;
@@ -246,7 +246,7 @@ public class Disk implements Serializable {
     }
 
     @Data
-    private static class DiskBlock{
+    private static class DiskBlock implements Serializable{
 
         int order;//块号
         char[] block_cont = new char[BLOCK_MAX_SIZE];//内容
@@ -263,6 +263,25 @@ public class Disk implements Serializable {
         String read() {
             if (block_cont == null) return "";
             return String.copyValueOf(block_cont);
+        }
+    }
+
+    public void readDiskFromFile() {
+        try(ObjectInputStream ooi = new ObjectInputStream(new FileInputStream("src/main/resources/diskDat.dat"))) {
+            disk = (Disk) ooi.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void writeDiskToFile() {
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/diskDat.dat"))) {
+            oos.writeObject(disk);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

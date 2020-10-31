@@ -35,7 +35,7 @@ public class FileTree {
         return fileTree;
     }
 
-    private FileTree(VBox vBox) {
+    public FileTree(VBox vBox) {
         init(vBox);
         addListener();
     }
