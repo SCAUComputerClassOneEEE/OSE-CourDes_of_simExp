@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1350.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
+<AnchorPane prefHeight="900.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
    <children>
-      <TabPane layoutY="-1.0" prefHeight="900.0" prefWidth="1350.0" style="-fx-background-color: WHITE;" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutY="-1.0" prefHeight="900.0" prefWidth="1350.0" tabClosingPolicy="UNAVAILABLE">
          <tabs>
             <Tab text="运行">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="783.0" prefWidth="1339.0">
                      <children>
-                        <SplitPane dividerPositions="0.2972749793559042" prefHeight="875.0" prefWidth="1350.0" style="-fx-background-color: WHITE;">
+                        <SplitPane dividerPositions="0.2972749793559042" prefHeight="875.0" prefWidth="1350.0">
                            <items>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="108.0" style="-fx-background-color: WHITE;">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="108.0">
                                  <children>
                                     <Button fx:id="beginORStop" layoutX="77.0" layoutY="82.0" mnemonicParsing="false" onAction="#beginORStop" prefHeight="37.0" prefWidth="105.0" text="开始/暂停" />
-                                    <TableView fx:id="equipmentTable" layoutX="44.0" layoutY="523.0" prefHeight="312.0" prefWidth="311.0">
+                                    <TableView fx:id="equipmentTable" layoutX="44.0" layoutY="523.0" prefHeight="312.0" prefWidth="311.0" style="-fx-border-color: #FFFFFF;">
                                        <columns>
                                           <TableColumn fx:id="equipmentID" prefWidth="92.0" text="设备" />
                                           <TableColumn fx:id="useEquipmentPCBID" prefWidth="99.0" text="进程ID" />
@@ -29,16 +28,16 @@
                                        <children>
                                           <GridPane prefHeight="228.0" prefWidth="299.0">
                                              <children>
-                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="82.0" text="进程ID" GridPane.rowIndex="2" />
+                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="82.0" style="-fx-text-fill: #FFFFFF;" text="进程ID" GridPane.rowIndex="2" />
                                                 <TextField fx:id="runningPCBID" editable="false" opacity="0.6" prefHeight="32.0" prefWidth="151.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="82.0" text="CPU时间" />
+                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="82.0" style="-fx-text-fill: #FFFFFF;" text="CPU时间" />
                                                 <TextField fx:id="cpuTime" editable="false" opacity="0.6" prefHeight="32.0" prefWidth="151.0" GridPane.columnIndex="1" />
-                                                <Label text="剩余时间片" GridPane.rowIndex="1" />
+                                                <Label style="-fx-text-fill: #FFFFFF;" text="剩余时间片" GridPane.rowIndex="1" />
                                                 <TextField fx:id="timeSlice" editable="false" opacity="0.6" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                 <TextField fx:id="runningIR" editable="false" opacity="0.6" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                <Label text="正在执行的指令" GridPane.rowIndex="3" />
-                                                <Label text="中间结果" GridPane.rowIndex="4" />
-                                                <Label text="进程最终结果" GridPane.rowIndex="5" />
+                                                <Label style="-fx-text-fill: #FFFFFF;" text="正在执行的指令" GridPane.rowIndex="3" />
+                                                <Label style="-fx-text-fill: #FFFFFF;" text="中间结果" GridPane.rowIndex="4" />
+                                                <Label style="-fx-text-fill: #FFFFFF;" text="进程最终结果" GridPane.rowIndex="5" />
                                                 <TextField fx:id="intermediateResult" editable="false" opacity="0.6" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                 <TextField fx:id="finalResult" editable="false" opacity="0.6" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                              </children>
@@ -58,21 +57,21 @@
                                        </children>
                                     </StackPane>
                                     <Label layoutX="21.0" layoutY="478.0" text="设备总量:A2,B3,C3,显示在下表中的即为已分配的设备" />
-                                    <Button fx:id="reset" onAction="#reset" layoutX="245.0" layoutY="82.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="89.0" text="重置" />
+                                    <Button fx:id="reset" layoutX="232.0" layoutY="82.0" mnemonicParsing="false" onAction="#reset" prefHeight="37.0" prefWidth="105.0" text="重置" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="985.0" style="-fx-background-color: WHITE;">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="985.0">
                                  <children>
-                                    <StackPane layoutX="59.0" layoutY="20.0" prefHeight="355.0" prefWidth="810.0" style="-fx-border-color: #FF8C00;">
+                                    <StackPane layoutX="59.0" layoutY="20.0" prefHeight="355.0" prefWidth="810.0">
                                        <children>
                                           <VBox prefHeight="314.0" prefWidth="727.0">
                                              <children>
-                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="810.0" style="-fx-background-color: #FF8C00; -fx-padding: 6px;" text="就绪队列">
+                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="35.0" prefWidth="810.0" style="-fx-padding: 6px;" text="就绪队列">
                                                    <font>
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <TableView fx:id="readyTable" prefHeight="362.0" prefWidth="808.0">
+                                                <TableView fx:id="readyTable" prefHeight="362.0" prefWidth="808.0" style="-fx-border-color: #FFFFFF;">
                                                    <columns>
                                                       <TableColumn fx:id="readyID" prefWidth="60.0" text="PID" />
                                                       <TableColumn fx:id="readyEXFileName" prefWidth="106.0" text="exFileName" />
@@ -87,16 +86,16 @@
                                           </VBox>
                                        </children>
                                     </StackPane>
-                                    <StackPane layoutX="59.0" layoutY="390.0" prefHeight="234.0" prefWidth="809.0" style="-fx-border-color: #FF8C00;">
+                                    <StackPane layoutX="59.0" layoutY="390.0" prefHeight="234.0" prefWidth="809.0">
                                        <children>
                                           <VBox prefHeight="198.0" prefWidth="807.0">
                                              <children>
-                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="0.0" prefWidth="807.0" style="-fx-background-color: #FF8C00; -fx-padding: 6px;" text="阻塞队列">
+                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="0.0" prefWidth="807.0" style="-fx-padding: 6px;" text="阻塞队列">
                                                    <font>
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <TableView fx:id="blockTable" prefHeight="284.0" prefWidth="266.0">
+                                                <TableView fx:id="blockTable" prefHeight="284.0" prefWidth="266.0" style="-fx-border-color: #FFFFFF;">
                                                    <columns>
                                                       <TableColumn fx:id="blockID" prefWidth="59.0" text="PID" />
                                                       <TableColumn fx:id="blockEXFileName" prefWidth="116.0" text="exFileName" />
@@ -111,16 +110,16 @@
                                           </VBox>
                                        </children>
                                     </StackPane>
-                                    <StackPane layoutX="59.0" layoutY="633.0" prefHeight="200.0" prefWidth="809.0" style="-fx-border-color: #1E90FF;">
+                                    <StackPane layoutX="59.0" layoutY="633.0" prefHeight="200.0" prefWidth="809.0">
                                        <children>
                                           <VBox prefHeight="200.0" prefWidth="100.0">
                                              <children>
-                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="823.0" style="-fx-background-color: #1E90FF; -fx-padding: 6px;" text="内存分配情况">
+                                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="823.0" style="-fx-padding: 6px;" text="内存分配情况">
                                                    <font>
                                                       <Font name="DengXian Regular" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <Pane fx:id="memoryPane" prefHeight="167.0" prefWidth="787.0" />
+                                                <Pane fx:id="memoryPane" prefHeight="167.0" prefWidth="787.0" style="-fx-border-color: #FFFFFF;" />
                                              </children>
                                           </VBox>
                                        </children>

@@ -35,6 +35,7 @@ public class Terminal {
 
 
     public Terminal(FileTree fileTree) {
+        textArea.setStyle("-fx-background-color: transparent;");
         this.rootTree = fileTree.getRootTree();
         init();
     }

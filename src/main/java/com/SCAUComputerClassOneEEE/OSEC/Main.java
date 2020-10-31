@@ -72,6 +72,7 @@ public class Main extends Application {
         try {
             root = FXMLLoader.load(getClass().getResource("MyScene.fxml"));
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("background.css").toExternalForm());
             //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             stage.setScene(scene);
             stage.setWidth(1350);

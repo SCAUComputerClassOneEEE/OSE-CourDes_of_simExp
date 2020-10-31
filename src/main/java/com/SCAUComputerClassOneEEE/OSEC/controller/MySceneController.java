@@ -184,8 +184,8 @@ public class MySceneController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        ButtonUtil.decorateButton(beginORStop,"开始");
-        ButtonUtil.decorateButton(reset,"重置");
+        //ButtonUtil.decorateButton(beginORStop,"开始");
+        //ButtonUtil.decorateButton(reset,"重置");
         beginORStop.setText("开始");
 
         initTime();
