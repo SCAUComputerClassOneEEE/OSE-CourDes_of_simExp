@@ -1,9 +1,9 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.OS;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DeviceSimService;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.SneakyThrows;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +30,6 @@ public class CPU implements Runnable{
     public static int psw = 0;// 程序状态字
     public static int AX =0;// 数据寄存器AX
     public static PCB curPCB = null;// 当前正在运行的进程的控制块
-    private final Clock clock = Clock.getClock();// 时钟
 
     // 三种中断
     public static int EOP = 1;// 程序结束
@@ -40,6 +38,7 @@ public class CPU implements Runnable{
 
     // 磁盘数据服务层
     private static final DiskSimService diskSimService = new DiskSimService();
+
     // 预先设置的10个可运行文件，形式仅仅是文件
     public static final ArrayList<AFile> exeFiles = new ArrayList<>();
 
@@ -59,8 +58,8 @@ public class CPU implements Runnable{
      */
     private void executeCPU() throws Exception {
         //创建可执行文件
-        initExeFile();
-        TaskThreadPools.execute(clock);
+        //initExeFile();
+        TaskThreadPools.execute(OS.clock);
         cpu();
     }
 
@@ -92,7 +91,7 @@ public class CPU implements Runnable{
                     MySceneController.runningPCBIDSim.setValue("当前进程为闲逛进程");
                 }
                 // timeRotation中运行一个指令周期
-                psw = clock.timeRotation();
+                psw = OS.clock.timeRotation();
             }
         }
     }
@@ -161,13 +160,13 @@ public class CPU implements Runnable{
             ProcessSimService.getProcessSimService().create(executeFile);
         }
     }
-
-    /**
+/*
+    *//**
      * 创建10个可执行文件
-     */
+     *//*
     public void initExeFile(){
-        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "ef1", 8);
-        diskSimService.createFile(Main.fileTree.getRootTree().getValue(), "ef2", 8);
+        diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef1", 8);
+        diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef2", 8);
 
         String[] exeFileContents = {
                 "X=0;!A6;X++;X++;!C3;X++;X--;end;",
@@ -177,7 +176,7 @@ public class CPU implements Runnable{
                 "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end"};
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
-                exeFiles.add(diskSimService.createFile(Main.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
+                exeFiles.add(diskSimService.createFile(OS.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
                 try {
                     diskSimService.write_exeFile(exeFiles.get(i*5+j), exeFileContents[(int)(Math.random() * 4)]);
                 } catch (Exception e) {
@@ -185,7 +184,7 @@ public class CPU implements Runnable{
                 }
             }
         }
-    }
+    }*/
 
     /**
      * 中断处理
@@ -244,7 +243,7 @@ public class CPU implements Runnable{
      */
     private PCB processScheduling() {
         // 重置时间片
-        clock.setTimeSlice(6);
+        OS.clock.setTimeSlice(6);
         PCB nextProcess = null;
         if (readyQueue.size() > 0) {
             // 从就绪队列中摘取出来

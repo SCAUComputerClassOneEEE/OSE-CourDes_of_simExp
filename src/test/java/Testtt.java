@@ -1,4 +1,6 @@
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
 import org.junit.Test;
 
@@ -58,11 +60,9 @@ public class Testtt {
     }
     @Test
     public void tttt(){
-        Memory memory = Memory.getMemory();
-        memory.getMat().getMAT_OccupyCont().get(0).getLength();
-        int length = memory.getMat().getMAT_OccupyCont().size();
-        for (int i = 0; i < length; i++){
-
-        }
+        Thread cpu = new Thread(new CPU());
+        cpu.start();
+        cpu.interrupt();
+        cpu.start();
     }
 }

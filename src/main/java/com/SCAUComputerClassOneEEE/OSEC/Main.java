@@ -28,12 +28,12 @@ import java.net.URL;
 
 
 public class Main extends Application {
-    public static DiskPane diskPane = DiskPane.getDiskPane();
+/*    public static DiskPane diskPane = DiskPane.getDiskPane();
     public static Disk disk = Disk.getDisk();
     public static FileTree fileTree = FileTree.getFileTree();
-    public static CPU cpu = CPU.getCpu();
+    public static CPU cpu = CPU.getCpu();*/
 
-    Stage stage =new Stage();
+    Stage stage = new Stage();
     private boolean allReady = false;
     private static Label infoLb;
 
