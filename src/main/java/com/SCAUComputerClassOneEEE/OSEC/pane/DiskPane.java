@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.pane;
 
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -14,7 +15,7 @@ import lombok.Setter;
 @Data
 public class DiskPane {
 
-    private volatile static DiskPane diskPane = new DiskPane();
+    private volatile static DiskPane diskPane;
 
     private BlockPane[] blockPanes = new BlockPane[128];
     private GridPane diskBlockSet;
@@ -42,6 +43,13 @@ public class DiskPane {
     }
 
     public static DiskPane getDiskPane(){
+        if (diskPane == null){
+            synchronized (Disk.class){
+                if (diskPane == null){
+                    diskPane = new DiskPane();
+                }
+            }
+        }
         return diskPane;
     }
 
