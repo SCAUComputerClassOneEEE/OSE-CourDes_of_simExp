@@ -4,6 +4,7 @@ import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileModel.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.op.DiskPane;
+import com.SCAUComputerClassOneEEE.OSEC.ui.MainUI;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,6 +26,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
+            MainUI.mainUI();
+            System.out.println("2");
             Parent root = FXMLLoader.load(getClass().getResource("MyScene.fxml"));
             Scene scene = new Scene(root);
             //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
@@ -38,6 +41,4 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
-
-
 }
