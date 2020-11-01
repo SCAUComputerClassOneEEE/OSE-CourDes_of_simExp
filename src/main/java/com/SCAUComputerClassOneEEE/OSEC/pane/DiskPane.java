@@ -1,6 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.pane;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.Disk;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -8,7 +8,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 

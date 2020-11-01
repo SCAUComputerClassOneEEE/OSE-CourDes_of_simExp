@@ -1,9 +1,9 @@
 package com.SCAUComputerClassOneEEE.OSEC.pane;
 
-import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.utils.CompileUtil;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.data_service.DiskSimService;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -59,13 +59,13 @@ public class FileTextField {
             AFile aFile = myTreeItem.getValue();
             int diskNum = aFile.getDiskNum();
             if(aFile.isFile()){
-                OS.disk.writeFile(diskNum, textArea.getText());
-                aFile.setLength((char)OS.disk.getFileSize(diskNum));
+                OSDataCenter.disk.writeFile(diskNum, textArea.getText());
+                aFile.setLength((char) OSDataCenter.disk.getFileSize(diskNum));
             }else if(aFile.isExeFile()){
                 diskSimService.write_exeFile(aFile, textArea.getText());
             }
             AFile fatherFile = myTreeItem.getParent().getValue();
-            OS.disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
+            OSDataCenter.disk.writeFile(fatherFile.getDiskNum(), modify(fatherFile, aFile));
             FilePane.update(myTreeItem);
             text = textArea.getText();
             stage.setTitle(aFile.getFileName() + "." + aFile.getType());
@@ -119,7 +119,7 @@ public class FileTextField {
     }
 
     String modify(AFile fatherFile, AFile rootFile) {
-        char[] block_cont = String.valueOf(OS.disk.readFile(fatherFile.getDiskNum())).toCharArray();
+        char[] block_cont = String.valueOf(OSDataCenter.disk.readFile(fatherFile.getDiskNum())).toCharArray();
         char[] root_cont = rootFile.getALLData();
         int in = fatherFile.getAFiles().indexOf(rootFile);
         System.arraycopy(root_cont, 0, block_cont, in * 8, 8);

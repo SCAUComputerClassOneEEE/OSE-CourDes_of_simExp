@@ -1,16 +1,18 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.processSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.utils.CompileUtil;
-import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.data_service.ProcessSimService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.Data;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author hlf & sky
@@ -89,7 +91,7 @@ public class CPU implements Runnable{
                     MainSceneController.runningPCBIDSim.setValue("当前进程为闲逛进程");
                 }
                 // timeRotation中运行一个指令周期
-                psw = OS.clock.timeRotation();
+                psw = OSDataCenter.clock.timeRotation();
             }
         }
     }
@@ -162,7 +164,7 @@ public class CPU implements Runnable{
         if ((int)(Math.random()*6) == 5) {
             AFile executeFile = exeFiles.get((int)(exeFiles.size() * Math.random()));
             // 创建进程
-            OS.processSimService.create(executeFile);
+            OSDataCenter.processSimService.create(executeFile);
         }
     }
 
@@ -170,8 +172,8 @@ public class CPU implements Runnable{
      * 创建10个可执行文件
      */
     public void initExeFile(){
-        OS.diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef1", 8);
-        OS.diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef2", 8);
+        OSDataCenter.diskSimService.createFile(OSDataCenter.fileTree.getRootTree().getValue(), "ef1", 8);
+        OSDataCenter.diskSimService.createFile(OSDataCenter.fileTree.getRootTree().getValue(), "ef2", 8);
 
         // 可执行文件池
         String[] exeFileContents = {
@@ -183,10 +185,10 @@ public class CPU implements Runnable{
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
-                exeFiles.add(OS.diskSimService.createFile(OS.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
+                exeFiles.add(OSDataCenter.diskSimService.createFile(OSDataCenter.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
                 try {
                     // 随机从文件池中选择
-                    OS.diskSimService.write_exeFile(exeFiles.get(i * 5 + j), exeFileContents[(int)(Math.random() * 5)]);
+                    OSDataCenter.diskSimService.write_exeFile(exeFiles.get(i * 5 + j), exeFileContents[(int)(Math.random() * 5)]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -219,7 +221,7 @@ public class CPU implements Runnable{
             char equip = IR.charAt(1);
             int time = Integer.parseInt(IR.substring(2));
             // 请求分配设备
-            OS.deviceSimService.distributeDevice(equip,curPCB,time);
+            OSDataCenter.deviceSimService.distributeDevice(equip,curPCB,time);
             // 调度
             curPCB = processScheduling();
             // 去除设备中断
@@ -250,7 +252,7 @@ public class CPU implements Runnable{
      */
     private PCB processScheduling() {
         // 重置时间片
-        OS.clock.setTimeSlice(6);
+        OSDataCenter.clock.setTimeSlice(6);
         PCB nextProcess = null;
         if (readyQueue.size() > 0) {
             // 从就绪队列中摘取出来
@@ -305,6 +307,76 @@ public class CPU implements Runnable{
         readyQueue.clear();
         blockedQueue.clear();
         allPCB.clear();
+    }
+
+    /**
+     * @author best lu
+     * @date 25/8/2020
+     */
+    @Data
+    public static class Clock{
+
+        private static int TIME_UNIT = 999;
+        private static int cpuRanTime = 0;
+        private volatile static int timeSlice = 6;
+        private static final Clock clock = new Clock();
+
+        public void setTimeSlice(int timeSlice){
+            Clock.timeSlice = timeSlice;
+        }
+
+        public long getCpuRanTime(){
+            return cpuRanTime;
+        }
+
+        private Clock(){
+
+        }
+
+        public static Clock getClock(){
+            return clock;
+        }
+
+
+        /**
+         * 时间片轮转。
+         * 分发一个时间单位（1000ms），去调用cpu的executeAndFetch方法，取指令（更新IR）、执行指令(取IR)。
+         * @return 一个时间片内执行返回程序中断字
+         * @throws InterruptedException
+         * @throws ExecutionException
+         */
+        public synchronized int timeRotation() throws InterruptedException{
+
+            long sTime = System.currentTimeMillis();
+
+            MainSceneController.cpuTimeSim.set(cpuRanTime++);
+            MainSceneController.timeSliceSim.setValue(timeSlice--);
+            OSDataCenter.deviceSimService.decTime();
+            OSDataCenter.cpu.timeAdd();
+            //返回中断字
+            int psw = instructionCycle();
+            long end1 = System.currentTimeMillis();
+            //补足1000ms时间
+            try {
+                Thread.sleep(TIME_UNIT - end1 + sTime);
+            }
+            catch (Exception ignored){
+
+            }
+
+            if (timeSlice == 0){
+                //System.out.println("##时间片结束");
+                timeSlice = 6;
+                return TSE | psw;
+            }
+
+            //System.out.println("一条代码结束执行，用时： " + (end2-sTime));
+            return psw;
+        }
+
+        public void reset() {
+            cpuRanTime = 0;
+        }
     }
 }
 

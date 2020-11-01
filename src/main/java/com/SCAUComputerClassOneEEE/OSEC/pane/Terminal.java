@@ -1,8 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.pane;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.FileTree;
-import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -59,44 +57,44 @@ public class Terminal {
             //文件路径
             String filePath = matcher1.group(2);
 
-            List<String> fileNameList = OS.diskSimService.getFileNameList(filePath);
+            List<String> fileNameList = OSDataCenter.diskSimService.getFileNameList(filePath);
             String info;
             switch (action){
                 case "create"://新，ok
-                    info = OS.diskSimService.createFile(filePath);
+                    info = OSDataCenter.diskSimService.createFile(filePath);
                     formatOut(info);
                     break;
                 case "close"://ok
-                    info = OS.diskSimService.close_file(OS.diskSimService.getLastTreeItem(filePath))?"关闭成功":"关闭失败";
+                    info = OSDataCenter.diskSimService.close_file(OSDataCenter.diskSimService.getLastTreeItem(filePath))?"关闭成功":"关闭失败";
                     formatOut(info);
                     break;
                 case "delete"://ok
-                    info = OS.diskSimService.deleteFile(OS.diskSimService.getLastTreeItem(filePath))?"删除成功":"删除失败";
+                    info = OSDataCenter.diskSimService.deleteFile(OSDataCenter.diskSimService.getLastTreeItem(filePath))?"删除成功":"删除失败";
                     formatOut(info);
                     break;
                 case "type":
-                    info = OS.diskSimService.typeFile(OS.diskSimService.getLastTreeItem(filePath))?"显示成功":"显示失败";
+                    info = OSDataCenter.diskSimService.typeFile(OSDataCenter.diskSimService.getLastTreeItem(filePath))?"显示成功":"显示失败";
                     formatOut(info);
                     break;
 
                     //下面的是目录功能
                 case "mkdir"://新,ok
-                    info = OS.diskSimService.createFile(filePath);
+                    info = OSDataCenter.diskSimService.createFile(filePath);
                     formatOut(info);
                     break;
                 case "dir":
-                    info = OS.diskSimService.dirDirectory(OS.diskSimService.getLastTreeItem(filePath))?"true":"false";
+                    info = OSDataCenter.diskSimService.dirDirectory(OSDataCenter.diskSimService.getLastTreeItem(filePath))?"true":"false";
                     formatOut(info);
                     break;
                 case "deldir":
-                    info = OS.diskSimService.rdDirectory(OS.diskSimService.getLastTreeItem(filePath))?"true":"false";
+                    info = OSDataCenter.diskSimService.rdDirectory(OSDataCenter.diskSimService.getLastTreeItem(filePath))?"true":"false";
                     formatOut(info);
                     break;
 
                 //-------------新增功能-----------------------
                     //删除空目录
                 case "rmdir"://ok
-                    info = OS.diskSimService.rmdir(filePath);//info填要输出的内容
+                    info = OSDataCenter.diskSimService.rmdir(filePath);//info填要输出的内容
                     formatOut(info);
                     break;
 
@@ -110,19 +108,19 @@ public class Terminal {
             //操作值
             String value = matcher2.group(3);
 
-            List<String> fileNameList = OS.diskSimService.getFileNameList(filePath);
+            List<String> fileNameList = OSDataCenter.diskSimService.getFileNameList(filePath);
             String info;
             switch (action){
                 case "open"://ok
-                    info = OS.diskSimService.open_file(OS.diskSimService.getLastTreeItem(filePath),value)?"打开成功":"打开失败";
+                    info = OSDataCenter.diskSimService.open_file(OSDataCenter.diskSimService.getLastTreeItem(filePath),value)?"打开成功":"打开失败";
                     formatOut(info);
                     break;
                 case "read"://ok
-                    info = OS.diskSimService.read_file(OS.diskSimService.getLastTreeItem(filePath),Integer.parseInt(value));
+                    info = OSDataCenter.diskSimService.read_file(OSDataCenter.diskSimService.getLastTreeItem(filePath),Integer.parseInt(value));
                     formatOut(info);
                     break;
                 case "change"://ok
-                    info = OS.diskSimService.change(OS.diskSimService.getLastTreeItem(filePath),Integer.parseInt(value))?"属性修改成功":"属性修改失败";
+                    info = OSDataCenter.diskSimService.change(OSDataCenter.diskSimService.getLastTreeItem(filePath),Integer.parseInt(value))?"属性修改成功":"属性修改失败";
                     formatOut(info);
                     break;
 
@@ -130,22 +128,22 @@ public class Terminal {
 
                 //拷贝文件
                 case "copy":
-                    info = OS.diskSimService.copyFile(filePath, value);//info填要输出的内容
+                    info = OSDataCenter.diskSimService.copyFile(filePath, value);//info填要输出的内容
                     formatOut(info);
                     break;
                  //移动文件
                 case "move"://ok
-                    info = OS.diskSimService.move(filePath, value);//info填要输出的内容
+                    info = OSDataCenter.diskSimService.move(filePath, value);//info填要输出的内容
                     formatOut(info);
                     break;
                 //改变目录路径
                 case "chdir"://ok
-                    info = OS.diskSimService.chdir(filePath, value);//info填要输出的内容
+                    info = OSDataCenter.diskSimService.chdir(filePath, value);//info填要输出的内容
                     formatOut(info);
                     break;
                 //----------------------------------------
                 case "inputBuffer":
-                    info = OS.diskSimService.inputBuffer(Integer.parseInt(filePath),value)?"写缓冲成功":"写缓冲失败";
+                    info = OSDataCenter.diskSimService.inputBuffer(Integer.parseInt(filePath),value)?"写缓冲成功":"写缓冲失败";
                     formatOut(info);
 
             }
@@ -156,15 +154,15 @@ public class Terminal {
             int bufferNum = Integer.parseInt(matcher3.group(3));
             int length = Integer.parseInt(matcher3.group(4));
 
-            String info = OS.diskSimService.write_file(OS.diskSimService.getLastTreeItem(path), bufferNum, length)?"成功":"失败";
+            String info = OSDataCenter.diskSimService.write_file(OSDataCenter.diskSimService.getLastTreeItem(path), bufferNum, length)?"成功":"失败";
             formatOut(info);
         }else if(matcher0.matches()){//无参数,ok
             //格式化操作
             String action = matcher0.group(1);
             if ("format".equals(action)) {
-                String info = OS.diskSimService.format();
+                String info = OSDataCenter.diskSimService.format();
                 formatOut(info);
-                FilePane.update(OS.fileTree.getRootTree());
+                FilePane.update(OSDataCenter.fileTree.getRootTree());
             }
         }
     }

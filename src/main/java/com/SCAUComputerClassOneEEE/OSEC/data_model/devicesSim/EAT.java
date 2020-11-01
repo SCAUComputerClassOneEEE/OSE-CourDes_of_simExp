@@ -1,6 +1,6 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.devicesSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**

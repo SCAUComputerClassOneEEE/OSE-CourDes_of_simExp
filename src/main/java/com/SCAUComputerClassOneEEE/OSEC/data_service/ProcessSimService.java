@@ -1,11 +1,9 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataService;
+package com.SCAUComputerClassOneEEE.OSEC.data_service;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.Clock;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
-import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -51,13 +49,13 @@ public class ProcessSimService {
         }
         //申请内存
         try {
-            pointer = OS.memory.malloc(aFile.getDiskContent().toCharArray());
+            pointer = OSDataCenter.memory.malloc(aFile.getDiskContent().toCharArray());
         }catch (Exception e){
             return;
         }
         Color newProcessColor = randomColor();
         //空白进程控制块
-        PCB newProcess = new PCB(pointer,totalSize,newProcessColor,(int) Clock.getClock().getCpuRanTime(),aFile.getAbsoluteLocation().substring(5)+".ex");
+        PCB newProcess = new PCB(pointer,totalSize,newProcessColor,(int) CPU.Clock.getClock().getCpuRanTime(),aFile.getAbsoluteLocation().substring(5)+".ex");
         colors.remove(newProcessColor);
         //添加进就绪队列并显示结果
         CPU.readyQueue.add(newProcess);
@@ -70,7 +68,7 @@ public class ProcessSimService {
     public void destroy(PCB destroyProcess){
         //回收内存空间
         try{
-            OS.memory.recovery(destroyProcess.getPointerToMemory());
+            OSDataCenter.memory.recovery(destroyProcess.getPointerToMemory());
         }
         catch (Exception e){
             //e.printStackTrace();

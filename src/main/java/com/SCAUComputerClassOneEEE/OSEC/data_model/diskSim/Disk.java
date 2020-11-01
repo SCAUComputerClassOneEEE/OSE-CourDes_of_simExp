@@ -1,6 +1,7 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
@@ -270,6 +271,8 @@ public class Disk implements Serializable{
     public void readDiskFromFile() {
         try(ObjectInputStream ooi = new ObjectInputStream(new FileInputStream("src/main/resources/diskDat.dat"))) {
             disk = (Disk) ooi.readObject();
+            OSDataCenter.disk = disk;
+            // 更新文件树与磁盘块展示界面
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -279,8 +282,6 @@ public class Disk implements Serializable{
     public void writeDiskToFile() {
         try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/diskDat.dat"))) {
             oos.writeObject(disk);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

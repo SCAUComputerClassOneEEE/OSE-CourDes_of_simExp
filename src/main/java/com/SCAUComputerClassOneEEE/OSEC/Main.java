@@ -1,12 +1,12 @@
 package com.SCAUComputerClassOneEEE.OSEC;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
-import com.SCAUComputerClassOneEEE.OSEC.ui.MainUI;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.Disk;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.data_service.ProcessSimService;
+import com.SCAUComputerClassOneEEE.OSEC.start.Start;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -95,7 +95,7 @@ public class Main extends Application {
      * @throws MalformedURLException
      */
     public void bootStage() throws URISyntaxException, MalformedURLException {
-        URL url = MainUI.class.getClassLoader().getResource("加载界面.png").toURI().toURL();
+        URL url = Start.class.getClassLoader().getResource("加载界面.png").toURI().toURL();
         Image image = new Image(url.toString());
         ImageView view = new ImageView(image);
 

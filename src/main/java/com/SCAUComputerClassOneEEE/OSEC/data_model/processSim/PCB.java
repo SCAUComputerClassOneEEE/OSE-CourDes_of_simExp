@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.processSim;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;

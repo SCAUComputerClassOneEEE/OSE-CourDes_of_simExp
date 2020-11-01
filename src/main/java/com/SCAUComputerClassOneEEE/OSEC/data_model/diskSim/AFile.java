@@ -1,6 +1,6 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.pane.OpenFileManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +46,7 @@ public class AFile{
     }
 
     public AFile(String filePath, int property) throws Exception{
-        int header = OS.disk.malloc_F_Header();
+        int header = OSDataCenter.disk.malloc_F_Header();
         if(header == -1){
             throw new Exception("磁盘空间不足");
         }else{
@@ -71,7 +71,7 @@ public class AFile{
     }
 
     public AFile(String fatherPath, String fileName, int property) throws Exception{
-        int header = OS.disk.malloc_F_Header();
+        int header = OSDataCenter.disk.malloc_F_Header();
         if(header == -1){
             throw new Exception("磁盘空间不足");
         }else{
@@ -125,7 +125,7 @@ public class AFile{
     }
     //得到文件内容
     public String getDiskContent(){
-        String str = OS.disk.readFile(diskNum);
+        String str = OSDataCenter.disk.readFile(diskNum);
         StringBuilder deleteString = new StringBuilder();
         for (int i = 0; i < str.length(); i++)
             if (str.charAt(i) != '#')

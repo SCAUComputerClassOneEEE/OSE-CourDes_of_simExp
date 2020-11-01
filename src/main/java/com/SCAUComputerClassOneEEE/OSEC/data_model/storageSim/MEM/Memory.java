@@ -1,8 +1,9 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.storageSim.MEM;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.start.Start;
 import lombok.Data;
 import lombok.Getter;
 

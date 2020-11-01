@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.ui;
+package com.SCAUComputerClassOneEEE.OSEC.start;
 
 import lombok.Data;
 
@@ -8,6 +8,6 @@ import lombok.Data;
  * @date 31/10/2020
  */
 @Data
-public class MainUI {
+public class Start {
     private boolean allReady = false;
 }
