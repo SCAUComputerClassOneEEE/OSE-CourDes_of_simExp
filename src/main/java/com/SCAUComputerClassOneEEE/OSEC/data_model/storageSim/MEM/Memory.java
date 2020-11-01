@@ -2,8 +2,9 @@ package com.SCAUComputerClassOneEEE.OSEC.data_model.storageSim.MEM;
 
 import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
-import com.SCAUComputerClassOneEEE.OSEC.start.Start;
+import com.SCAUComputerClassOneEEE.OSEC.starter.Starter;
 import lombok.Data;
 import lombok.Getter;
 
@@ -113,7 +114,7 @@ public class Memory {
         Arrays.fill(userMemoryArea,'#');
         mat = new MAT();
         PCB_LIST.clear();
-        Main.bootOS();
+        Starter.bootOS();
     }
 
     public char[] readPChars(int pId){

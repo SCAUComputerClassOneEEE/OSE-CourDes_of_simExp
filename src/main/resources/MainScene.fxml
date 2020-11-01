@@ -80,7 +80,7 @@
                                                       <TableColumn fx:id="readyTotalTime" editable="false" prefWidth="120.0" sortable="false" text="进程存在时间" />
                                                       <TableColumn fx:id="readyAX" editable="false" prefWidth="84.0" sortable="false" text="X的值" />
                                                       <TableColumn fx:id="readyRemainInstructions" editable="false" prefWidth="116.0" sortable="false" text="剩余指令数" />
-                                                      <TableColumn fx:id="readyProgressRate" editable="false" prefWidth="211.0" sortable="false" text="进度" />
+                                                      <TableColumn fx:id="readyProgressRate" editable="false" prefWidth="226.0" sortable="false" text="进度" />
                                                    </columns>
                                                 </TableView>
                                              </children>
@@ -104,7 +104,7 @@
                                                       <TableColumn fx:id="blockArriveTime" editable="false" prefWidth="91.0" sortable="false" text="到达时间" />
                                                       <TableColumn fx:id="blockTotalTime" editable="false" prefWidth="122.0" sortable="false" text="进程存在时间" />
                                                       <TableColumn fx:id="blockAX" editable="false" minWidth="2.0" prefWidth="98.0" sortable="false" text="X的值" />
-                                                      <TableColumn fx:id="blockProgressRate" editable="false" prefWidth="210.0" sortable="false" text="进度" />
+                                                      <TableColumn fx:id="blockProgressRate" editable="false" prefWidth="225.0" sortable="false" text="进度" />
                                                    </columns>
                                                 </TableView>
                                              </children>
