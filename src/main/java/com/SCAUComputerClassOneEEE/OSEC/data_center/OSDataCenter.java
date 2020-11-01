@@ -10,6 +10,7 @@ import com.SCAUComputerClassOneEEE.OSEC.data_service.DiskSimService;
 import com.SCAUComputerClassOneEEE.OSEC.data_service.ProcessSimService;
 import com.SCAUComputerClassOneEEE.OSEC.pane.DiskPane;
 import com.SCAUComputerClassOneEEE.OSEC.pane.Terminal;
+import com.SCAUComputerClassOneEEE.OSEC.starter.Starter;
 
 public class OSDataCenter {
     public static CPU cpu = CPU.getCpu();
@@ -26,6 +27,8 @@ public class OSDataCenter {
     public static DiskPane diskPane = DiskPane.getDiskPane();
 
     public static Terminal terminal = Terminal.getTerminal();
+
+    public static Starter starter = Starter.getStarter();
 
     public static double width = 1300;
     public static double height = 830;
