@@ -26,6 +26,7 @@ public class Disk implements Serializable{
     @Getter
     private final FAT fat;
     //模拟的磁盘数据区，（ 2 ~ 127 号）
+    @Getter
     private final DiskBlock[] diskBlocks;
 
     public static Disk getDisk(){
@@ -248,7 +249,7 @@ public class Disk implements Serializable{
     }
 
     @Data
-    private static class DiskBlock implements Serializable{
+    public static class DiskBlock implements Serializable{
 
         int order;//块号
         char[] block_cont = new char[BLOCK_MAX_SIZE];//内容
@@ -271,9 +272,9 @@ public class Disk implements Serializable{
     public void readDiskFromFile() {
         try(ObjectInputStream ooi = new ObjectInputStream(new FileInputStream("src/main/resources/diskDat.dat"))) {
             disk = (Disk) ooi.readObject();
-            //System.out.println("成功");
-            // OSDataCenter.disk = disk;
+             OSDataCenter.disk = disk;
             // 更新文件树与磁盘块展示界面
+            OSDataCenter.fileTree.readingDisk(disk);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

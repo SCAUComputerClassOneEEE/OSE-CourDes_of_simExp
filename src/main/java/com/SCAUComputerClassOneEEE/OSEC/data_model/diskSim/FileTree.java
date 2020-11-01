@@ -1,7 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.pane.MenuPane;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
+import com.SCAUComputerClassOneEEE.OSEC.pane.MenuPane;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -11,25 +11,22 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
-import java.util.ArrayList;
 
 @Getter
 @Setter
 public class FileTree {
 
     private static FileTree fileTree = new FileTree();
-
     //文件树界面
     private VBox fileTreePane;
     //文件树
     private TreeView<AFile> treeView;
     //根项目
     private MyTreeItem rootTree;
+    //disk磁盘块内容
+    private Disk.DiskBlock[] diskBlocks;
 
-    public static FileTree getFileTree() {
-        return fileTree;
-    }
-
+    public static FileTree getFileTree() { return fileTree; }
     public FileTree() {
         init();
         addListener();
@@ -41,14 +38,12 @@ public class FileTree {
         int header = OSDataCenter.disk.malloc_F_Header();
         if(header == -1){
             System.out.println("错误，磁盘已满");
-        }else{
-            System.out.println("根目录对应的磁盘号：" + header);
-            char diskNum = (char)header;
+        }else {
+            char diskNum = (char) header;
             char property = 8;
             char length = 0;
             AFile rootFile = new AFile("root", "  ", property, diskNum, length, "");
-            rootTree = new MyTreeItem(rootFile);
-            this.setRootFileTreeItems(rootFile, rootTree);
+            this.rootTree = new MyTreeItem(rootFile);
             this.treeView = new TreeView<>(rootTree);
             this.treeView.setShowRoot(true);
             // 单元设置，TreeView下的每个子控件都支持,包扩子子控件,所以添加菜单栏那里只对有儿子有父亲的进行设置
@@ -57,18 +52,37 @@ public class FileTree {
         }
     }
 
-    private void setRootFileTreeItems(AFile aFile, TreeItem<AFile> rootTreeItem){
-        //加载根目录
-        ArrayList<AFile> aFiles = aFile.getAFiles();
-        if(aFiles == null){
-            return;
-        }
-        for(AFile file:aFiles){
-            TreeItem<AFile> treeItem = new TreeItem<>(file);
-            rootTreeItem.getChildren().add(treeItem);
-            if(!treeItem.isLeaf()){
-                setRootFileTreeItems(file, treeItem);
+    public void readingDisk(Disk disk){
+        treeView.getRoot().getChildren().removeAll();
+        if(disk != null)
+            diskBlocks = disk.getDiskBlocks();
+        if (diskBlocks != null)
+            setRootFileTreeItems(2, rootTree);
+    }
+
+    private void setRootFileTreeItems(int diskNum, TreeItem<AFile> fatherItem) {
+        char[] chars = diskBlocks[diskNum].getBlock_cont();
+        AFile fatherFile = fatherItem.getValue();
+        fatherItem.setExpanded(true);
+        for (int i = 0; i < 8; i++) {
+            int j = i * 8;
+            if(chars[j] == '#') break;
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int k = j; k < j + 3; k++) {
+                if (chars[k] == ' ')
+                    break;
+                stringBuilder.append(chars[k]);
             }
+            String fileName = stringBuilder.toString();
+            String type = new String(chars, j + 3, 2);
+            String location = fatherFile.getAbsoluteLocation();
+            AFile aFile = new AFile(fileName, type, chars[j + 5], chars[j + 6], chars[j + 7], location);
+            OSDataCenter.diskPane.updateType(chars[j + 6]);
+            fatherFile.getAFiles().add(aFile);
+            TreeItem<AFile> treeItem = new TreeItem<>(aFile);
+            fatherItem.getChildren().add(treeItem);
+            if(aFile.isDirectory())
+                setRootFileTreeItems(aFile.getDiskNum(), treeItem);
         }
     }
 
