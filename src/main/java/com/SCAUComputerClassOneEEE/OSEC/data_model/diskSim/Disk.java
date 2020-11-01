@@ -271,7 +271,8 @@ public class Disk implements Serializable{
     public void readDiskFromFile() {
         try(ObjectInputStream ooi = new ObjectInputStream(new FileInputStream("src/main/resources/diskDat.dat"))) {
             disk = (Disk) ooi.readObject();
-            OSDataCenter.disk = disk;
+            System.out.println("成功");
+            // OSDataCenter.disk = disk;
             // 更新文件树与磁盘块展示界面
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
