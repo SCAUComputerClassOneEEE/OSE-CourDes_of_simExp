@@ -39,6 +39,7 @@ public class FilePane extends BorderPane {
         );
     }
 
+    //初始化面板
     private void init(){
         flowPane.setHgap(5);
         flowPane.setVgap(5);
@@ -49,6 +50,7 @@ public class FilePane extends BorderPane {
         this.setCenter(scrollPane);
     }
 
+    //初始化图片
     private static Label initPicture(TreeItem<AFile> ti){
         AFile aFile = ti.getValue();
         ImageView iv1 = new ImageView(new Image("file:" + new File("src/main/resources/picture/file.jpg"), 100, 100, true, true));
@@ -119,6 +121,7 @@ public class FilePane extends BorderPane {
         return label;
     }
 
+    //更新节点
     public static void update(TreeItem<AFile> newValue){
         try {
             Platform.runLater(()-> flowPane.getChildren().remove(0, flowPane.getChildren().size()));

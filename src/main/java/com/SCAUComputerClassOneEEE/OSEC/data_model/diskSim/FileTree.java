@@ -52,6 +52,10 @@ public class FileTree {
         }
     }
 
+    /**
+     * 从dat文件读取数据更新文件树和磁盘面板
+     * @param disk 从dat文件读取的disk对象
+     */
     public void readingDisk(Disk disk){
         treeView.getRoot().getChildren().removeAll();
         if(disk != null)
@@ -60,6 +64,11 @@ public class FileTree {
             setRootFileTreeItems(2, rootTree);
     }
 
+    /**
+     * 更新fatherItem节点的子节点
+     * @param diskNum 磁盘块号
+     * @param fatherItem    父节点
+     */
     private void setRootFileTreeItems(int diskNum, TreeItem<AFile> fatherItem) {
         char[] chars = diskBlocks[diskNum].getBlock_cont();
         AFile fatherFile = fatherItem.getValue();
