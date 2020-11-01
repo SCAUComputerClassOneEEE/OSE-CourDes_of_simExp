@@ -179,7 +179,7 @@ public class CPU implements Runnable{
                 "X=4;!B5;X++;X++;!A4;X++;X++;X++;X++;X++;X++;end;",
                 "X=2;X--;!A5;X--;!C2;X++;!B3;X++;X++;X++;X++;X++;X++;end;",
                 "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;",
-                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end"};
+                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;"};
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
