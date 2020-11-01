@@ -76,27 +76,32 @@ public class MainSceneController implements Initializable {
         }
     }
 
-    // 重置，未完善
+    // 重置
     @FXML
     private void reset(){
-        //把cpu进程关掉
-        coreThread.interrupt();
+        if (coreThread == null) return;
+        // 把cpu进程关掉
+        coreThread.stop();
+        coreThread = null;
+        // 重置
+        OS.cpu.reset();
+        OS.clock.reset();
+        OS.device.reset();
+        OS.processSimService.reset();
+        PCB.nextProcessID = 0;
+        OS.memory.reset();
 
-        runningIR.setText("");
-        runningPCBID.setText("");
+        startORStop.setText("开始");
+        startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/开始.png", 30, 30, true, true)));
+
         cpuTime.setText("");
         timeSlice.setText("");
+        runningPCBID.setText("");
+        runningIR.setText("");
         intermediateResult.setText("");
         finalResult.setText("");
 
         isFirstStart = true;
-        startORStop.setText("开始");
-        startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/开始.png", 30, 30, true, true)));
-        OS.cpu.reset();
-        OS.clock.reset();
-        OS.device.reset();
-        //OS.memory.reset();
-        updateMemoryPane();
     }
 
     private void initMassage(){
@@ -194,26 +199,20 @@ public class MainSceneController implements Initializable {
         memoryPane.getChildren().clear();
         for (int i = 0; i < CPU.allPCB.size() ; i++){
             PCB drawingPCB = CPU.allPCB.get(i);
-            double width = ((double)drawingPCB.getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
-            double layoutX = ((double)drawingPCB.getPointerToMemory() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
+            // 宽
+            double width = 2 * ((double)drawingPCB.getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
+            // 位置
+            double layoutX = 2 * ((double)drawingPCB.getPointerToMemory() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
 
+            // 一个进程在内存界面中的表示
             Rectangle shapeOfProcessBlock = new Rectangle(width, memoryPane.getHeight(), drawingPCB.getColor());
             Label label = new Label(String.valueOf(drawingPCB.getProcessId()));
-
-            // 一个进程在内存中的表示
+            if (i == 0) label.setText("OS");
             StackPane aProcessBlock = new StackPane();
             aProcessBlock.setPrefSize(width,memoryPane.getHeight());
             aProcessBlock.setLayoutX(layoutX);
             aProcessBlock.getChildren().addAll(shapeOfProcessBlock,label);
 
-            if (i==0){
-                label.setText("OS");
-            }
-/*            else {
-                width*=2;
-                layoutX*=2;
-                layoutX-=((double)CPU.allPCB.get(0).getTotalSize() / Memory.getMemory().getUserMemoryArea().length * memoryPane.getWidth());
-            }*/
             memoryPane.getChildren().add(aProcessBlock);
         }
     }
@@ -309,7 +308,7 @@ public class MainSceneController implements Initializable {
     // 记录是否首次开启cpu线程
     private boolean isFirstStart = true;
     // 存放cpu线程
-    private Thread coreThread;
+    private Thread coreThread = null;
 
     // 文件系统的组件变量
     private final FilePane centerPane = new FilePane();

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PCB {
-    private static int nextProcessID = 0;
+    public static int nextProcessID = 0;
 
     private String exFileName;
     private int processId;//进程id

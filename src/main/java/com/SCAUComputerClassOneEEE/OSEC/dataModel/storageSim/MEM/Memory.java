@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
 import lombok.Data;
@@ -27,9 +28,9 @@ public class Memory {
     @Getter
     private final List<PCB> PCB_LIST;
     @Getter
-    private final MAT mat;
+    private MAT mat;
     @Getter
-    private char[] userMemoryArea;
+    private final char[] userMemoryArea;
 
     private Memory(){
         userMemoryArea = new char[USER_MEMORY_AREA_SIZE];
@@ -105,6 +106,13 @@ public class Memory {
             mat.getMAT_FreeCont().add(new MAT.FreeBlock(iProcessLength,mat.totalFreeLength()));
             mat.compressionProcessBlocks();
         }
+    }
+
+    public void reset() {
+        Arrays.fill(userMemoryArea,'#');
+        mat = new MAT();
+        PCB_LIST.clear();
+        Main.bootOS();
     }
 
     public char[] readPChars(int pId){
@@ -269,4 +277,6 @@ public class Memory {
             return retPointer;
         }
     }
+
+
 }

@@ -19,7 +19,7 @@ public class ProcessSimService {
     private static final ProcessSimService processSimService = new ProcessSimService();
 
     //颜色库，给PCB赋颜色值
-    private static final ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.YELLOWGREEN);
+    private static ArrayList<Color> colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.YELLOWGREEN);
         add(Color.YELLOW);add(Color.TOMATO);add(Color.SILVER);add(Color.TURQUOISE);add(Color.TAN);add(Color.CORAL);
         add(Color.SKYBLUE);add(Color.PINK);add(Color.LIGHTSTEELBLUE);add(Color.CYAN);}};
 
@@ -70,7 +70,7 @@ public class ProcessSimService {
     public void destroy(PCB destroyProcess){
         //回收内存空间
         try{
-            OS.memory.getMemory().recovery(destroyProcess.getPointerToMemory());
+            OS.memory.recovery(destroyProcess.getPointerToMemory());
         }
         catch (Exception e){
             //e.printStackTrace();
@@ -112,4 +112,9 @@ public class ProcessSimService {
             return colors.get(index);
     }
 
+    public void reset() {
+        colors = new ArrayList<Color>(){{add(Color.DEEPSKYBLUE); add(Color.YELLOWGREEN);
+            add(Color.YELLOW);add(Color.TOMATO);add(Color.SILVER);add(Color.TURQUOISE);add(Color.TAN);add(Color.CORAL);
+            add(Color.SKYBLUE);add(Color.PINK);add(Color.LIGHTSTEELBLUE);add(Color.CYAN);}};
+    }
 }

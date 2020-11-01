@@ -158,7 +158,8 @@ public class CPU implements Runnable{
      */
     private void randomPosses(){
         if (exeFiles.size() == 0) return;
-        if ((int)(Math.random()) == 0) {
+        //if ((int)(Math.random()) == 0) {
+        if ((int)(Math.random()*6) == 5) {
             AFile executeFile = exeFiles.get((int)(exeFiles.size() * Math.random()));
             // 创建进程
             OS.processSimService.create(executeFile);
@@ -183,7 +184,7 @@ public class CPU implements Runnable{
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(OS.diskSimService.createFile(OS.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
                 try {
-                    OS.diskSimService.write_exeFile(exeFiles.get(i*5+j), exeFileContents[(int)(Math.random() * 4)]);
+                    OS.diskSimService.write_exeFile(exeFiles.get(i * 5 + j), exeFileContents[(int)(Math.random() * 4)]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -194,7 +195,7 @@ public class CPU implements Runnable{
     /**
      * 中断处理
      */
-    private void interruptHandling() throws InterruptedException {
+    private void interruptHandling() {
         // 处理程序结束中断
         if ((psw& EOP) != 0) {
             MainSceneController.intermediateResultSim.setValue("处理程序结束中断···");
@@ -301,10 +302,7 @@ public class CPU implements Runnable{
         curPCB = null;
         readyQueue.clear();
         blockedQueue.clear();
-        int size = allPCB.size();
-        for(int i = 1; i < size; i++) {
-            allPCB.remove(1);
-        }
+        allPCB.clear();
     }
 }
 
