@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
@@ -12,14 +13,17 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -78,6 +82,9 @@ public class Main extends Application {
             stage.setTitle("模拟操作系统实现");
             stage.show();
             bootOS();
+
+            askForLoadExistDat();
+
             stage.setOnCloseRequest(e -> {
                 Disk.getDisk().writeDiskToFile();
                 if (MainSceneController.getCoreThread() != null) {
@@ -89,6 +96,30 @@ public class Main extends Application {
         }
     }
 
+    private void askForLoadExistDat() {
+        if (new File("src/main/resources/diskDat.dat").exists()){
+            Label tips = new Label("检测到有磁盘记录，是否加载？");
+            Button yes = new Button("是");
+            Button no = new Button("否");
+            BorderPane askPane = new BorderPane();
+            askPane.setTop(tips);
+            askPane.setLeft(yes);
+            askPane.setRight(no);
+            Scene askScene = new Scene(askPane);
+            Stage askStage = new Stage();
+            askStage.setScene(askScene);
+            askStage.show();
+
+            yes.setOnAction(event -> {
+                OSDataCenter.disk.readDiskFromFile();
+                askStage.close();
+            });
+
+            no.setOnAction(event -> {
+                askStage.close();
+            });
+        }
+    }
     /**
      * 启动界面
      * @throws URISyntaxException
