@@ -2,13 +2,13 @@ package com.SCAUComputerClassOneEEE.OSEC.starter;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
-import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.storageSim.MEM.Memory;
 import com.SCAUComputerClassOneEEE.OSEC.data_service.ProcessSimService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,7 +17,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Data;
@@ -30,7 +33,7 @@ import java.net.URL;
 
 
 /**
- * @author hlf
+ * @author best lu & hlf
  * @date 31/10/2020
  */
 @Data
@@ -52,7 +55,7 @@ public class Starter {
     }
     /**
      * 主界面
-     * @param stage 是
+     * @param stage
      */
     public void secondStage(Stage stage){
         Parent root;
@@ -73,7 +76,7 @@ public class Starter {
             askForLoadExistDat();
 
             stage.setOnCloseRequest(e -> {
-                Disk.getDisk().writeDiskToFile();
+                askForSaveDat();
                 if (MainSceneController.getCoreThread() != null) {
                     MainSceneController.getCoreThread().stop();
                 }
@@ -85,27 +88,12 @@ public class Starter {
 
     private void askForLoadExistDat() {
         if (new File("src/main/resources/diskDat.dat").exists()){
-            Label tips = new Label("检测到有磁盘记录，是否加载？");
-            Button yes = new Button("是");
-            Button no = new Button("否");
-            BorderPane askPane = new BorderPane();
-            askPane.setTop(tips);
-            askPane.setLeft(yes);
-            askPane.setRight(no);
-            Scene askScene = new Scene(askPane);
-            Stage askStage = new Stage();
-            askStage.setScene(askScene);
-            askStage.show();
-
-            yes.setOnAction(event -> {
-                OSDataCenter.disk.readDiskFromFile();
-                askStage.close();
-            });
-
-            no.setOnAction(event -> {
-                askStage.close();
-            });
+            tipPane("检测到已存在的磁盘数据，是否加载？",true);
         }
+    }
+
+    private void askForSaveDat() {
+        tipPane("是否保存磁盘数据",false);
     }
     /**
      * 启动界面
@@ -168,5 +156,44 @@ public class Starter {
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void tipPane(String tips,boolean type) {
+        Stage stage = new Stage();
+
+        //锁定当前提示框
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        stage.setTitle("提示");
+        stage.setMinWidth(300);
+        stage.setMaxHeight(300);
+        Label tipLabel = new Label(tips);
+        Button yes = new Button(("是"));
+        Button no = new Button("否");
+
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(yes, no);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(30);
+        VBox vBox = new VBox(10);
+        vBox.setStyle("-fx-background-color: White");
+        vBox.getChildren().addAll(tipLabel, hBox);
+        vBox.setAlignment(Pos.CENTER);
+        Scene scene = new Scene (vBox);
+        stage.setScene(scene);
+        stage.show();
+        if (type) {
+            yes.setOnAction (e -> {
+                OSDataCenter.disk.readDiskFromFile();
+                stage.close();
+            });
+        }else {
+            yes.setOnAction (e -> {
+                OSDataCenter.disk.writeDiskToFile();
+                stage.close();
+            });
+        }
+
+        no.setOnAction(e ->stage.close());
     }
 }
