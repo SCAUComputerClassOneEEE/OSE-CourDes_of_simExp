@@ -1,8 +1,8 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataService;
+package com.SCAUComputerClassOneEEE.OSEC.data_service;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.EAT;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.Device;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.devicesSim.EAT;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.devicesSim.Device;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
 
 import java.util.ArrayList;
 

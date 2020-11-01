@@ -1,4 +1,4 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.devicesSim;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

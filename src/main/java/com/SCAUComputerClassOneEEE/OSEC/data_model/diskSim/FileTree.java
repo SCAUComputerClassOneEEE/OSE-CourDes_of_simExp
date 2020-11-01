@@ -1,7 +1,7 @@
-package com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim;
+package com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.pane.MenuPane;
-import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -38,7 +38,7 @@ public class FileTree {
     //初始化
     private void init(){
         this.fileTreePane = new VBox();
-        int header = OS.disk.malloc_F_Header();
+        int header = OSDataCenter.disk.malloc_F_Header();
         if(header == -1){
             System.out.println("错误，磁盘已满");
         }else{

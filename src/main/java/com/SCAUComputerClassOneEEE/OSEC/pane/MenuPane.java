@@ -1,7 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.pane;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.DiskSimService;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.data_service.DiskSimService;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;

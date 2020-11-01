@@ -1,14 +1,14 @@
 package com.SCAUComputerClassOneEEE.OSEC.controller;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
-import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.pane.OpenFileManager;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.EAT;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.devicesSim.Device;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.devicesSim.EAT;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.devicesSim.Device;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.CPU;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.storageSim.MEM.Memory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -60,18 +60,18 @@ public class MainSceneController implements Initializable {
         if ("开始".equals(startORStop.getText())){
             // 首次开始
             if (isFirstStart) {
-                coreThread = new Thread(OS.cpu);
+                coreThread = new Thread(OSDataCenter.cpu);
                 coreThread.start();
                 isFirstStart = false;
             }else { // 暂停后启动
-                OS.cpu.WAITING = false;
-                OS.cpu.notifyCpu();
+                OSDataCenter.cpu.WAITING = false;
+                OSDataCenter.cpu.notifyCpu();
             }
             startORStop.setText("暂停");
             startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/暂停.png", 30, 30, true, true)));
         }
         else { // 准备暂停
-            OS.cpu.WAITING = true;
+            OSDataCenter.cpu.WAITING = true;
             startORStop.setText("开始");
             startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/开始.png", 30, 30, true, true)));
         }
@@ -85,12 +85,12 @@ public class MainSceneController implements Initializable {
         coreThread.stop();
         coreThread = null;
         // 重置
-        OS.cpu.reset();
-        OS.clock.reset();
-        OS.device.reset();
-        OS.processSimService.reset();
+        OSDataCenter.cpu.reset();
+        OSDataCenter.clock.reset();
+        OSDataCenter.device.reset();
+        OSDataCenter.processSimService.reset();
         PCB.nextProcessID = 0;
-        OS.memory.reset();
+        OSDataCenter.memory.reset();
 
         startORStop.setText("开始");
         startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/开始.png", 30, 30, true, true)));
@@ -159,13 +159,13 @@ public class MainSceneController implements Initializable {
         borderPaneOfBorderPane1.setCenter(rightOfBottom);
 
         // 大小尺寸
-        OS.width = borderPane1OfFileSystemTab.getPrefWidth();
-        OS.height = borderPane1OfFileSystemTab.getPrefHeight();
-        OS.fileTree.getTreeView().setPrefSize(OS.width/5,3*OS.height/5);
-        OS.diskPane.getDiskBlockSet().setPrefSize(3*OS.width/7,2*OS.height/5);
-        centerPane.setPrefSize(2*OS.width/5,3*OS.height/5);
-        rightPane.setPrefSize(2*OS.width/5,3*OS.height/5);
-        OpenFileManager.openFileTableView.setPrefSize(4*OS.width/7,2*OS.height/5);
+        OSDataCenter.width = borderPane1OfFileSystemTab.getPrefWidth();
+        OSDataCenter.height = borderPane1OfFileSystemTab.getPrefHeight();
+        OSDataCenter.fileTree.getTreeView().setPrefSize(OSDataCenter.width/5,3* OSDataCenter.height/5);
+        OSDataCenter.diskPane.getDiskBlockSet().setPrefSize(3* OSDataCenter.width/7,2* OSDataCenter.height/5);
+        centerPane.setPrefSize(2* OSDataCenter.width/5,3* OSDataCenter.height/5);
+        rightPane.setPrefSize(2* OSDataCenter.width/5,3* OSDataCenter.height/5);
+        OpenFileManager.openFileTableView.setPrefSize(4* OSDataCenter.width/7,2* OSDataCenter.height/5);
 
         //监听器
         diskChange.setValue(0);
@@ -218,7 +218,7 @@ public class MainSceneController implements Initializable {
         }
     }
     private void updateDiskPane(int index) {
-        OS.diskPane.updateType(index);
+        OSDataCenter.diskPane.updateType(index);
     }
 
     /**
@@ -314,10 +314,10 @@ public class MainSceneController implements Initializable {
 
     // 文件系统的组件变量
     private final FilePane centerPane = new FilePane();
-    private final VBox leftPane = OS.fileTree.getFileTreePane();
-    private final TextArea rightPane = OS.terminal.getTextArea();
+    private final VBox leftPane = OSDataCenter.fileTree.getFileTreePane();
+    private final TextArea rightPane = OSDataCenter.terminal.getTextArea();
     private final TableView<AFile.AOpenFile> leftOfBottom = OpenFileManager.openFileTableView;
-    private final GridPane rightOfBottom = OS.diskPane.getDiskBlockSet();
+    private final GridPane rightOfBottom = OSDataCenter.diskPane.getDiskBlockSet();
 
     //维护数据属性，监听器装在的对象
     public static SimpleObjectProperty<Integer> diskChange = new SimpleObjectProperty<>();
