@@ -173,18 +173,20 @@ public class CPU implements Runnable{
         OS.diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef1", 8);
         OS.diskSimService.createFile(OS.fileTree.getRootTree().getValue(), "ef2", 8);
 
+        // 可执行文件池
         String[] exeFileContents = {
                 "X=0;!A6;X++;X++;!C3;X++;X--;end;",
                 "X=4;!B5;X++;X++;!A4;X++;X++;X++;X++;X++;X++;end;",
                 "X=2;X--;!A5;X--;!C2;X++;!B3;X++;X++;X++;X++;X++;X++;end;",
-                "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;end;",
-                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end"};
+                "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;",
+                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end"};
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
                 exeFiles.add(OS.diskSimService.createFile(OS.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
                 try {
-                    OS.diskSimService.write_exeFile(exeFiles.get(i * 5 + j), exeFileContents[(int)(Math.random() * 4)]);
+                    // 随机从文件池中选择
+                    OS.diskSimService.write_exeFile(exeFiles.get(i * 5 + j), exeFileContents[(int)(Math.random() * 5)]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

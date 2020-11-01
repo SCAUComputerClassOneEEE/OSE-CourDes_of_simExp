@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC;
 
+import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
@@ -68,7 +69,6 @@ public class Main extends Application {
             root = FXMLLoader.load(getClass().getResource("MainScene.fxml"));
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("background.css").toExternalForm());
-            //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             stage.setScene(scene);
             stage.setWidth(1350);
             stage.setHeight(950);
@@ -78,7 +78,12 @@ public class Main extends Application {
             stage.setTitle("模拟操作系统实现");
             stage.show();
             bootOS();
-            stage.setOnCloseRequest(e -> Disk.getDisk().writeDiskToFile());
+            stage.setOnCloseRequest(e -> {
+                Disk.getDisk().writeDiskToFile();
+                if (MainSceneController.getCoreThread() != null) {
+                    MainSceneController.getCoreThread().stop();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

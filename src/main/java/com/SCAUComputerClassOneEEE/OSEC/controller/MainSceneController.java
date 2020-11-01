@@ -1,6 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.controller;
 
-import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AOpenFile;
+import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.pane.OpenFileManager;
@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
+import lombok.Getter;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -308,13 +309,14 @@ public class MainSceneController implements Initializable {
     // 记录是否首次开启cpu线程
     private boolean isFirstStart = true;
     // 存放cpu线程
-    private Thread coreThread = null;
+    @Getter
+    private static Thread coreThread = null;
 
     // 文件系统的组件变量
     private final FilePane centerPane = new FilePane();
     private final VBox leftPane = OS.fileTree.getFileTreePane();
     private final TextArea rightPane = OS.terminal.getTextArea();
-    private final TableView<AOpenFile> leftOfBottom = OpenFileManager.openFileTableView;
+    private final TableView<AFile.AOpenFile> leftOfBottom = OpenFileManager.openFileTableView;
     private final GridPane rightOfBottom = OS.diskPane.getDiskBlockSet();
 
     //维护数据属性，监听器装在的对象
