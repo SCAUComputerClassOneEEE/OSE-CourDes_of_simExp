@@ -28,4 +28,7 @@ public class OS {
 
     public static Terminal terminal = Terminal.getTerminal();
 
+    public static double width = 1300;
+    public static double height = 830;
+
 }

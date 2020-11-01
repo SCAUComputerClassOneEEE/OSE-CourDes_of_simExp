@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController">
+<AnchorPane prefHeight="900.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController">
    <children>
       <TabPane layoutY="-1.0" prefHeight="900.0" prefWidth="1350.0" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="运行">
+            <Tab text="进程运行">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="783.0" prefWidth="1339.0">
                      <children>
@@ -16,12 +17,13 @@
                            <items>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="108.0">
                                  <children>
-                                    <Button fx:id="beginORStop" layoutX="77.0" layoutY="82.0" mnemonicParsing="false" onAction="#beginORStop" prefHeight="37.0" prefWidth="105.0" text="开始/暂停" />
+                                    <Button fx:id="startORStop" layoutX="77.0" layoutY="82.0" mnemonicParsing="false" onAction="#startORStop" prefHeight="37.0" prefWidth="105.0" text="开始" />
+                                    <Button fx:id="reset" layoutX="232.0" layoutY="82.0" mnemonicParsing="false" onAction="#reset" prefHeight="37.0" prefWidth="105.0" text="重置" />
                                     <TableView fx:id="equipmentTable" layoutX="44.0" layoutY="523.0" prefHeight="312.0" prefWidth="311.0" style="-fx-border-color: #FFFFFF;">
                                        <columns>
-                                          <TableColumn fx:id="equipmentID" prefWidth="92.0" text="设备" />
-                                          <TableColumn fx:id="useEquipmentPCBID" prefWidth="99.0" text="进程ID" />
-                                          <TableColumn fx:id="time" prefWidth="113.0" text="剩余时间" />
+                                          <TableColumn fx:id="equipmentID" editable="false" prefWidth="92.0" sortable="false" text="设备" />
+                                          <TableColumn fx:id="useEquipmentPCBID" editable="false" prefWidth="99.0" sortable="false" text="进程ID" />
+                                          <TableColumn fx:id="remainingTime" editable="false" prefWidth="113.0" sortable="false" text="剩余时间" />
                                        </columns>
                                     </TableView>
                                     <StackPane layoutX="33.0" layoutY="189.0" prefHeight="240.0" prefWidth="325.0">
@@ -57,7 +59,6 @@
                                        </children>
                                     </StackPane>
                                     <Label layoutX="21.0" layoutY="478.0" text="设备总量:A2,B3,C3,显示在下表中的即为已分配的设备" />
-                                    <Button fx:id="reset" layoutX="232.0" layoutY="82.0" mnemonicParsing="false" onAction="#reset" prefHeight="37.0" prefWidth="105.0" text="重置" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="790.0" prefWidth="985.0">
@@ -73,13 +74,13 @@
                                                 </Label>
                                                 <TableView fx:id="readyTable" prefHeight="362.0" prefWidth="808.0" style="-fx-border-color: #FFFFFF;">
                                                    <columns>
-                                                      <TableColumn fx:id="readyID" prefWidth="60.0" text="PID" />
-                                                      <TableColumn fx:id="readyEXFileName" prefWidth="106.0" text="exFileName" />
-                                                      <TableColumn fx:id="readyArriveTime" prefWidth="86.0" text="到达时间" />
-                                                      <TableColumn fx:id="readyTotalTime" prefWidth="120.0" text="进程存在时间" />
-                                                      <TableColumn fx:id="readyAX" prefWidth="84.0" text="X的值" />
-                                                      <TableColumn fx:id="readyRemainInstructions" prefWidth="116.0" text="剩余指令数" />
-                                                      <TableColumn fx:id="readyProgressRate" prefWidth="211.0" text="进度" />
+                                                      <TableColumn fx:id="readyID" editable="false" prefWidth="60.0" sortable="false" text="PID" />
+                                                      <TableColumn fx:id="readyEXFileName" editable="false" prefWidth="106.0" sortable="false" text="exFileName" />
+                                                      <TableColumn fx:id="readyArriveTime" editable="false" prefWidth="86.0" sortable="false" text="到达时间" />
+                                                      <TableColumn fx:id="readyTotalTime" editable="false" prefWidth="120.0" sortable="false" text="进程存在时间" />
+                                                      <TableColumn fx:id="readyAX" editable="false" prefWidth="84.0" sortable="false" text="X的值" />
+                                                      <TableColumn fx:id="readyRemainInstructions" editable="false" prefWidth="116.0" sortable="false" text="剩余指令数" />
+                                                      <TableColumn fx:id="readyProgressRate" editable="false" prefWidth="211.0" sortable="false" text="进度" />
                                                    </columns>
                                                 </TableView>
                                              </children>
@@ -97,13 +98,13 @@
                                                 </Label>
                                                 <TableView fx:id="blockTable" prefHeight="284.0" prefWidth="266.0" style="-fx-border-color: #FFFFFF;">
                                                    <columns>
-                                                      <TableColumn fx:id="blockID" prefWidth="59.0" text="PID" />
-                                                      <TableColumn fx:id="blockEXFileName" prefWidth="116.0" text="exFileName" />
-                                                      <TableColumn fx:id="waitEq" prefWidth="88.0" text="阻塞原因" />
-                                                      <TableColumn fx:id="blockArriveTime" prefWidth="91.0" text="到达时间" />
-                                                      <TableColumn fx:id="blockTotalTime" prefWidth="122.0" text="进程存在时间" />
-                                                      <TableColumn fx:id="blockAX" minWidth="2.0" prefWidth="98.0" text="X的值" />
-                                                      <TableColumn fx:id="blockProgressRate" prefWidth="210.0" text="进度" />
+                                                      <TableColumn fx:id="blockID" editable="false" prefWidth="59.0" sortable="false" text="PID" />
+                                                      <TableColumn fx:id="blockEXFileName" editable="false" prefWidth="116.0" sortable="false" text="exFileName" />
+                                                      <TableColumn fx:id="waitingForDevice" editable="false" prefWidth="88.0" sortable="false" text="阻塞原因" />
+                                                      <TableColumn fx:id="blockArriveTime" editable="false" prefWidth="91.0" sortable="false" text="到达时间" />
+                                                      <TableColumn fx:id="blockTotalTime" editable="false" prefWidth="122.0" sortable="false" text="进程存在时间" />
+                                                      <TableColumn fx:id="blockAX" editable="false" minWidth="2.0" prefWidth="98.0" sortable="false" text="X的值" />
+                                                      <TableColumn fx:id="blockProgressRate" editable="false" prefWidth="210.0" sortable="false" text="进度" />
                                                    </columns>
                                                 </TableView>
                                              </children>
@@ -132,14 +133,15 @@
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab fx:id="fileSystem" text="文件">
+            <Tab text="文件系统">
                <content>
-                  <BorderPane fx:id="bp1" prefHeight="783.0" prefWidth="1339.0">
+                  <BorderPane fx:id="borderPane1OfFileSystemTab" prefHeight="783.0" prefWidth="1339.0">
                      <bottom>
-                        <BorderPane fx:id="bp2" prefHeight="389.0" prefWidth="1350.0" BorderPane.alignment="CENTER" />
+                        <BorderPane fx:id="borderPaneOfBorderPane1" prefHeight="389.0" prefWidth="1350.0" BorderPane.alignment="CENTER" />
                      </bottom>
                   </BorderPane>
-               </content></Tab>
+               </content>
+            </Tab>
          </tabs>
       </TabPane>
    </children>

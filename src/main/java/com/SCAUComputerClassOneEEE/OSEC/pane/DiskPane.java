@@ -15,7 +15,7 @@ import lombok.Setter;
 @Data
 public class DiskPane {
 
-    private volatile static DiskPane diskPane = new DiskPane();
+    private volatile static DiskPane diskPane;
 
     private BlockPane[] blockPanes = new BlockPane[128];
     private GridPane diskBlockSet;
@@ -39,7 +39,7 @@ public class DiskPane {
                 diskBlockSet.add(blockPanes[index], j, i+3, 1, 1);
             }
         }
-        //diskBlockSet.setStyle("-fx-background-color: WHITE");
+        diskBlockSet.setStyle("-fx-background-color: #c4ecf3");
     }
 
     public static DiskPane getDiskPane(){

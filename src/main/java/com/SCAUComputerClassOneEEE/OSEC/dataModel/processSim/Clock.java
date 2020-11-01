@@ -1,7 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim;
 
-import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
-import com.SCAUComputerClassOneEEE.OSEC.dataService.DeviceSimService;
+import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
+import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
 import lombok.Data;
 
 import java.util.concurrent.ExecutionException;
@@ -45,16 +45,11 @@ public class Clock{
     public synchronized int timeRotation() throws InterruptedException{
 
         long sTime = System.currentTimeMillis();
-        //System.out.println("========timeRotation=======");
-        //System.out.println("一条代码开始执行");
-        //时间片减一
-        //System.out.println("剩余时间片：" + timeSlice);
 
-        //
-        MySceneController.cpuTimeSim.set(cpuRanTime++);
-        MySceneController.timeSliceSim.setValue(timeSlice--);
-        DeviceSimService.getDeviceSimService().decTime();
-        CPU.getCpu().timeAdd();
+        MainSceneController.cpuTimeSim.set(cpuRanTime++);
+        MainSceneController.timeSliceSim.setValue(timeSlice--);
+        OS.deviceSimService.decTime();
+        OS.cpu.timeAdd();
         //返回中断字
         int psw = CPU.instructionCycle();
         long end1 = System.currentTimeMillis();

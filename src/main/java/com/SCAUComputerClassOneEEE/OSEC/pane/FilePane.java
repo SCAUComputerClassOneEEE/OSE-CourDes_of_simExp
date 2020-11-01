@@ -1,9 +1,9 @@
 package com.SCAUComputerClassOneEEE.OSEC.pane;
 
-import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.diskSim.AFile;
 import com.SCAUComputerClassOneEEE.OSEC.utils.CompileUtil;
 import com.SCAUComputerClassOneEEE.OSEC.dataService.ProcessSimService;
+import com.SCAUComputerClassOneEEE.OSEC.utils.OS;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -132,7 +132,7 @@ public class FilePane extends BorderPane {
             }
         } else {
             TextArea textArea = new TextArea();
-            textArea.setPrefSize(2*MySceneController.width/5,3*MySceneController.height/5);
+            textArea.setPrefSize(2* OS.width/5,3*OS.height/5);
             textArea.setEditable(false);
             if(newValue.getValue().isFile())
                 textArea.setText(newValue.getValue().getDiskContent());

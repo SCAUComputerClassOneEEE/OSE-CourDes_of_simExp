@@ -1,8 +1,8 @@
 package com.SCAUComputerClassOneEEE.OSEC.dataModel.storageSim.MEM;
 
-import com.SCAUComputerClassOneEEE.OSEC.controller.MySceneController;
+import com.SCAUComputerClassOneEEE.OSEC.Main;
+import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
 import com.SCAUComputerClassOneEEE.OSEC.dataModel.processSim.PCB;
-import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
 
@@ -28,9 +28,9 @@ public class Memory {
     @Getter
     private final List<PCB> PCB_LIST;
     @Getter
-    private final MAT mat;
+    private MAT mat;
     @Getter
-    private char[] userMemoryArea;
+    private final char[] userMemoryArea;
 
     private Memory(){
         userMemoryArea = new char[USER_MEMORY_AREA_SIZE];
@@ -69,7 +69,7 @@ public class Memory {
                 System.arraycopy(exeChars, 0, userMemoryArea, pointer, exeChars.length);
             }
 
-            MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
+            MainSceneController.memoryChange.setValue(MainSceneController.memoryChange.getValue()+1);
 
             return pointer;
         }
@@ -85,7 +85,7 @@ public class Memory {
             MAT.ProcessBlock thisProcessBlock = MAT.ProcessBlock.screen(mat.getMAT_OccupyCont(),pointer);
             if (thisProcessBlock == null) throw new Exception("PROCESS NOT EXIST");
             mat.recovery_MAT(pointer,thisProcessBlock.getLength());
-            MySceneController.memoryChange.setValue(MySceneController.memoryChange.getValue()+1);
+            MainSceneController.memoryChange.setValue(MainSceneController.memoryChange.getValue()+1);
         }
     }
 
@@ -106,6 +106,13 @@ public class Memory {
             mat.getMAT_FreeCont().add(new MAT.FreeBlock(iProcessLength,mat.totalFreeLength()));
             mat.compressionProcessBlocks();
         }
+    }
+
+    public void reset() {
+        Arrays.fill(userMemoryArea,'#');
+        mat = new MAT();
+        PCB_LIST.clear();
+        Main.bootOS();
     }
 
     public char[] readPChars(int pId){
@@ -270,4 +277,6 @@ public class Memory {
             return retPointer;
         }
     }
+
+
 }
