@@ -176,11 +176,11 @@ public class CPU implements Runnable{
 
         // 可执行文件池
         String[] exeFileContents = {
-                "X=0;!A6;X++;X++;!C3;X++;X--;end;",
-                "X=4;!B5;X++;X++;!A4;X++;X++;X++;X++;X++;X++;end;",
-                "X=2;X--;!A5;X--;!C2;X++;!B3;X++;X++;X++;X++;X++;X++;end;",
-                "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;",
-                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;"};
+                "X=0;\n!A6;\nX++;\nX++;\n!C3;\nX++;\nX--;\nend;",
+                "X=4;\n!B5;\nX++;\nX++;\n!A4;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nend;",
+                "X=2;\nX--;\n!A5;\nX--;\n!C2;\nX++;\n!B3;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nend;",
+                "X=0;\n!A2;\nX++;\n!B2;\nX++;\n!C2;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nend;",
+                "X=5;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nX++;\nend;"};
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
