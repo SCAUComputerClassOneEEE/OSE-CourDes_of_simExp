@@ -86,7 +86,7 @@ public class FileTextField {
             StringBuilder contents = new StringBuilder();
             char[] chars = aFile.getDiskContent().toCharArray();
             for (char c:chars)
-                contents.append(CompileUtil.decompile(c)).append((char) 10);
+                contents.append(CompileUtil.decompile(c) + ";" + (char)10);
             textFile = contents.toString();
         }
         else
@@ -129,8 +129,6 @@ public class FileTextField {
     void addListener(TreeItem<AFile> myTreeItem) {
         AFile aFile = myTreeItem.getValue();
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("newValue:" + newValue);
-            System.out.println("text:" + text);
             if(!newValue.equals(text)) {
                 stage.setTitle("*" + aFile.getFileName() + "." + aFile.getType());
             } else stage.setTitle(aFile.getFileName() + "." + aFile.getType());

@@ -143,7 +143,7 @@ public class FilePane extends BorderPane {
                 StringBuilder contents = new StringBuilder();
                 char[] chars = newValue.getValue().getDiskContent().toCharArray();
                 for (char c:chars)
-                    contents.append(CompileUtil.decompile(c) + (char)10);
+                    contents.append(CompileUtil.decompile(c) + ";" + (char)10);
                 textArea.setText(contents.toString());
             }
             Platform.runLater(()-> flowPane.getChildren().add(textArea));

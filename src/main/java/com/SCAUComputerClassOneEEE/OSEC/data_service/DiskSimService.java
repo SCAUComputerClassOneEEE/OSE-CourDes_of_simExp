@@ -393,8 +393,14 @@ public class DiskSimService {
         StringBuilder contents = new StringBuilder();
         while (!string.equals("") && string.contains(";")){
             String b = string.substring(0, string.indexOf(";"));
-            string = string.substring(string.indexOf(";") + 1);
             contents.append(CompileUtil.compile(b));
+            if (string.indexOf(";") + 1 < string.length())
+                string = string.substring(string.indexOf(";") + 2);
+            else string = string.substring(string.indexOf(";") + 1);
+        }
+        int count = contents.length();
+        for (int i = 0; i < 64 - count; i++) {
+            contents.append('#');
         }
         OSDataCenter.disk.writeFile(aFile.getDiskNum(), contents.toString());
         aFile.setLength((char) OSDataCenter.disk.getFileSize(aFile.getDiskNum()));
