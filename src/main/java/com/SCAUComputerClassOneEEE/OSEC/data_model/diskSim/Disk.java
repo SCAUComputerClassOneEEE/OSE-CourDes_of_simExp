@@ -2,11 +2,15 @@ package com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim;
 
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
+import com.SCAUComputerClassOneEEE.OSEC.starter.Starter;
 import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -272,8 +276,9 @@ public class Disk implements Serializable{
         }
     }
 
-    public void readDiskFromFile() {
-        try(ObjectInputStream ooi = new ObjectInputStream(new FileInputStream("src/main/resources/diskDat.dat"))) {
+    public void readDiskFromFile() throws URISyntaxException, MalformedURLException {
+        URL dataFile = Starter.class.getClassLoader().getResource("diskDat.dat").toURI().toURL();
+        try(ObjectInputStream ooi = new ObjectInputStream(new FileInputStream(dataFile.getFile()))) {
             disk = (Disk) ooi.readObject();
             OSDataCenter.disk = disk;
             // 更新文件树与磁盘块展示界面
@@ -284,8 +289,9 @@ public class Disk implements Serializable{
     }
 
 
-    public void writeDiskToFile() {
-        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("src/main/resources/diskDat.dat"))) {
+    public void writeDiskToFile() throws URISyntaxException, MalformedURLException {
+        URL dataFile = Starter.class.getClassLoader().getResource("diskDat.dat").toURI().toURL();
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dataFile.getFile()))) {
             oos.writeObject(disk);
         } catch (IOException e) {
             e.printStackTrace();

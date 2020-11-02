@@ -90,8 +90,9 @@ public class Starter {
         }
     }
 
-    private void askForLoadExistDat() {
-        if (new File("src/main/resources/diskDat.dat").exists()){
+    private void askForLoadExistDat() throws URISyntaxException, MalformedURLException {
+        URL dataFile = Starter.class.getClassLoader().getResource("diskDat.dat").toURI().toURL();
+        if (new File(dataFile.toURI()).exists()){
             tipPane("检测到已存在的磁盘数据，是否加载？",true);
         }
     }
@@ -189,12 +190,24 @@ public class Starter {
         stage.show();
         if (type) {
             yes.setOnAction (e -> {
-                OSDataCenter.disk.readDiskFromFile();
+                try {
+                    OSDataCenter.disk.readDiskFromFile();
+                } catch (URISyntaxException uriSyntaxException) {
+                    uriSyntaxException.printStackTrace();
+                } catch (MalformedURLException malformedURLException) {
+                    malformedURLException.printStackTrace();
+                }
                 stage.close();
             });
         }else {
             yes.setOnAction (e -> {
-                OSDataCenter.disk.writeDiskToFile();
+                try {
+                    OSDataCenter.disk.writeDiskToFile();
+                } catch (URISyntaxException uriSyntaxException) {
+                    uriSyntaxException.printStackTrace();
+                } catch (MalformedURLException malformedURLException) {
+                    malformedURLException.printStackTrace();
+                }
                 stage.close();
             });
         }
