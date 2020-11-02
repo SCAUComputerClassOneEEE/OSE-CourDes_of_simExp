@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -34,6 +35,7 @@ import java.util.ResourceBundle;
  * @Date: 2020/10/14 21:30
  */
 public class MainSceneController implements Initializable {
+
     //初始化
     @SneakyThrows
     @Override
@@ -41,6 +43,8 @@ public class MainSceneController implements Initializable {
         /*
         界面的初始化
          */
+        // 背景图
+        initBackground();
         // 初始化表格中的信息列
         initMassage();
         // 初始化设备表格
@@ -113,6 +117,17 @@ public class MainSceneController implements Initializable {
         isFirstStart = true;
     }
 
+    private void initBackground() throws URISyntaxException, MalformedURLException {
+        URL url = Starter.class.getClassLoader().getResource("界面背景图.png").toURI().toURL();
+        Image image = new Image(url.toString());
+/*
+        (Image image, BackgroundRepeat repeatX, BackgroundRepeat repeatY, BackgroundPosition position, BackgroundSize size)
+*/
+        BackgroundImage backgroundImage = new BackgroundImage(image,BackgroundRepeat.REPEAT,
+                BackgroundRepeat.REPEAT,BackgroundPosition.DEFAULT,BackgroundSize.DEFAULT);
+        Background background = new Background(backgroundImage);
+        splitPane.setBackground(background);
+    }
     private void initMassage() throws URISyntaxException, MalformedURLException {
         //加监听器
         cpuTimeSim.addListener((observable, oldValue, newValue)-> setCPUTime(newValue));
@@ -238,6 +253,7 @@ public class MainSceneController implements Initializable {
     /**
      * 以下为进程执行界面的控件
      */
+    @FXML SplitPane splitPane;
     // 按钮
     @FXML
     private Button startORStop;
