@@ -60,14 +60,18 @@ public class Starter {
     public void secondStage(Stage stage){
         Parent root;
         try {
-            root = FXMLLoader.load(Starter.class.getResource("MainScene.fxml"));
+            URL fxml = Starter.class.getClassLoader().getResource("MainScene.fxml").toURI().toURL();
+            //root = FXMLLoader.load(Starter.class.getResource("MainScene.fxml"));
+            root = FXMLLoader.load(fxml);
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(Starter.class.getResource("background.css").toExternalForm());
+
+            scene.getStylesheets().add(Starter.class.getClassLoader().getResource("background.css").toExternalForm());
+
             stage.setScene(scene);
             stage.setWidth(1350);
             stage.setHeight(950);
-            //stage.initStyle(StageStyle.DECORATED);
-            stage.getIcons().add(new Image("file:" +"src/main/resources/操作系统.png",20, 20,
+            URL icon = Starter.class.getClassLoader().getResource("操作系统.png").toURI().toURL();
+            stage.getIcons().add(new Image(icon.toString(),20, 20,
                     true, true));
             stage.setTitle("模拟操作系统实现");
             stage.show();
@@ -81,7 +85,7 @@ public class Starter {
                     MainSceneController.getCoreThread().stop();
                 }
             });
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -117,7 +121,8 @@ public class Starter {
         stage.setWidth(image.getWidth());
         stage.setHeight(image.getHeight());
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.getIcons().add(new Image("file:" +"src/main/resources/操作系统.png",20, 20,
+        URL icon = Starter.class.getClassLoader().getResource("操作系统.png").toURI().toURL();
+        stage.getIcons().add(new Image(icon.toString(),20, 20,
                 true, true));
         Thread t = new Thread(this::initSystem);
         t.start();

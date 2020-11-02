@@ -1,6 +1,7 @@
 package com.SCAUComputerClassOneEEE.OSEC.pane;
 
 import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.starter.Starter;
 import com.SCAUComputerClassOneEEE.OSEC.utils.CompileUtil;
 import com.SCAUComputerClassOneEEE.OSEC.data_service.ProcessSimService;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
@@ -20,6 +21,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 @Getter
 @Setter
@@ -51,14 +55,14 @@ public class FilePane extends BorderPane {
     }
 
     //初始化图片
-    private static Label initPicture(TreeItem<AFile> ti){
+    private static Label initPicture(TreeItem<AFile> ti) throws URISyntaxException, MalformedURLException {
         AFile aFile = ti.getValue();
-        ImageView iv1 = new ImageView(new Image("file:" + new File("src/main/resources/picture/file.jpg"), 100, 100, true, true));
-        ImageView iv2 = new ImageView(new Image("file:" + new File("src/main/resources/picture/folder.jpg"), 100, 100, true, true));
-        ImageView iv3 = new ImageView(new Image("file:" + new File("src/main/resources/picture/file1.jpg"), 100, 100, true, true));
-        ImageView iv4 = new ImageView(new Image("file:" + new File("src/main/resources/picture/folder1.jpg"), 100, 100, true, true));
-        ImageView iv5 = new ImageView(new Image("file:" + new File("src/main/resources/picture/exe.jpg"), 100, 100, true, true));
-        ImageView iv6 = new ImageView(new Image("file:" + new File("src/main/resources/picture/exe1.jpg"), 100, 100, true, true));
+        ImageView iv1 = new ImageView(new Image(Starter.class.getClassLoader().getResource("file.jpg").toURI().toURL().toString(), 100, 100, true, true));
+        ImageView iv2 = new ImageView(new Image(Starter.class.getClassLoader().getResource("folder.jpg").toURI().toURL().toString(), 100, 100, true, true));
+        ImageView iv3 = new ImageView(new Image(Starter.class.getClassLoader().getResource("file1.jpg").toURI().toURL().toString(), 100, 100, true, true));
+        ImageView iv4 = new ImageView(new Image(Starter.class.getClassLoader().getResource("folder1.jpg").toURI().toURL().toString(), 100, 100, true, true));
+        ImageView iv5 = new ImageView(new Image(Starter.class.getClassLoader().getResource("exe.jpg").toURI().toURL().toString(), 100, 100, true, true));
+        ImageView iv6 = new ImageView(new Image(Starter.class.getClassLoader().getResource("exe1.jpg").toURI().toURL().toString(), 100, 100, true, true));
 
         Label label = new Label();
         label.setPickOnBounds(true);
@@ -130,7 +134,15 @@ public class FilePane extends BorderPane {
         }
         if(newValue.getValue().isDirectory()){
             for(TreeItem<AFile> ti : newValue.getChildren()){
-                Platform.runLater(()-> flowPane.getChildren().add(initPicture(ti)));
+                Platform.runLater(()-> {
+                    try {
+                        flowPane.getChildren().add(initPicture(ti));
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                });
                 //flowPane.getChildren().add(initPicture(ti));
             }
         } else {

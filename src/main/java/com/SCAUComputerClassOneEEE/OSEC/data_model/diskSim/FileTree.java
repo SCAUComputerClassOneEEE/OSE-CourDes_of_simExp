@@ -3,6 +3,7 @@ package com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.pane.MenuPane;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
+import com.SCAUComputerClassOneEEE.OSEC.starter.Starter;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,12 +12,24 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 @Getter
 @Setter
 public class FileTree {
 
-    private static FileTree fileTree = new FileTree();
+    private static FileTree fileTree;
+
+    static {
+        try {
+            fileTree = new FileTree();
+        } catch (MalformedURLException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     //文件树界面
     private VBox fileTreePane;
     //文件树
@@ -27,13 +40,13 @@ public class FileTree {
     private Disk.DiskBlock[] diskBlocks;
 
     public static FileTree getFileTree() { return fileTree; }
-    public FileTree() {
+    public FileTree() throws MalformedURLException, URISyntaxException {
         init();
         addListener();
     }
 
     //初始化
-    private void init(){
+    private void init() throws MalformedURLException, URISyntaxException {
         this.fileTreePane = new VBox();
         int header = OSDataCenter.disk.malloc_F_Header();
         if(header == -1){
@@ -109,16 +122,16 @@ public class FileTree {
     @Setter
     public static class MyTreeItem extends TreeItem<AFile> {
 
-        public MyTreeItem(AFile aFile) {
+        public MyTreeItem(AFile aFile) throws URISyntaxException, MalformedURLException {
             this.setValue(aFile);
-
             //设置图标
-            File file = new File("src/main/resources/folder.png");
+            String type = "文件树图标1.png";
             if (isLeaf()) {
-                file = new File("src/main/resources/文件.png");
+                type = "文件树图标2.png";
             }
+            URL icon = Starter.class.getClassLoader().getResource(type).toURI().toURL();
 
-            this.setGraphic(new ImageView(new Image("file:" + file, 20, 20,
+            this.setGraphic(new ImageView(new Image(icon.toString(), 20, 20,
                     true, true)));
         }
 

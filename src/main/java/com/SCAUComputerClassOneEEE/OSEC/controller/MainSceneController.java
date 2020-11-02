@@ -9,6 +9,7 @@ import com.SCAUComputerClassOneEEE.OSEC.data_model.devicesSim.Device;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.PCB;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.storageSim.MEM.Memory;
+import com.SCAUComputerClassOneEEE.OSEC.starter.Starter;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -21,7 +22,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -31,6 +35,7 @@ import java.util.ResourceBundle;
  */
 public class MainSceneController implements Initializable {
     //初始化
+    @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         /*
@@ -55,7 +60,7 @@ public class MainSceneController implements Initializable {
      */
     // 开始或暂停
     @FXML
-    public void startORStop() {
+    public void startORStop() throws URISyntaxException, MalformedURLException {
         // 准备开始
         if ("开始".equals(startORStop.getText())){
             // 首次开始
@@ -68,18 +73,20 @@ public class MainSceneController implements Initializable {
                 OSDataCenter.cpu.notifyCpu();
             }
             startORStop.setText("暂停");
-            startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/暂停.png", 30, 30, true, true)));
+            URL icon = Starter.class.getClassLoader().getResource("暂停.png").toURI().toURL();
+            startORStop.setGraphic(new ImageView(new Image(icon.toString(), 30, 30, true, true)));
         }
         else { // 准备暂停
             OSDataCenter.cpu.WAITING = true;
             startORStop.setText("开始");
-            startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/开始.png", 30, 30, true, true)));
+            URL icon = Starter.class.getClassLoader().getResource("开始.png").toURI().toURL();
+            startORStop.setGraphic(new ImageView(new Image(icon.toString(), 30, 30, true, true)));
         }
     }
 
     // 重置
     @FXML
-    private void reset(){
+    private void reset() throws URISyntaxException, MalformedURLException {
         if (coreThread == null) return;
         // 把cpu进程关掉
         coreThread.stop();
@@ -93,7 +100,8 @@ public class MainSceneController implements Initializable {
         OSDataCenter.memory.reset();
 
         startORStop.setText("开始");
-        startORStop.setGraphic(new ImageView(new Image("file:" +"src/main/resources/开始.png", 30, 30, true, true)));
+        URL icon = Starter.class.getClassLoader().getResource("开始.png").toURI().toURL();
+        startORStop.setGraphic(new ImageView(new Image(icon.toString(), 30, 30, true, true)));
 
         cpuTime.setText("");
         timeSlice.setText("");
@@ -105,7 +113,7 @@ public class MainSceneController implements Initializable {
         isFirstStart = true;
     }
 
-    private void initMassage(){
+    private void initMassage() throws URISyntaxException, MalformedURLException {
         //加监听器
         cpuTimeSim.addListener((observable, oldValue, newValue)-> setCPUTime(newValue));
         timeSliceSim.addListener((observable, oldValue, newValue)-> setTimeSlice(newValue));
@@ -113,6 +121,12 @@ public class MainSceneController implements Initializable {
         runningIRSim.addListener((observable, oldValue, newValue)-> setRunningIR(newValue));
         intermediateResultSim.addListener((observable, oldValue, newValue)-> setIntermediateResult(newValue));
         finalResultSim.addListener((observable, oldValue, newValue)-> setFinalResult(newValue));
+
+        URL icon = Starter.class.getClassLoader().getResource("开始.png").toURI().toURL();
+        startORStop.setGraphic(new ImageView(new Image(icon.toString(), 30, 30, true, true)));
+
+        icon = Starter.class.getClassLoader().getResource("重置.png").toURI().toURL();
+        reset.setGraphic(new ImageView(new Image(icon.toString(), 30, 30, true, true)));
     }
     private void initDeviceTable(){
         //给表添加数据源

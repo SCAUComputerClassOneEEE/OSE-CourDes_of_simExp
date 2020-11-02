@@ -89,10 +89,4 @@ public class CompileUtil {
         int decimal = (int) Long.parseLong(binary, 2);
         return decimal;
     }
-
-    public static void main(String[] args) {
-        String result = CompileUtil.decompile(CompileUtil.compile("X=6").charAt(0));
-        System.out.println(result);
-
-    }
 }
