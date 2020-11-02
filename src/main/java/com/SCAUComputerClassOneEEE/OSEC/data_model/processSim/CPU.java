@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.data_model.processSim;
 
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.utils.CompileUtil;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
@@ -38,9 +39,6 @@ public class CPU implements Runnable{
 /*    // 磁盘数据服务层
     private static final DiskSimService diskSimService = new DiskSimService();*/
 
-    // 预先设置的10个可运行文件，形式仅仅是文件
-    public static final ArrayList<AFile> exeFiles = new ArrayList<>();
-
     public static final ArrayList<PCB> allPCB = new ArrayList<>();// 所有进程的PCB链表
     public static final ObservableList<PCB> readyQueue = FXCollections.observableArrayList();// 就绪进程PCB队列
     public static final ObservableList<PCB> blockedQueue = FXCollections.observableArrayList();// 阻塞进程PCB队列
@@ -57,7 +55,8 @@ public class CPU implements Runnable{
      */
     private void executeCPU() throws Exception {
         //创建可执行文件
-        if (exeFiles.size() == 0) {
+        System.out.println(OSDataCenter.disk.exeFiles.size());
+        if (OSDataCenter.disk.exeFiles.size() == 0) {
             initExeFile();
         }
         cpu();
@@ -159,10 +158,10 @@ public class CPU implements Runnable{
      * 随机产生进程申请
      */
     private void randomPosses(){
-        if (exeFiles.size() == 0) return;
+        if (OSDataCenter.disk.exeFiles.size() == 0) return;
         //if ((int)(Math.random()) == 0) {
         if ((int)(Math.random()*6) == 5) {
-            AFile executeFile = exeFiles.get((int)(exeFiles.size() * Math.random()));
+            AFile executeFile = OSDataCenter.disk.exeFiles.get((int)(OSDataCenter.disk.exeFiles.size() * Math.random()));
             // 创建进程
             OSDataCenter.processSimService.create(executeFile);
         }
@@ -181,14 +180,14 @@ public class CPU implements Runnable{
                 "X=4;!B5;X++;X++;!A4;X++;X++;X++;X++;X++;X++;end;",
                 "X=2;X--;!A5;X--;!C2;X++;!B3;X++;X++;X++;X++;X++;X++;end;",
                 "X=0;!A2;X++;!B2;X++;!C2;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;",
-                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;"};
+                "X=5;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;X++;end;"};
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 5; j++) {
-                exeFiles.add(OSDataCenter.diskSimService.createFile(OSDataCenter.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16));
+                AFile newFile = OSDataCenter.diskSimService.createFile(OSDataCenter.fileTree.getRootTree().getChildren().get(i).getValue(), "e" + j, 16);
                 try {
                     // 随机从文件池中选择
-                    OSDataCenter.diskSimService.write_exeFile(exeFiles.get(i * 5 + j), exeFileContents[(int)(Math.random() * 5)]);
+                    OSDataCenter.diskSimService.write_exeFile(newFile, exeFileContents[(int)(Math.random() * 5)]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

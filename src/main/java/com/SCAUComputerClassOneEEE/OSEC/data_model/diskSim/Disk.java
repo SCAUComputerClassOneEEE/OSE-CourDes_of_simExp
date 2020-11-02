@@ -22,6 +22,9 @@ public class Disk implements Serializable{
     public static final int DISK_MAX_SIZE = 128;
     public static final int BLOCK_MAX_SIZE = 64;
 
+    // 预先设置的10个可运行文件
+    public ArrayList<AFile> exeFiles = new ArrayList<>();
+
     //文件分配表，占两字节，磁盘的 0、1 号
     @Getter
     private final FAT fat;
@@ -272,7 +275,7 @@ public class Disk implements Serializable{
     public void readDiskFromFile() {
         try(ObjectInputStream ooi = new ObjectInputStream(new FileInputStream("src/main/resources/diskDat.dat"))) {
             disk = (Disk) ooi.readObject();
-             OSDataCenter.disk = disk;
+            OSDataCenter.disk = disk;
             // 更新文件树与磁盘块展示界面
             OSDataCenter.fileTree.readingDisk(disk);
         } catch (IOException | ClassNotFoundException e) {

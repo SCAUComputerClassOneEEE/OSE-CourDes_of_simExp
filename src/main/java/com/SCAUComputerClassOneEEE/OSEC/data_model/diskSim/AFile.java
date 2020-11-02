@@ -5,11 +5,12 @@ import com.SCAUComputerClassOneEEE.OSEC.pane.OpenFileManager;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Getter
 @Setter
-public class AFile{
+public class AFile implements Serializable {
     private String fileName;
     /*
      *名仅可以使用字母、数字和除“$”、 “.”、 “/”、“#”以外的字符

@@ -1,8 +1,10 @@
 package com.SCAUComputerClassOneEEE.OSEC.data_service;
 
+import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.Disk;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.FileTree;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim.AFile;
+import com.SCAUComputerClassOneEEE.OSEC.data_model.processSim.CPU;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FilePane;
 import com.SCAUComputerClassOneEEE.OSEC.pane.FileTextField;
 import com.SCAUComputerClassOneEEE.OSEC.pane.OpenFileManager;
@@ -60,6 +62,9 @@ public class DiskSimService {
                 newFile = new AFile(fileName, "ex", property, diskNum, length, root.getLocation()+"/"+root.getFileName());
             }else
                 newFile = null;
+            if (attribute == 16){
+                OSDataCenter.disk.exeFiles.add(newFile);
+            }
             return getString(myTreeItem, root, newFile);
         }
     }
@@ -75,6 +80,9 @@ public class DiskSimService {
             AFile newFile = new AFile(root.getAbsoluteLocation().substring(5), fileName, attribute);
             String filePath = newFile.getAbsoluteLocation().substring(5);
             getString(getFatherTreeItem(getFileNameList(filePath), OSDataCenter.fileTree.getRootTree(), 0), root, newFile);
+            if (attribute == 16){
+                OSDataCenter.disk.exeFiles.add(newFile);
+            }
             return newFile;
         } catch (Exception e) {
             e.printStackTrace();
