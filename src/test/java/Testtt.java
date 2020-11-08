@@ -9,22 +9,23 @@ public class Testtt {
     @Test
     public void diskTest() throws Exception {
         Disk testDisk = Disk.getDisk();
+
         int header1 = testDisk.malloc_F_Header();
+        System.out.println("get header: " + header1);
         testDisk.writeFile(header1,"header1 wrote.");
+
         int header2 = testDisk.malloc_F_Header();
+        System.out.println("get header: " + header2);
         testDisk.writeFile(header2,"header2 wrote.qwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
                 "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
                 "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
                 "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer");
+
         int header3 = testDisk.malloc_F_Header();
+        System.out.println("get header: " + header3);
         testDisk.writeFile(header3,"header3 wrote.");
-        testDisk.writeFile(header2,"header2 wrote.qwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
-                "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
-                "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
-                "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
-                "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
-                "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer" +
-                "qwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwerqwer");
+
+        testDisk.writeFile(header2,"header2 wrote.q");
     }
 
    @Test

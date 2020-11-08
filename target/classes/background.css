@@ -3,16 +3,16 @@
     -fx-text-fill: #000000;
 }
 .split-pane {
-   /* -fx-background-color: #b7e1ea;*/
-/*    -fx-background-image: url("界面背景图.png");*/
+    /* -fx-background-color: #b7e1ea;*/
+    /*    -fx-background-image: url("界面背景图.png");*/
 }
 
 .table-view {
     -fx-background-color: transparent;
 }
 .table-view .column-header {
-     -fx-background-color: #a0deec;
-  /*  -fx-background-image: url("界面背景图.png");*/
+    -fx-background-color: #a0deec;
+    /*  -fx-background-image: url("界面背景图.png");*/
     /*-fx-background-color:	#FFFFFF;*/
 }
 
