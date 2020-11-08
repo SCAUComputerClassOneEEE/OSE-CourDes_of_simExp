@@ -10,6 +10,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * 文本编辑域
  */
@@ -59,7 +62,14 @@ public class FileTextField {
             AFile aFile = myTreeItem.getValue();
             int diskNum = aFile.getDiskNum();
             if(aFile.isFile()){
-                OSDataCenter.disk.writeFile(diskNum, textArea.getText());
+                int len = 64 - (textArea.getText().length() % 64);
+                String rest = "";
+                for (int i=0;i<len;i++){
+                    rest += "#";
+                }
+                System.out.println("rest="+rest);
+                String newContent = textArea.getText() + rest;
+                OSDataCenter.disk.writeFile(diskNum, newContent);
                 aFile.setLength((char) OSDataCenter.disk.getFileSize(diskNum));
             }else if(aFile.isExeFile()){
                 diskSimService.write_exeFile(aFile, textArea.getText());

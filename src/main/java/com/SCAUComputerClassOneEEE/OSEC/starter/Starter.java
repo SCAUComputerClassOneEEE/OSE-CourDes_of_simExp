@@ -174,7 +174,7 @@ public class Starter {
         stage.setMinWidth(300);
         stage.setMaxHeight(300);
         Label tipLabel = new Label(tips);
-        Button yes = new Button(("是"));
+        Button yes = new Button("是");
         Button no = new Button("否");
 
         HBox hBox = new HBox();

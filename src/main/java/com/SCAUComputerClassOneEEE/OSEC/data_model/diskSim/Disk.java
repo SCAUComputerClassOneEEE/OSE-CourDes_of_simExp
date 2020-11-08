@@ -1,5 +1,6 @@
 package com.SCAUComputerClassOneEEE.OSEC.data_model.diskSim;
 
+import com.SCAUComputerClassOneEEE.OSEC.Main;
 import com.SCAUComputerClassOneEEE.OSEC.controller.MainSceneController;
 import com.SCAUComputerClassOneEEE.OSEC.data_center.OSDataCenter;
 import com.SCAUComputerClassOneEEE.OSEC.starter.Starter;
@@ -214,6 +215,10 @@ public class Disk implements Serializable{
                 //System.out.println("   get next free block order, " + freeOrder);
                 FAT_cont[header] = freeOrder;
                 header = freeOrder;
+                if(OSDataCenter.diskPane.getType(header) != 1){
+                    MainSceneController.diskChange.setValue(header);
+                }
+
             }
             FAT_cont[header] = EOF;
             System.out.println("   FAT_cont[ " + header + " ] = EOF now");

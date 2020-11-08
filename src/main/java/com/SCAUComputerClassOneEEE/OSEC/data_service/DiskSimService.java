@@ -130,6 +130,8 @@ public class DiskSimService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else{
+            return "错误";
         }
         return "成功";
     }

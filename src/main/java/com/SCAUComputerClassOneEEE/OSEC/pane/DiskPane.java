@@ -61,6 +61,10 @@ public class DiskPane {
             blockPanes[index].setFree();
     }
 
+    public int getType(int index) {
+        return blockPanes[index].getType();
+    }
+
     @Getter
     @Setter
     public class BlockPane extends StackPane {

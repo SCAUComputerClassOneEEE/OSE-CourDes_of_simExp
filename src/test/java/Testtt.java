@@ -26,6 +26,8 @@ public class Testtt {
         testDisk.writeFile(header3,"header3 wrote.");
 
         testDisk.writeFile(header2,"header2 wrote.q");
+        int header4 = testDisk.malloc_F_Header();
+        System.out.println(header4);
     }
 
    @Test
