@@ -160,7 +160,10 @@ public class Disk implements Serializable{
                 return;
             }
             System.out.println("回收的磁盘块:" + header);
+            Platform.runLater(()-> MainSceneController.diskChange.setValue(header-1));
             Platform.runLater(()-> MainSceneController.diskChange.setValue(header));
+            Platform.runLater(()-> MainSceneController.diskChange.setValue(header-1));
+
 //            System.out.println("    recovery the " + header + " now.");
             recovery_FAT(FAT_cont[header]);
             if (header < frsFreePosition) {
