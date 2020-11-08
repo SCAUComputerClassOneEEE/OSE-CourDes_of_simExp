@@ -53,12 +53,17 @@ public class DiskPane {
     }
 
     public void updateType(int index){
+        System.out.println("进入的index:" + index);
         if(index <= 1 || index > 127)
             return;
-        if(blockPanes[index].getType() == 0)
+        if(blockPanes[index].getType() == 0){
             blockPanes[index].setUse();
-        else if(blockPanes[index].getType() == 1)
+            System.out.println("确实分配:"+index);
+        }
+        else if(blockPanes[index].getType() == 1) {
             blockPanes[index].setFree();
+            System.out.println("确实回收:"+index);
+        }
     }
 
     public int getType(int index) {

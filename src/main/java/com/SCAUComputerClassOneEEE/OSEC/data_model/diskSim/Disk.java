@@ -59,7 +59,6 @@ public class Disk implements Serializable{
     public void recovery(int header){
         if(MainSceneController.diskChange.getValue() == header)
             Platform.runLater(()-> MainSceneController.diskChange.setValue(-1));
-        Platform.runLater(()-> MainSceneController.diskChange.setValue(header));
         fat.recovery_FAT(header);
     }
 
@@ -148,8 +147,8 @@ public class Disk implements Serializable{
          * @param header 回收的首块
          */
         void recovery_FAT(int header){
-            System.out.println();
-            System.out.println("--------recovery_FAT--------");
+//            System.out.println();
+//            System.out.println("--------recovery_FAT--------");
             if (header == 0) {
                 return;
             }
@@ -157,21 +156,23 @@ public class Disk implements Serializable{
                 return;
             }
             if (header == EOF) {
-                System.out.println("    return because header == EOF is true\n--------end--------");
+//                System.out.println("    return because header == EOF is true\n--------end--------");
                 return;
             }
-            System.out.println("    recovery the " + header + " now.");
+            System.out.println("回收的磁盘块:" + header);
+            Platform.runLater(()-> MainSceneController.diskChange.setValue(header));
+//            System.out.println("    recovery the " + header + " now.");
             recovery_FAT(FAT_cont[header]);
             if (header < frsFreePosition) {
-                System.out.println("    header < frsFreePosition is true");
+//                System.out.println("    header < frsFreePosition is true");
                 frsFreePosition = header;
             }
             FAT_cont[header] = 0;
-            System.out.println("    make the FAT_cont[header] = 0 yet");
+//            System.out.println("    make the FAT_cont[header] = 0 yet");
             /* 计算剩余空闲 */
             freeBlocks ++;
-            System.out.println("--------end--------");
-            System.out.println();
+//            System.out.println("--------end--------");
+//            System.out.println();
             //System.out.println();
         }
 
@@ -199,15 +200,15 @@ public class Disk implements Serializable{
          * @param preBlockSize 请求划分的块数
          */
         void mallocForFile_FAT(int header,int preBlockSize) throws Exception {
-            System.out.println();
-            System.out.println("---------mallocForFile_FAT--------");
+//            System.out.println();
+//            System.out.println("---------mallocForFile_FAT--------");
             if (preBlockSize < 0) return;
 //            if (preBlockSize > 0){
 //                System.out.println("    preBlockSize > 0 is true");
 //                recovery_FAT(FAT_cont[header]);
 //            }
             recovery_FAT(FAT_cont[header]);
-            System.out.println("   preBlockSize = " + preBlockSize);
+//            System.out.println("   preBlockSize = " + preBlockSize);
             if (preBlockSize > freeBlocks)
                 throw new Exception("Not enough memory to be allocated.");
             for (int i = 0; i < preBlockSize; i ++){
@@ -215,15 +216,13 @@ public class Disk implements Serializable{
                 //System.out.println("   get next free block order, " + freeOrder);
                 FAT_cont[header] = freeOrder;
                 header = freeOrder;
-                if(OSDataCenter.diskPane.getType(header) != 1){
+                System.out.println("分配的磁盘块号:" + header);
+//                if(OSDataCenter.diskPane.getType(header) != 1){
                     MainSceneController.diskChange.setValue(header);
-                }
+//                }
 
             }
             FAT_cont[header] = EOF;
-            System.out.println("   FAT_cont[ " + header + " ] = EOF now");
-            System.out.println("-------end--------");
-            System.out.println();
             //System.out.println();
         }
         /**
